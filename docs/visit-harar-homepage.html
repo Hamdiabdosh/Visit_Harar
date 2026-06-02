@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visit Harar — Ancient City of Saints</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #C4952A;
+    --gold-light: #E8C97A;
+    --gold-pale: #F5EDD8;
+    --earth: #8B4513;
+    --earth-dark: #5C2E0A;
+    --ivory: #FAF6EF;
+    --ivory-dark: #F0E8D8;
+    --stone: #2C2419;
+    --stone-mid: #4A3728;
+    --teal: #1D5C5C;
+    --teal-light: #2A8080;
+    --teal-pale: #E0F0F0;
+    --red-harar: #C0392B;
+    --text-main: #1A1209;
+    --text-muted: #6B5744;
+    --text-faint: #9A8570;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--ivory);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: transparent;
+    transition: background 0.4s, backdrop-filter 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(26, 18, 9, 0.92);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold-light); }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.82);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold-light); }
+  .nav-cta {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--stone);
+    background: var(--gold-light);
+    border: none;
+    padding: 0.6rem 1.4rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #fff; }
+
+  /* ─── HERO ─── */
+  .hero {
+    height: 100vh;
+    min-height: 700px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: var(--stone);
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(160deg, rgba(26,18,9,0.15) 0%, rgba(26,18,9,0.7) 100%),
+      url('https://images.unsplash.com/photo-1580048915913-4f8f5cb481c4?w=1600&q=80') center/cover no-repeat;
+    transform: scale(1.04);
+    animation: heroZoom 20s ease-in-out infinite alternate;
+  }
+  @keyframes heroZoom {
+    from { transform: scale(1.04); }
+    to   { transform: scale(1.12); }
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(26,18,9,0.90) 0%,
+      rgba(26,18,9,0.40) 50%,
+      rgba(26,18,9,0.10) 100%
+    );
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 4rem 6rem;
+    max-width: 900px;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    border: 1px solid rgba(196,149,42,0.5);
+    padding: 0.4rem 1rem;
+    margin-bottom: 1.8rem;
+  }
+  .hero-badge::before {
+    content: '';
+    display: block;
+    width: 18px; height: 1px;
+    background: var(--gold-light);
+  }
+  h1.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 900;
+    line-height: 0.95;
+    color: #fff;
+    margin-bottom: 0.3em;
+  }
+  h1.hero-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+  .hero-sub {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.35rem;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(255,255,255,0.75);
+    max-width: 500px;
+    margin-bottom: 2.8rem;
+    line-height: 1.5;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+  }
+  .btn-primary {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--stone);
+    background: var(--gold);
+    border: none;
+    padding: 1rem 2.2rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-ghost {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 1rem 2.2rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  .hero-stats {
+    position: absolute;
+    right: 4rem;
+    bottom: 6rem;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    text-align: right;
+  }
+  .stat-item .stat-num {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+  .stat-item .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .hero-scroll {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    animation: bobScroll 2.5s ease-in-out infinite;
+  }
+  .hero-scroll span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+  .hero-scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+  }
+  @keyframes bobScroll {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+
+  /* ─── INTRO BAND ─── */
+  .intro-band {
+    background: var(--stone);
+    padding: 5rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .intro-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .intro-label::after { content: ''; flex: 1; height: 1px; background: rgba(196,149,42,0.4); }
+  .intro-band h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--gold-pale);
+    line-height: 1.1;
+  }
+  .intro-band h2 em { font-style: italic; color: var(--gold-light); }
+  .intro-text {
+    color: rgba(245,237,216,0.7);
+    font-size: 1.2rem;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+  .intro-text strong {
+    color: var(--gold-pale);
+    font-weight: 600;
+  }
+  .intro-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.8rem;
+  }
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(196,149,42,0.35);
+    padding: 0.35rem 0.9rem;
+  }
+
+  /* ─── ATTRACTIONS ─── */
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+  }
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.1;
+  }
+  .section-title em { font-style: italic; }
+  .see-all {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: gap 0.2s;
+    white-space: nowrap;
+  }
+  .see-all:hover { gap: 0.9rem; }
+
+  .attractions {
+    padding: 6rem 4rem;
+    background: var(--ivory);
+  }
+  .attractions-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1.5px;
+  }
+  .attract-card {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .attract-card:first-child {
+    grid-row: span 2;
+    min-height: 600px;
+  }
+  .attract-card:not(:first-child) {
+    min-height: 295px;
+  }
+  .attract-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+  .attract-card:hover .attract-img { transform: scale(1.06); }
+  .attract-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(26,18,9,0.88) 0%, rgba(26,18,9,0.1) 60%);
+    transition: opacity 0.3s;
+  }
+  .attract-info {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 1.8rem;
+  }
+  .attract-cat {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 0.4rem;
+  }
+  .attract-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: #fff;
+  }
+  .attract-card:first-child .attract-name { font-size: 1.9rem; }
+  .attract-card:not(:first-child) .attract-name { font-size: 1.2rem; }
+  .attract-desc {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.65);
+    margin-top: 0.4rem;
+    line-height: 1.5;
+  }
+  .attract-card:not(:first-child) .attract-desc { display: none; }
+  .attract-card:first-child .attract-desc { display: block; }
+
+  /* ─── CULTURE SPLIT ─── */
+  .culture-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 600px;
+  }
+  .culture-img-col {
+    position: relative;
+    overflow: hidden;
+  }
+  .culture-img-col img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.7s ease;
+  }
+  .culture-img-col:hover img { transform: scale(1.04); }
+  .culture-img-caption {
+    position: absolute;
+    bottom: 2rem; left: 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+  }
+  .culture-text-col {
+    background: var(--stone);
+    padding: 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .culture-text-col .section-label { color: var(--gold); }
+  .culture-text-col .section-title { color: var(--gold-pale); }
+  .culture-text-col .section-title em { color: var(--gold-light); }
+  .culture-body {
+    font-size: 1.15rem;
+    color: rgba(245,237,216,0.65);
+    font-weight: 300;
+    line-height: 1.9;
+    margin: 1.5rem 0 2.5rem;
+  }
+  .culture-facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .culture-fact {
+    border-left: 2px solid var(--gold);
+    padding-left: 1rem;
+  }
+  .culture-fact strong {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+  .culture-fact span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(245,237,216,0.45);
+  }
+
+  /* ─── GALLERY ─── */
+  .gallery-section {
+    padding: 6rem 4rem;
+    background: var(--ivory-dark);
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 220px;
+    gap: 8px;
+    margin-top: 3rem;
+  }
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+  .gallery-item:nth-child(5) { grid-column: span 2; }
+  .gallery-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+  .gallery-item:hover img { transform: scale(1.08); }
+  .gallery-item-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(26,18,9,0);
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-item:hover .gallery-item-overlay { background: rgba(26,18,9,0.45); }
+  .gallery-zoom {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.6);
+    padding: 0.5rem 1rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .gallery-item:hover .gallery-zoom { opacity: 1; }
+
+  /* ─── GUIDES ─── */
+  .guides-section {
+    padding: 6rem 4rem;
+    background: var(--ivory);
+  }
+  .guides-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  .guide-card {
+    background: #fff;
+    border: 1px solid rgba(139,69,19,0.12);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .guide-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(26,18,9,0.12);
+  }
+  .guide-img-wrap {
+    height: 240px;
+    overflow: hidden;
+    position: relative;
+  }
+  .guide-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s;
+  }
+  .guide-card:hover .guide-img-wrap img { transform: scale(1.05); }
+  .guide-lang {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    display: flex;
+    gap: 0.4rem;
+  }
+  .lang-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(26,18,9,0.75);
+    color: var(--gold-light);
+    padding: 0.25rem 0.5rem;
+  }
+  .guide-body { padding: 1.5rem; }
+  .guide-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.2rem;
+  }
+  .guide-spec {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+  .guide-bio {
+    font-size: 0.98rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 1.2rem;
+  }
+  .guide-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .stars { color: var(--gold); font-size: 0.85rem; letter-spacing: 0.05em; }
+  .rating-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-faint);
+  }
+  .btn-book {
+    width: 100%;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--teal);
+    border: none;
+    padding: 0.85rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    transition: background 0.2s;
+  }
+  .btn-book:hover { background: var(--teal-light); }
+
+  /* ─── ANNOUNCEMENTS ─── */
+  .announcements {
+    padding: 6rem 4rem;
+    background: var(--stone);
+  }
+  .announcements .section-label { color: var(--gold); }
+  .announcements .section-title { color: var(--gold-pale); }
+  .announcements .see-all { color: var(--gold-light); }
+  .news-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  .news-featured {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    min-height: 420px;
+  }
+  .news-featured img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    position: absolute;
+    inset: 0;
+    transition: transform 0.6s;
+  }
+  .news-featured:hover img { transform: scale(1.04); }
+  .news-featured-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(26,18,9,0.92) 0%, rgba(26,18,9,0.2) 60%);
+  }
+  .news-featured-content {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 2.5rem;
+  }
+  .news-cat {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 0.6rem;
+  }
+  .news-featured-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.7rem;
+  }
+  .news-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.45);
+  }
+  .news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .news-item {
+    padding: 1.4rem 0;
+    border-bottom: 1px solid rgba(196,149,42,0.2);
+    cursor: pointer;
+    transition: padding-left 0.2s;
+  }
+  .news-item:hover { padding-left: 0.5rem; }
+  .news-item-cat {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.56rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+  .news-item-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold-pale);
+    line-height: 1.3;
+    margin-bottom: 0.3rem;
+  }
+  .news-item-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.56rem;
+    letter-spacing: 0.08em;
+    color: rgba(245,237,216,0.35);
+  }
+
+  /* ─── PLAN YOUR TRIP ─── */
+  .plan-section {
+    padding: 6rem 4rem;
+    background: var(--teal);
+  }
+  .plan-section .section-label { color: var(--gold-light); }
+  .plan-section .section-title { color: #fff; }
+  .plan-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    margin-top: 3rem;
+    background: rgba(255,255,255,0.1);
+  }
+  .plan-card {
+    background: var(--teal);
+    padding: 2.5rem 2rem;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s;
+  }
+  .plan-card:hover { background: rgba(255,255,255,0.08); }
+  .plan-icon {
+    width: 48px; height: 48px;
+    border: 1px solid rgba(255,255,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+  }
+  .plan-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.6rem;
+  }
+  .plan-card-text {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.58);
+    line-height: 1.6;
+  }
+  .plan-card-arrow {
+    display: block;
+    margin-top: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+  }
+
+  /* ─── CONTACT CTA ─── */
+  .contact-cta {
+    padding: 7rem 4rem;
+    background: var(--ivory-dark);
+    text-align: center;
+  }
+  .contact-cta .section-label {
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .contact-cta .section-label::before,
+  .contact-cta .section-label::after {
+    content: ''; flex: 0 0 40px; height: 1px;
+    background: rgba(196,149,42,0.5);
+    display: inline-block;
+  }
+  .contact-cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1.05;
+    margin-bottom: 1.2rem;
+  }
+  .contact-cta-title em { font-style: italic; color: var(--earth); }
+  .contact-cta-sub {
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    font-style: italic;
+  }
+  .contact-cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+  }
+  .btn-earth {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--earth);
+    border: none;
+    padding: 1rem 2.2rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s;
+  }
+  .btn-earth:hover { background: var(--earth-dark); }
+  .btn-outline-earth {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--earth);
+    background: transparent;
+    border: 1px solid var(--earth);
+    padding: 1rem 2.2rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, color 0.2s;
+  }
+  .btn-outline-earth:hover { background: var(--earth); color: #fff; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--stone);
+    color: rgba(245,237,216,0.55);
+    padding: 5rem 4rem 2.5rem;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid rgba(196,149,42,0.2);
+    margin-bottom: 2rem;
+  }
+  .footer-brand .nav-logo { display: inline-block; margin-bottom: 1rem; }
+  .footer-brand p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 260px;
+  }
+  .footer-col h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 0.6rem; }
+  .footer-col ul li a {
+    font-size: 0.95rem;
+    color: rgba(245,237,216,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-col ul li a:hover { color: var(--gold-light); }
+  .footer-contact-item {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.8rem;
+    display: flex;
+    gap: 0.6rem;
+  }
+  .footer-contact-item span:first-child {
+    color: var(--gold);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    padding-top: 0.15rem;
+  }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: rgba(245,237,216,0.25);
+  }
+  .footer-bottom a {
+    color: rgba(196,149,42,0.5);
+    text-decoration: none;
+  }
+  .footer-bottom a:hover { color: var(--gold); }
+  .unesco-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(196,149,42,0.3);
+    padding: 0.4rem 0.8rem;
+    margin-top: 1.2rem;
+  }
+  .unesco-badge span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo">Visit <span>Harar</span></a>
+  <ul class="nav-links">
+    <li><a href="#attractions">Attractions</a></li>
+    <li><a href="#culture">Culture</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#guides">Guides</a></li>
+    <li><a href="#plan">Plan Your Trip</a></li>
+    <li><a href="#news">News</a></li>
+  </ul>
+  <a href="#booking" class="nav-cta">Book a Guide</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">Official Tourism Bureau · Harari Regional State</div>
+    <h1 class="hero-title">
+      Ancient City<br>
+      of <em>Saints &</em><br>
+      <em>Scholars</em>
+    </h1>
+    <p class="hero-sub">Where 82 mosques whisper across cobblestone alleys and hyenas come at dusk to feed from the hands of the faithful.</p>
+    <div class="hero-actions">
+      <a href="#attractions" class="btn-primary">Explore Harar</a>
+      <a href="#guides" class="btn-ghost">Book a Local Guide</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <span class="stat-num">3,000+</span>
+      <span class="stat-label">Years of History</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">82</span>
+      <span class="stat-label">Mosques in the Old City</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">UNESCO</span>
+      <span class="stat-label">World Heritage Site</span>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Discover</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- INTRO BAND -->
+<section class="intro-band">
+  <div>
+    <div class="intro-label">The City</div>
+    <h2>Where Africa<br>meets <em>Arabia</em></h2>
+    <div class="unesco-badge">
+      <span>✦ UNESCO World Heritage Site 2006</span>
+    </div>
+  </div>
+  <div>
+    <p class="intro-text">
+      Harar Jugol — the walled city — is a <strong>living museum</strong> of Islamic architecture, Harari culture, and ancient trade routes that once connected the African interior to the Arabian Peninsula. Its labyrinthine lanes hide over <strong>350 historic buildings</strong>, centuries-old mosques, and a hyena-feeding tradition unlike anywhere on earth.
+    </p>
+    <p class="intro-text" style="margin-top: 1rem;">
+      This is the official tourism portal of the <strong>Harari Regional Tourism Bureau</strong> — your trusted, authoritative guide to visiting one of Africa's most extraordinary cities.
+    </p>
+    <div class="intro-tags">
+      <span class="tag">World Heritage</span>
+      <span class="tag">Islamic Architecture</span>
+      <span class="tag">Cultural Tourism</span>
+      <span class="tag">Wildlife</span>
+      <span class="tag">Coffee Origin</span>
+      <span class="tag">Harari Cuisine</span>
+    </div>
+  </div>
+</section>
+
+<!-- ATTRACTIONS -->
+<section class="attractions" id="attractions">
+  <div class="section-header">
+    <div>
+      <p class="section-label">What to See</p>
+      <h2 class="section-title">Top <em>Attractions</em></h2>
+    </div>
+    <a href="#" class="see-all">View all attractions →</a>
+  </div>
+
+  <div class="attractions-grid">
+    <!-- Featured -->
+    <div class="attract-card">
+      <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=900&q=80" alt="Harar Jugol Old City" class="attract-img">
+      <div class="attract-overlay"></div>
+      <div class="attract-info">
+        <p class="attract-cat">UNESCO Heritage</p>
+        <h3 class="attract-name">Harar Jugol — The Walled City</h3>
+        <p class="attract-desc">Step inside the ancient 16th-century walls enclosing 82 mosques, 102 shrines, and a labyrinth of alleys that have remained unchanged for centuries. The heart and soul of Harari civilisation.</p>
+      </div>
+    </div>
+
+    <!-- Small cards -->
+    <div class="attract-card">
+      <img src="https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=600&q=80" alt="Hyena Men of Harar" class="attract-img">
+      <div class="attract-overlay"></div>
+      <div class="attract-info">
+        <p class="attract-cat">Living Tradition</p>
+        <h3 class="attract-name">Hyena Feeding Ritual</h3>
+      </div>
+    </div>
+    <div class="attract-card">
+      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&q=80" alt="Arthur Rimbaud House" class="attract-img">
+      <div class="attract-overlay"></div>
+      <div class="attract-info">
+        <p class="attract-cat">History & Culture</p>
+        <h3 class="attract-name">Rimbaud House Museum</h3>
+      </div>
+    </div>
+    <div class="attract-card">
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Shewa Gate Harar" class="attract-img">
+      <div class="attract-overlay"></div>
+      <div class="attract-info">
+        <p class="attract-cat">Architecture</p>
+        <h3 class="attract-name">The Five City Gates</h3>
+      </div>
+    </div>
+    <div class="attract-card">
+      <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80" alt="Harari Coffee Ceremony" class="attract-img">
+      <div class="attract-overlay"></div>
+      <div class="attract-info">
+        <p class="attract-cat">Ritual & Taste</p>
+        <h3 class="attract-name">Harari Coffee Ceremony</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CULTURE SPLIT -->
+<section class="culture-split" id="culture">
+  <div class="culture-img-col">
+    <img src="https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=900&q=80" alt="Harari traditional dress and market life">
+    <span class="culture-img-caption">Harar, Ethiopia — Harari Regional State</span>
+  </div>
+  <div class="culture-text-col">
+    <p class="section-label">Living Culture</p>
+    <h2 class="section-title">Festivals,<br><em>Faith &</em><br>Tradition</h2>
+    <p class="culture-body">
+      Harar is not a relic — it is a city that breathes. From the vibrant colour of traditional Harari dresses to the aroma of freshly roasted coffee drifting from doorways, every corner carries a story passed down through generations.
+    </p>
+    <div class="culture-facts">
+      <div class="culture-fact">
+        <strong>Ashura</strong>
+        <span>Major festival</span>
+      </div>
+      <div class="culture-fact">
+        <strong>Eid al-Adha</strong>
+        <span>City-wide celebration</span>
+      </div>
+      <div class="culture-fact">
+        <strong>Harari New Year</strong>
+        <span>Enkutatash season</span>
+      </div>
+      <div class="culture-fact">
+        <strong>Meskel</strong>
+        <span>Finding of the True Cross</span>
+      </div>
+    </div>
+    <a href="#" class="btn-primary">Explore Culture & Festivals</a>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section" id="gallery">
+  <div class="section-header">
+    <div>
+      <p class="section-label">Through the Lens</p>
+      <h2 class="section-title">Gallery of <em>Harar</em></h2>
+    </div>
+    <a href="#" class="see-all">View full gallery →</a>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=800&q=80" alt="Harar street life">
+      <div class="gallery-item-overlay"><span class="gallery-zoom">View Photo</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&q=80" alt="Harar landscape">
+      <div class="gallery-item-overlay"><span class="gallery-zoom">View Photo</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=600&q=80" alt="Ethiopian highlands near Harar">
+      <div class="gallery-item-overlay"><span class="gallery-zoom">View Photo</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&q=80" alt="Harar architecture doorway">
+      <div class="gallery-item-overlay"><span class="gallery-zoom">View Photo</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1504198322253-cfa87a0ff25f?w=800&q=80" alt="Traditional market">
+      <div class="gallery-item-overlay"><span class="gallery-zoom">View Photo</span></div>
+    </div>
+    <div class="gallery-item">
+      <img src="https://images.unsplash.com/photo-1519922639192-e73293ca430e?w=600&q=80" alt="Harar old town evening">
+      <div class="gallery-item-overlay"><span class="gallery-zoom">View Photo</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- GUIDES -->
+<section class="guides-section" id="guides">
+  <div class="section-header">
+    <div>
+      <p class="section-label">Official Licensed Guides</p>
+      <h2 class="section-title">Meet Your <em>Expert</em></h2>
+    </div>
+    <a href="#" class="see-all">See all guides →</a>
+  </div>
+  <div class="guides-grid">
+    <div class="guide-card">
+      <div class="guide-img-wrap">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=80" alt="Guide Omar">
+        <div class="guide-lang">
+          <span class="lang-badge">English</span>
+          <span class="lang-badge">Arabic</span>
+        </div>
+      </div>
+      <div class="guide-body">
+        <h3 class="guide-name">Omar Abdullahi</h3>
+        <p class="guide-spec">Old City Specialist · 12 years</p>
+        <p class="guide-bio">Born and raised inside the Jugol walls, Omar brings the history of Harar to life with stories, access, and deep cultural knowledge that no book can teach.</p>
+        <div class="guide-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">4.9 · 204 tours</span>
+        </div>
+        <a href="#booking" class="btn-book">Book Omar</a>
+      </div>
+    </div>
+
+    <div class="guide-card">
+      <div class="guide-img-wrap">
+        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b977?w=500&q=80" alt="Guide Fatuma">
+        <div class="guide-lang">
+          <span class="lang-badge">English</span>
+          <span class="lang-badge">French</span>
+        </div>
+      </div>
+      <div class="guide-body">
+        <h3 class="guide-name">Fatuma Umar</h3>
+        <p class="guide-spec">Culture & Cuisine · 8 years</p>
+        <p class="guide-bio">Fatuma specialises in immersive cultural experiences — Harari cooking classes, market tours, and authentic coffee ceremonies in traditional homes.</p>
+        <div class="guide-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">4.8 · 187 tours</span>
+        </div>
+        <a href="#booking" class="btn-book">Book Fatuma</a>
+      </div>
+    </div>
+
+    <div class="guide-card">
+      <div class="guide-img-wrap">
+        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=500&q=80" alt="Guide Ahmed">
+        <div class="guide-lang">
+          <span class="lang-badge">English</span>
+          <span class="lang-badge">Amharic</span>
+        </div>
+      </div>
+      <div class="guide-body">
+        <h3 class="guide-name">Ahmed Jiru</h3>
+        <p class="guide-spec">Hyena Night Tours · 6 years</p>
+        <p class="guide-bio">Ahmed is Harar's leading hyena night tour specialist. His family has maintained this ancient tradition for three generations — an unforgettable experience.</p>
+        <div class="guide-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">4.9 · 316 tours</span>
+        </div>
+        <a href="#booking" class="btn-book">Book Ahmed</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANNOUNCEMENTS -->
+<section class="announcements" id="news">
+  <div class="section-header">
+    <div>
+      <p class="section-label">Bureau Updates</p>
+      <h2 class="section-title" style="color: var(--gold-pale);">News &amp; <em style="color:var(--gold-light)">Announcements</em></h2>
+    </div>
+    <a href="#" class="see-all">All news →</a>
+  </div>
+  <div class="news-grid">
+    <div class="news-featured">
+      <img src="https://images.unsplash.com/photo-1556742400-b5b7c512c4b3?w=900&q=80" alt="Harar festival">
+      <div class="news-featured-overlay"></div>
+      <div class="news-featured-content">
+        <p class="news-cat">Festival Announcement</p>
+        <h3 class="news-featured-title">Ashura Festival 2025 — Full Programme Now Available</h3>
+        <p style="font-size:1rem; color:rgba(255,255,255,0.65); line-height:1.6; margin-bottom:0.8rem;">The annual Ashura festival will be held across the old city gates from the 5th–7th of July. The bureau invites all visitors to attend cultural exhibitions, night processions, and traditional Harari feasts.</p>
+        <p class="news-date">Published June 1, 2025 · Harari Tourism Bureau</p>
+      </div>
+    </div>
+
+    <div class="news-list">
+      <div class="news-item">
+        <p class="news-item-cat">Travel Advisory</p>
+        <h4 class="news-item-title">New Visitor Entry Guidelines Effective August 2025</h4>
+        <p class="news-item-date">May 20, 2025</p>
+      </div>
+      <div class="news-item">
+        <p class="news-item-cat">Site Update</p>
+        <h4 class="news-item-title">Harar Jugol Conservation Project — Phase 2 Begins</h4>
+        <p class="news-item-date">May 12, 2025</p>
+      </div>
+      <div class="news-item">
+        <p class="news-item-cat">Guide Programme</p>
+        <h4 class="news-item-title">Bureau Certifies 14 New Licensed Guides for 2025 Season</h4>
+        <p class="news-item-date">April 30, 2025</p>
+      </div>
+      <div class="news-item">
+        <p class="news-item-cat">Infrastructure</p>
+        <h4 class="news-item-title">New Visitor Centre Opens at Shewa Gate</h4>
+        <p class="news-item-date">April 15, 2025</p>
+      </div>
+      <div class="news-item" style="border-bottom: none;">
+        <p class="news-item-cat">Partnership</p>
+        <h4 class="news-item-title">Visit Harar Signs MoU with Ethiopian Tourism Organisation</h4>
+        <p class="news-item-date">March 28, 2025</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLAN YOUR TRIP -->
+<section class="plan-section" id="plan">
+  <div class="section-header">
+    <div>
+      <p class="section-label">Practical Information</p>
+      <h2 class="section-title" style="color:#fff;">Plan Your <em style="color:var(--gold-light)">Visit</em></h2>
+    </div>
+  </div>
+  <div class="plan-cards">
+    <div class="plan-card">
+      <div class="plan-icon">✈</div>
+      <h3 class="plan-card-title">Getting Here</h3>
+      <p class="plan-card-text">Harar is served by Dire Dawa Airport (DIE), 52 km away. Daily flights from Addis Ababa. Bus and minibus services connect regional cities.</p>
+      <span class="plan-card-arrow">Learn more →</span>
+    </div>
+    <div class="plan-card">
+      <div class="plan-icon">🏨</div>
+      <h3 class="plan-card-title">Where to Stay</h3>
+      <p class="plan-card-text">From boutique guesthouses inside the Jugol to modern hotels outside the walls — official accommodation listings vetted by the bureau.</p>
+      <span class="plan-card-arrow">Find accommodation →</span>
+    </div>
+    <div class="plan-card">
+      <div class="plan-icon">🗺</div>
+      <h3 class="plan-card-title">Itineraries</h3>
+      <p class="plan-card-text">One day, three days, or a full week — curated itineraries designed by our certified guides to make the most of your time in Harar.</p>
+      <span class="plan-card-arrow">Browse itineraries →</span>
+    </div>
+    <div class="plan-card">
+      <div class="plan-icon">📋</div>
+      <h3 class="plan-card-title">Visitor Guide</h3>
+      <p class="plan-card-text">Entry requirements, local customs, what to wear, best seasons to visit, health tips, and emergency contacts — everything you need.</p>
+      <span class="plan-card-arrow">Download guide →</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT CTA -->
+<section class="contact-cta" id="booking">
+  <p class="section-label" style="display:flex;align-items:center;justify-content:center;gap:0.6rem;font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;">
+    <span style="display:inline-block;width:40px;height:1px;background:rgba(196,149,42,0.5);"></span>
+    Official Tourism Bureau
+    <span style="display:inline-block;width:40px;height:1px;background:rgba(196,149,42,0.5);"></span>
+  </p>
+  <h2 class="contact-cta-title">
+    Ready to <em>Experience</em><br>
+    the Walled City?
+  </h2>
+  <p class="contact-cta-sub">Book a licensed guide, submit a tour request, or contact the Harari Regional Tourism Bureau directly.</p>
+  <div class="contact-cta-actions">
+    <a href="#" class="btn-earth">Book a Guide Now</a>
+    <a href="#" class="btn-outline-earth">Contact the Bureau</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">Visit <span>Harar</span></a>
+      <p>The official tourism portal of the Harari Regional Tourism Bureau, Federal Democratic Republic of Ethiopia.</p>
+      <div class="unesco-badge" style="margin-top:1.2rem;">
+        <span>✦ UNESCO World Heritage Site — Harar Jugol</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#">Attractions</a></li>
+        <li><a href="#">Culture & Festivals</a></li>
+        <li><a href="#">Gallery</a></li>
+        <li><a href="#">About Harar</a></li>
+        <li><a href="#">News</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Plan Your Trip</h4>
+      <ul>
+        <li><a href="#">Licensed Guides</a></li>
+        <li><a href="#">Book a Tour</a></li>
+        <li><a href="#">Itineraries</a></li>
+        <li><a href="#">Getting Here</a></li>
+        <li><a href="#">Where to Stay</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact Bureau</h4>
+      <div class="footer-contact-item">
+        <span>Address</span>
+        <span>Harari Regional Tourism Bureau, Harar Jugol, Harari Regional State, Ethiopia</span>
+      </div>
+      <div class="footer-contact-item">
+        <span>Email</span>
+        <span>info@visitharar.gov.et</span>
+      </div>
+      <div class="footer-contact-item">
+        <span>Phone</span>
+        <span>+251 25 666 0000</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Harari Regional Tourism Bureau. All rights reserved.</span>
+    <span>
+      <a href="#">Privacy Policy</a> · <a href="#">Accessibility</a> · <a href="#" style="color:rgba(196,149,42,0.4);">Admin</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+</script>
+</body>
+</html>

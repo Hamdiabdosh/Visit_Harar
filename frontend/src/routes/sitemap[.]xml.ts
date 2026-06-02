@@ -1,0 +1,70 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { getServerConfig } from "@/lib/config.server";
+import { getAttractions } from "@/lib/attractions-fns";
+import { getGuides } from "@/lib/guides-fns";
+import { getAnnouncements } from "@/lib/announcements-fns";
+import { getPublishedAlbums } from "@/lib/gallery-fns";
+
+function xmlEscape(s: string) {
+  return s
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
+}
+
+function absolute(path: string) {
+  const { appUrl } = getServerConfig();
+  const base = appUrl?.replace(/\/+$/, "") ?? "";
+  return base ? `${base}${path}` : path;
+}
+
+export const Route = createFileRoute("/sitemap.xml")({
+  server: {
+    handlers: {
+      GET: async () => {
+        const staticRoutes = [
+          "/",
+          "/attractions",
+          "/guides",
+          "/gallery",
+          "/about",
+          "/culture",
+          "/plan-your-trip",
+          "/news",
+          "/contact",
+          "/book",
+        ];
+
+        const [attractions, guides, announcements, albums] = await Promise.all([
+          getAttractions({ data: { published: true } }),
+          getGuides({ data: { published: true } }),
+          getAnnouncements({ data: { publishedOnly: true, page: 1, perPage: 500 } }),
+          getPublishedAlbums(),
+        ]);
+
+        const urls = [
+          ...staticRoutes.map((p) => absolute(p)),
+          ...attractions.map((a) => absolute(`/attractions/${a.slug}`)),
+          ...guides.map((g) => absolute(`/guides/${g.slug}`)),
+          ...announcements.items.map((a) => absolute(`/news/${a.slug}`)),
+          ...albums.map((a) => absolute(`/gallery/${a.id}`)),
+        ];
+
+        const body =
+          `<?xml version="1.0" encoding="UTF-8"?>` +
+          `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` +
+          urls.map((u) => `<url><loc>${xmlEscape(u)}</loc></url>`).join("") +
+          `</urlset>`;
+
+        return new Response(body, {
+          headers: {
+            "content-type": "application/xml; charset=utf-8",
+            "cache-control": "public, max-age=300",
+          },
+        });
+      },
+    },
+  },
+});
