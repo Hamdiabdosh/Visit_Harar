@@ -6,7 +6,7 @@ import { PageHero } from "@/components/public/PageHero";
 import { createBooking, getBookingEnabledFn } from "@/lib/bookings-fns";
 import { getGuides, type GuideDto } from "@/lib/guides-fns";
 import { BOOKING_COUNTRIES } from "@/lib/countries";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync } from "@/lib/metadata";
 import {
   Check,

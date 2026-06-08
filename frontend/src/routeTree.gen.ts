@@ -24,6 +24,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as UploadsSplatRouteImport } from './routes/uploads/$'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as NewsIdRouteImport } from './routes/news.$id'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
@@ -132,6 +133,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const UploadsSplatRoute = UploadsSplatRouteImport.update({
+  id: '/uploads/$',
+  path: '/uploads/$',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const NewsSlugRoute = NewsSlugRouteImport.update({
   id: '/$slug',
@@ -336,6 +342,7 @@ export interface FileRoutesByFullPath {
   '/guides/$slug': typeof GuidesSlugRoute
   '/news/$id': typeof NewsIdRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/uploads/$': typeof UploadsSplatRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/announcements/$id': typeof AdminAnnouncementsIdRoute
   '/admin/attractions/$id': typeof AdminAttractionsIdRoute
@@ -381,6 +388,7 @@ export interface FileRoutesByTo {
   '/guides/$slug': typeof GuidesSlugRoute
   '/news/$id': typeof NewsIdRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/uploads/$': typeof UploadsSplatRoute
   '/admin': typeof AdminIndexRoute
   '/admin/announcements/$id': typeof AdminAnnouncementsIdRoute
   '/admin/attractions/$id': typeof AdminAttractionsIdRoute
@@ -432,6 +440,7 @@ export interface FileRoutesById {
   '/guides/$slug': typeof GuidesSlugRoute
   '/news/$id': typeof NewsIdRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/uploads/$': typeof UploadsSplatRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/announcements/$id': typeof AdminAnnouncementsIdRoute
   '/admin/attractions/$id': typeof AdminAttractionsIdRoute
@@ -484,6 +493,7 @@ export interface FileRouteTypes {
     | '/guides/$slug'
     | '/news/$id'
     | '/news/$slug'
+    | '/uploads/$'
     | '/admin/'
     | '/admin/announcements/$id'
     | '/admin/attractions/$id'
@@ -529,6 +539,7 @@ export interface FileRouteTypes {
     | '/guides/$slug'
     | '/news/$id'
     | '/news/$slug'
+    | '/uploads/$'
     | '/admin'
     | '/admin/announcements/$id'
     | '/admin/attractions/$id'
@@ -579,6 +590,7 @@ export interface FileRouteTypes {
     | '/guides/$slug'
     | '/news/$id'
     | '/news/$slug'
+    | '/uploads/$'
     | '/admin/'
     | '/admin/announcements/$id'
     | '/admin/attractions/$id'
@@ -608,6 +620,7 @@ export interface RootRouteChildren {
   PlanYourTripRoute: typeof PlanYourTripRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  UploadsSplatRoute: typeof UploadsSplatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -717,6 +730,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/uploads/$': {
+      id: '/uploads/$'
+      path: '/uploads/$'
+      fullPath: '/uploads/$'
+      preLoaderRoute: typeof UploadsSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/news/$slug': {
       id: '/news/$slug'
@@ -1145,6 +1165,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanYourTripRoute: PlanYourTripRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  UploadsSplatRoute: UploadsSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

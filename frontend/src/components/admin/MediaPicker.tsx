@@ -14,7 +14,7 @@ import {
   type MediaAssetDto,
 } from "@/lib/media-fns";
 import { prepareMediaForUpload } from "@/lib/prepare-image-upload";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 import { Upload } from "lucide-react";
 
 type Props = {

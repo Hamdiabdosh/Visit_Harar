@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 
 export type GuideCardData = {
   id: string;

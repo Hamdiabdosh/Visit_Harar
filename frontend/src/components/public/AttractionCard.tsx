@@ -4,7 +4,7 @@ import {
   categoryGradient,
   type AttractionCategory,
 } from "@/lib/attraction-styles";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 
 export type AttractionCardData = {
   title: string;

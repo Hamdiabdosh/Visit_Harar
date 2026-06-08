@@ -6,7 +6,7 @@
 | -------------- | ------------------------------------------------- |
 | **Coolify**    | Hosts the TanStack Start app (Docker + Nitro)     |
 | **PostgreSQL** | Coolify managed DB, or external (Supabase, etc.)  |
-| **Cloudinary** | Images and video                                  |
+| **Local disk** | Uploaded images and video (`UPLOAD_DIR` volume)   |
 | **Resend**     | Auth reset and booking emails                     |
 
 The app builds with Nitro’s **`node-server`** preset for Docker. Vercel deploys use `NITRO_PRESET=vercel` (see [Vercel section](#vercel-alternative) below).
@@ -63,6 +63,7 @@ bun run db:seed   # first deploy only; uses SUPERADMIN_* from env
 4. **Build Pack**: Dockerfile (auto-detected from `frontend/Dockerfile`).
 5. **Port**: `3000` (must match `EXPOSE` in the Dockerfile).
 6. **Domain**: `visitharar.raafat.site` (enable SSL in Coolify).
+7. **Persistent storage**: mount a volume at `/data/uploads` so media survives redeploys.
 
 ### Build-time variables
 
@@ -85,9 +86,7 @@ Set these under **Build Variables** (they are embedded in the client bundle):
 | `NODE_ENV`              | `production`                                             |
 | `HOST`                  | `0.0.0.0` (set in Dockerfile; override only if needed) |
 | `PORT`                  | `3000` (Coolify may inject this automatically)           |
-| `CLOUDINARY_CLOUD_NAME` | From Cloudinary dashboard                                |
-| `CLOUDINARY_API_KEY`    |                                                          |
-| `CLOUDINARY_API_SECRET` |                                                          |
+| `UPLOAD_DIR`            | `/data/uploads` — must match the mounted volume path     |
 | `RESEND_API_KEY`        |                                                          |
 | `RESEND_FROM_EMAIL`     | Verified domain (e.g. `noreply@visitharar.gov.et`)       |
 | `SUPERADMIN_EMAIL`      | Used only when running `db:seed`                         |
@@ -135,7 +134,7 @@ Coolify builds the Docker image, runs `bun run build` inside the builder stage, 
 | `DATABASE_URL is not set`      | Add runtime env var in Coolify; redeploy.                           |
 | Auth redirects wrong host      | Align `BETTER_AUTH_URL`, `APP_URL`, and `VITE_APP_URL` (rebuild).   |
 | Emails not sent                | Verify Resend domain; check container logs.                         |
-| Upload fails                   | Confirm `CLOUDINARY_*` runtime vars.                                |
+| Upload fails                   | Check `UPLOAD_DIR` is writable; confirm volume is mounted at `/data/uploads`. |
 | Container unhealthy            | Ensure port `3000` is exposed; check logs for startup errors.       |
 
 ---
@@ -163,7 +162,8 @@ For Vercel + Supabase serverless deploy, set `NITRO_PRESET=vercel` in the Vercel
 | ------------ | ------------------------ | ------------------------------- |
 | Postgres     | Docker `5434`            | Coolify DB or external direct   |
 | App URL      | `http://localhost:8080`  | `https://visitharar.raafat.site` |
-| Nitro preset | `node-server` (default)  | `node-server` (Dockerfile)      |
-| Start        | `bun run dev`            | `node dist/server/index.mjs`    |
+| Nitro preset   | `node-server` (default)  | `node-server` (Dockerfile)      |
+| Media storage  | `./uploads` (local)      | `/data/uploads` (volume)        |
+| Start          | `bun run dev`            | `node dist/server/index.mjs`    |
 
 See [SETUP.md](./SETUP.md) for local development.

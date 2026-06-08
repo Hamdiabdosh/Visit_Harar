@@ -18,7 +18,7 @@ import {
   deleteImage,
   publicIdFromUrl,
   uploadImageBuffer,
-} from "@/lib/cloudinary.server";
+} from "@/lib/storage.server";
 import type { UserRole } from "@/lib/types";
 import { auditSnap, fireAudit } from "@/lib/audit";
 

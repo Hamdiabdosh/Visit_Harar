@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { AnnouncementType } from "@/lib/types";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 
 export type AnnouncementCardData = {
   slug: string;

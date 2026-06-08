@@ -12,7 +12,7 @@ import {
   type MediaAssetDto,
 } from "@/lib/media-fns";
 import { prepareMediaForUpload } from "@/lib/prepare-image-upload";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 import { Search, Upload, Copy, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/media")({

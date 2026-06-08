@@ -20,7 +20,7 @@ import {
   formatBookingDate,
   formatSubmittedAt,
 } from "@/lib/booking-ui";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 import { ArrowLeft, Check, X, Mail, Phone, RefreshCw } from "lucide-react";
 
 export const Route = createFileRoute("/admin/bookings/$ref")({

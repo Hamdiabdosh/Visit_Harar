@@ -8,7 +8,7 @@ import { seedHero } from "./seed-hero";
 import { seedGuides } from "./seed-guides";
 import { seedAnnouncements } from "./seed-announcements";
 import { seedGallery } from "./seed-gallery";
-import { seedCloudinaryImages } from "./seed-cloudinary-images";
+import { seedMediaImages } from "./seed-media-images";
 
 async function main() {
   console.log("Running seeds…");
@@ -22,7 +22,7 @@ async function main() {
   await seedGuides();
   await seedAnnouncements();
   await seedGallery();
-  await seedCloudinaryImages();
+  await seedMediaImages();
   console.log("All seeds completed.");
   process.exit(0);
 }

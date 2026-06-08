@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { defaultHeroInput, dtoToPreviewProps } from "@/lib/hero-map";
 import type { HeroDto } from "@/lib/hero-map";
 import type { HeroInput } from "@/lib/validators/hero";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 
 export type HeroSectionProps = {
   hero?: Partial<HeroInput> | HeroDto | null;

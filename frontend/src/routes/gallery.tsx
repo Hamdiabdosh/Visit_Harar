@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/public/PageHero";
 import { getPublishedAlbums } from "@/lib/gallery-fns";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync } from "@/lib/metadata";
 
 export const Route = createFileRoute("/gallery")({

@@ -11,7 +11,7 @@ import {
   deleteImage,
   publicIdFromUrl,
   uploadImageBuffer,
-} from "@/lib/cloudinary.server";
+} from "@/lib/storage.server";
 import { generateSlug } from "@/lib/slug";
 import { guideInputSchema } from "@/lib/validators/guides";
 import type { UserRole } from "@/lib/types";

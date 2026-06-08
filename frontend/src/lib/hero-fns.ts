@@ -12,7 +12,7 @@ import {
   deleteImage,
   publicIdFromUrl,
   uploadImageBuffer,
-} from "@/lib/cloudinary.server";
+} from "@/lib/storage.server";
 import type { UserRole } from "@/lib/types";
 import { DB_SETUP_HINT, isDbUnavailableError } from "@/lib/db-errors";
 import { auditSnap, fireAudit } from "@/lib/audit";

@@ -81,7 +81,7 @@ The spec describes custom `users` / `sessions` tables. This project uses **Bette
 - Open `/admin/hero`, edit fields, click **Publish**
 - Visit `/` — homepage hero should match the published content from the database
 - **Save Draft** stores content with `is_published = false` (public site keeps showing the last published hero, or defaults if none)
-- Image upload requires `CLOUDINARY_*` in `.env` (from [Cloudinary Dashboard](https://console.cloudinary.com/) → API Keys). Photos are resized in the browser before upload. You can also paste an image URL directly if upload fails.
+- Image upload stores files on disk (`UPLOAD_DIR`, default `./uploads`). Photos are resized in the browser before upload.
 
 ## Production (Vercel + Supabase)
 

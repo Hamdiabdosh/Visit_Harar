@@ -1,4 +1,4 @@
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 
 export function PageHero({
   title,

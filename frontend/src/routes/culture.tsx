@@ -3,7 +3,7 @@ import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/public/PageHero";
 import { getPublishedPage } from "@/lib/pages-fns";
 import DOMPurify from "isomorphic-dompurify";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
 import {
   CULTURE_DEFAULT_CONTENT,

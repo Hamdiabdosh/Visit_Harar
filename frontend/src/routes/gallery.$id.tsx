@@ -13,7 +13,7 @@ import {
   downloadImageUrl,
   galleryDownloadFilename,
   optimizeImage,
-} from "@/lib/cloudinary-url";
+} from "@/lib/media-url";
 import { buildHeadAsync } from "@/lib/metadata";
 import type { GalleryItemDto } from "@/lib/gallery-fns";
 

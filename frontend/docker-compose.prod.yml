@@ -34,14 +34,15 @@ services:
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:?set BETTER_AUTH_URL}
       APP_URL: ${APP_URL:?set APP_URL}
-      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
-      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
-      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      UPLOAD_DIR: /data/uploads
       RESEND_API_KEY: ${RESEND_API_KEY}
       RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL}
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+      - visit_harar_uploads:/data/uploads
 
 volumes:
   visit_harar_pg_data:
+  visit_harar_uploads:

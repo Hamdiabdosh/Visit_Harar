@@ -15,7 +15,7 @@ import {
   deleteAsset,
   publicIdFromUrl,
   uploadAssetBuffer,
-} from "@/lib/cloudinary.server";
+} from "@/lib/storage.server";
 import type { MediaType, UserRole } from "@/lib/types";
 import { auditSnap, fireAudit } from "@/lib/audit";
 

@@ -11,7 +11,7 @@ import {
   deleteImage,
   publicIdFromUrl,
   uploadImageBuffer,
-} from "@/lib/cloudinary.server";
+} from "@/lib/storage.server";
 import { ensureUniqueSlug, generateSlug } from "@/lib/slug";
 import { announcementInputSchema } from "@/lib/validators/announcements";
 import type { AnnouncementType, UserRole } from "@/lib/types";

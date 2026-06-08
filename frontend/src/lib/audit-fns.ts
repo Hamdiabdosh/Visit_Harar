@@ -114,11 +114,7 @@ export const getSystemHealth = createServerFn({ method: "GET" }).handler(
       } catch {
         dbOk = false;
       }
-      const cloudinaryOk = Boolean(
-        process.env.CLOUDINARY_CLOUD_NAME &&
-        process.env.CLOUDINARY_API_KEY &&
-        process.env.CLOUDINARY_API_SECRET,
-      );
+      const storageOk = (await import("@/lib/storage.server")).isStorageWritable();
       const emailOk = Boolean(
         process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL,
       );
@@ -126,7 +122,7 @@ export const getSystemHealth = createServerFn({ method: "GET" }).handler(
       const maintenanceMode = await getMaintenanceMode();
       return {
         database: dbOk ? "Connected" : "Error",
-        cloudinary: cloudinaryOk ? "Configured" : "Not configured",
+        storage: storageOk ? "Writable" : "Not writable",
         email: emailOk ? "Configured" : "Not configured",
         maintenance_mode: maintenanceMode,
       };

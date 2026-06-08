@@ -62,7 +62,7 @@ export function ImageMediaField({
         {value ? "Change image" : "Upload or choose from Media Library"}
       </Button>
       <p className="text-[11px] text-ink-muted mt-2">
-        Images are stored in Cloudinary via the media library.
+        Images are stored on the server via the media library.
       </p>
       {value && (
         <button

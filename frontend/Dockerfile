@@ -27,14 +27,18 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
+ENV UPLOAD_DIR=/data/uploads
 
 RUN addgroup -S app && adduser -S app -G app
+RUN mkdir -p /data/uploads && chown app:app /data/uploads
 
 COPY --from=builder --chown=app:app /app/dist ./dist
 
 USER app
 
 EXPOSE 3000
+
+VOLUME ["/data/uploads"]
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:' + (process.env.PORT || 3000)).then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"

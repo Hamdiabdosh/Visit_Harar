@@ -1,14 +1,18 @@
 import { z } from "zod";
-import { isCloudinaryUrl } from "@/lib/cloudinary-url";
+import { isMediaUrl } from "@/lib/media-url";
 
 export const uuidSchema = z.string().uuid();
 export const slugSchema = z.string().regex(/^[a-z0-9-]+$/);
 export const urlSchema = z.string().url();
 
-/** Image fields must point at Cloudinary — all uploads go through the media library. */
-export const cloudinaryUrlSchema = urlSchema.refine(isCloudinaryUrl, {
-  message: "Image must be a Cloudinary URL. Upload via Media Library.",
+/** Image fields must come from the media library (local uploads or legacy Cloudinary). */
+export const mediaUrlSchema = urlSchema.refine(isMediaUrl, {
+  message: "Image must be uploaded via the Media Library.",
 });
+
+/** @deprecated Use mediaUrlSchema */
+export const cloudinaryUrlSchema = mediaUrlSchema;
+
 export const emailSchema = z.string().email();
 
 export const paginationSchema = z.object({

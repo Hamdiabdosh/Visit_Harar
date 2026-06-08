@@ -193,7 +193,7 @@ function AlbumManager() {
     if (!window.confirm(`Delete ${selected.size} selected items?`)) return;
     try {
       for (const id of Array.from(selected)) {
-        // sequential to keep Cloudinary from being hammered
+        // sequential uploads to avoid overloading the server
 
         await deleteMediaItem({ data: id });
       }

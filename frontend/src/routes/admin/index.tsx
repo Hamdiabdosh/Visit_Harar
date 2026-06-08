@@ -121,7 +121,7 @@ function Dashboard() {
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
             <StatusItem label="Database" value={health.database} />
-            <StatusItem label="Cloudinary" value={health.cloudinary} />
+            <StatusItem label="Media storage" value={health.storage} />
             <StatusItem label="Email (Resend)" value={health.email} />
             <StatusItem
               label="Maintenance"
@@ -199,7 +199,11 @@ function StatusItem({
   value: string;
   warn?: boolean;
 }) {
-  const ok = value === "Connected" || value === "Configured" || value === "Off";
+  const ok =
+    value === "Connected" ||
+    value === "Configured" ||
+    value === "Writable" ||
+    value === "Off";
   return (
     <div
       className={`rounded border p-3 ${warn ? "border-amber-300 bg-amber-50" : ok ? "border-emerald-200 bg-emerald-50" : "border-red-200 bg-red-50"}`}

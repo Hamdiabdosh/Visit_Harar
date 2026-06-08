@@ -3,7 +3,7 @@ import { PublicLayout } from "@/components/PublicLayout";
 import { getAnnouncementBySlug } from "@/lib/announcements-fns";
 import DOMPurify from "isomorphic-dompurify";
 import { ArrowLeft } from "lucide-react";
-import { optimizeImage } from "@/lib/cloudinary-url";
+import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
 
 export const Route = createFileRoute("/news/$slug")({
