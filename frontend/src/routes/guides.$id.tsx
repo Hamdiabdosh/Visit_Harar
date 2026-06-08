@@ -1,22 +1,22 @@
-import { createFileRoute, Link, notFound } from '@tanstack/react-router'
-import { PublicLayout } from '@/components/PublicLayout'
-import { getGuideBySlug } from '@/lib/guides-fns'
-import DOMPurify from 'isomorphic-dompurify'
-import { ArrowLeft } from 'lucide-react'
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { PublicLayout } from "@/components/PublicLayout";
+import { getGuideBySlug } from "@/lib/guides-fns";
+import DOMPurify from "isomorphic-dompurify";
+import { ArrowLeft } from "lucide-react";
 
-export const Route = createFileRoute('/guides/$id')({
+export const Route = createFileRoute("/guides/$id")({
   loader: async ({ params }) => {
     // Back-compat route: treat `id` as the guide slug.
-    const item = await getGuideBySlug({ data: params.id })
-    if (!item) throw notFound()
-    return { item }
+    const item = await getGuideBySlug({ data: params.id });
+    if (!item) throw notFound();
+    return { item };
   },
   component: GuideDetailById,
-})
+});
 
 function GuideDetailById() {
-  const { item } = Route.useLoaderData()
-  const safeBio = DOMPurify.sanitize(item.bio ?? '')
+  const { item } = Route.useLoaderData();
+  const safeBio = DOMPurify.sanitize(item.bio ?? "");
 
   return (
     <PublicLayout>
@@ -30,13 +30,17 @@ function GuideDetailById() {
           </Link>
           <div className="bg-white rounded-lg border border-border p-10 grid md:grid-cols-[120px_1fr] gap-8">
             {item.photo ? (
-              <img src={item.photo} alt="" className="w-[120px] h-[120px] rounded-full object-cover" />
+              <img
+                src={item.photo}
+                alt=""
+                className="w-[120px] h-[120px] rounded-full object-cover"
+              />
             ) : (
               <span className="w-[120px] h-[120px] rounded-full bg-brand text-white grid place-items-center font-serif text-4xl font-bold">
                 {item.name
-                  .split(' ')
+                  .split(" ")
                   .map((p) => p[0])
-                  .join('')
+                  .join("")
                   .slice(0, 2)
                   .toUpperCase()}
               </span>
@@ -53,13 +57,26 @@ function GuideDetailById() {
                 dangerouslySetInnerHTML={{ __html: safeBio }}
               />
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-6 border-t border-border text-sm">
-                <Info label="Languages" value={item.languages.join(', ') || '—'} />
-                <Info label="Specialties" value={item.specialties.join(', ') || '—'} />
+                <Info
+                  label="Languages"
+                  value={item.languages.join(", ") || "—"}
+                />
+                <Info
+                  label="Specialties"
+                  value={item.specialties.join(", ") || "—"}
+                />
                 <Info
                   label="Experience"
-                  value={item.experience_years != null ? `${item.experience_years} years` : '—'}
+                  value={
+                    item.experience_years != null
+                      ? `${item.experience_years} years`
+                      : "—"
+                  }
                 />
-                <Info label="Availability" value={item.is_available ? 'Available' : 'Unavailable'} />
+                <Info
+                  label="Availability"
+                  value={item.is_available ? "Available" : "Unavailable"}
+                />
               </div>
               <Link
                 to="/book"
@@ -73,15 +90,16 @@ function GuideDetailById() {
         </div>
       </div>
     </PublicLayout>
-  )
+  );
 }
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-wider text-ink-muted font-semibold">{label}</div>
+      <div className="text-[10px] uppercase tracking-wider text-ink-muted font-semibold">
+        {label}
+      </div>
       <div className="text-ink mt-1">{value}</div>
     </div>
-  )
+  );
 }
-

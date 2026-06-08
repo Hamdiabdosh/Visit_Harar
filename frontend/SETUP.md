@@ -81,8 +81,10 @@ The spec describes custom `users` / `sessions` tables. This project uses **Bette
 - Open `/admin/hero`, edit fields, click **Publish**
 - Visit `/` — homepage hero should match the published content from the database
 - **Save Draft** stores content with `is_published = false` (public site keeps showing the last published hero, or defaults if none)
-- Image upload requires `CLOUDINARY_*` in `.env`; you can also paste an image URL directly
+- Image upload requires `CLOUDINARY_*` in `.env` (from [Cloudinary Dashboard](https://console.cloudinary.com/) → API Keys). Photos are resized in the browser before upload. You can also paste an image URL directly if upload fails.
 
-## Production note
+## Production (Vercel + Supabase)
 
-The Lovable/Vite preset may target Cloudflare Workers. Local dev uses Node + `postgres`. Production Postgres from Workers requires connection pooling (e.g. Hyperdrive).
+See **[DEPLOY.md](./DEPLOY.md)** for full steps: Supabase pooler URL, Vercel env vars, migrations, and custom domain.
+
+Local dev uses Docker Postgres on port **5434**. Production uses Supabase with the **transaction pooler** connection string on Vercel.

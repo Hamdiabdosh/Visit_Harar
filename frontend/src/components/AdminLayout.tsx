@@ -1,4 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard,
   Image as ImageIcon,
@@ -15,7 +16,8 @@ import {
   Settings as SettingsIcon,
   LogOut,
 } from "lucide-react";
-import { pendingCount } from "@/lib/harar-data";
+import { SiteLogo } from "@/components/SiteLogo";
+import { getPendingBookingsCount } from "@/lib/bookings-fns";
 import { useSessionContext } from "@/lib/contexts/SessionContext";
 
 type NavItem = {
@@ -24,6 +26,7 @@ type NavItem = {
   icon: typeof LayoutDashboard;
   exact?: boolean;
   badge?: number;
+  badgeKey?: "bookings";
 };
 type NavSection = { label: string; muted?: boolean; items: NavItem[] };
 
@@ -44,7 +47,12 @@ const sections: NavSection[] = [
   {
     label: "Bookings",
     items: [
-      { to: "/admin/bookings", label: "Bookings", icon: Calendar, badge: pendingCount },
+      {
+        to: "/admin/bookings",
+        label: "Bookings",
+        icon: Calendar,
+        badgeKey: "bookings" as const,
+      },
     ],
   },
   {
@@ -77,6 +85,13 @@ export function AdminLayout({
   const path = location.pathname;
   const { user, role, logout } = useSessionContext();
 
+  const { data: pendingBookings = 0 } = useQuery({
+    queryKey: ["admin", "bookings", "pending-count"],
+    queryFn: () => getPendingBookingsCount(),
+    refetchInterval: 60_000,
+    enabled: !!user,
+  });
+
   const visibleSections = sections.filter(
     (section) => section.label !== "System" || role === "superadmin",
   );
@@ -93,27 +108,36 @@ export function AdminLayout({
     <div className="min-h-screen bg-[#f5f5f2] text-ink flex">
       <aside className="fixed inset-y-0 left-0 w-60 bg-white border-r border-border flex flex-col z-30">
         <div className="h-16 px-5 flex items-center gap-3 border-b border-border">
-          <span className="w-9 h-9 rounded-full bg-brand text-white grid place-items-center font-serif font-bold">H</span>
+          <SiteLogo size="sm" />
           <div className="leading-tight">
-            <div className="font-serif font-bold text-[15px]">Visit Harar CMS</div>
-            <div className="text-[10px] uppercase tracking-wider text-ink-muted">Content Management</div>
+            <div className="font-serif font-bold text-[15px]">
+              Visit Harar CMS
+            </div>
+            <div className="text-[10px] uppercase tracking-wider text-ink-muted">
+              Content Management
+            </div>
           </div>
         </div>
 
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
           {visibleSections.map((section) => (
             <div key={section.label}>
-              <div className={`px-2 mb-2 text-[10px] uppercase tracking-wider font-semibold ${section.muted ? "text-ink-muted/60" : "text-ink-muted"}`}>
+              <div
+                className={`px-2 mb-2 text-[10px] uppercase tracking-wider font-semibold ${section.muted ? "text-ink-muted/60" : "text-ink-muted"}`}
+              >
                 {section.label}
               </div>
               <ul className="space-y-0.5">
                 {section.items.map((item) => {
-                  const isActive = item.exact ? path === item.to : path === item.to || path.startsWith(item.to + "/");
+                  const isActive = item.exact
+                    ? path === item.to
+                    : path === item.to || path.startsWith(item.to + "/");
                   const Icon = item.icon;
                   return (
                     <li key={item.to}>
                       <Link
                         to={item.to as never}
+                        search={{ denied: false } as never}
                         className={`flex items-center gap-3 px-3 py-2 rounded-md text-[13.5px] font-medium transition-colors ${
                           isActive
                             ? "bg-brand text-white"
@@ -122,7 +146,11 @@ export function AdminLayout({
                       >
                         <Icon className="w-4 h-4 shrink-0" />
                         <span className="flex-1 truncate">{item.label}</span>
-                        {"badge" in item && item.badge ? (
+                        {item.badgeKey === "bookings" && pendingBookings > 0 ? (
+                          <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-amber-950">
+                            {pendingBookings}
+                          </span>
+                        ) : "badge" in item && item.badge ? (
                           <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-amber-950">
                             {item.badge}
                           </span>
@@ -141,7 +169,9 @@ export function AdminLayout({
             {initials}
           </span>
           <div className="flex-1 leading-tight min-w-0">
-            <div className="text-[13px] font-semibold truncate">{user?.name ?? "User"}</div>
+            <div className="text-[13px] font-semibold truncate">
+              {user?.name ?? "User"}
+            </div>
             <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-700 font-medium">
               {role ?? "—"}
             </span>
@@ -161,7 +191,11 @@ export function AdminLayout({
         <header className="sticky top-0 z-20 h-16 bg-white/95 backdrop-blur border-b border-border px-8 flex items-center justify-between">
           <div>
             <h1 className="font-semibold text-[18px] text-ink">{title}</h1>
-            {breadcrumb && <div className="text-[12px] text-ink-muted mt-0.5">{breadcrumb}</div>}
+            {breadcrumb && (
+              <div className="text-[12px] text-ink-muted mt-0.5">
+                {breadcrumb}
+              </div>
+            )}
           </div>
           {action}
         </header>
@@ -172,15 +206,31 @@ export function AdminLayout({
 }
 
 // Reusable admin primitives
-export function AdminCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+export function AdminCard({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className={`bg-white rounded-lg border border-border shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${className}`}>
+    <div
+      className={`bg-white rounded-lg border border-border shadow-[0_1px_3px_rgba(0,0,0,0.04)] ${className}`}
+    >
       {children}
     </div>
   );
 }
 
-export function Toggle({ checked, onChange, label }: { checked: boolean; onChange?: (v: boolean) => void; label?: string }) {
+export function Toggle({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange?: (v: boolean) => void;
+  label?: string;
+}) {
   return (
     <button
       type="button"
@@ -189,17 +239,31 @@ export function Toggle({ checked, onChange, label }: { checked: boolean; onChang
       aria-pressed={checked}
       aria-label={label}
     >
-      <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-4" : ""}`} />
+      <span
+        className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-4" : ""}`}
+      />
     </button>
   );
 }
 
-export function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
+export function Field({
+  label,
+  children,
+  hint,
+}: {
+  label: string;
+  children: React.ReactNode;
+  hint?: string;
+}) {
   return (
     <label className="block">
-      <span className="block text-[12px] font-semibold text-ink mb-1.5 uppercase tracking-wide">{label}</span>
+      <span className="block text-[12px] font-semibold text-ink mb-1.5 uppercase tracking-wide">
+        {label}
+      </span>
       {children}
-      {hint && <span className="block text-[11px] text-ink-muted mt-1">{hint}</span>}
+      {hint && (
+        <span className="block text-[11px] text-ink-muted mt-1">{hint}</span>
+      )}
     </label>
   );
 }
@@ -213,7 +277,9 @@ export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   );
 }
 
-export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function Textarea(
+  props: React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+) {
   return (
     <textarea
       {...props}
@@ -232,7 +298,11 @@ export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
 }
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <div className="text-[11px] uppercase tracking-wider font-semibold text-ink-muted mb-3">{children}</div>;
+  return (
+    <div className="text-[11px] uppercase tracking-wider font-semibold text-ink-muted mb-3">
+      {children}
+    </div>
+  );
 }
 
 export function Button({
@@ -240,8 +310,11 @@ export function Button({
   className = "",
   children,
   ...rest
-}: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "ghost" | "gold" | "danger" | "outline" }) {
-  const base = "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-colors disabled:opacity-50";
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: "primary" | "ghost" | "gold" | "danger" | "outline";
+}) {
+  const base =
+    "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-colors disabled:opacity-50";
   const variants = {
     primary: "bg-brand text-white hover:bg-brand-dark",
     ghost: "bg-transparent text-ink hover:bg-surface",

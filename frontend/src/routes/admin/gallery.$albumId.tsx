@@ -1,7 +1,12 @@
-import { createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import type React from 'react'
-import { toast } from 'sonner'
+import {
+  createFileRoute,
+  Link,
+  notFound,
+  useNavigate,
+} from "@tanstack/react-router";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type React from "react";
+import { toast } from "sonner";
 import {
   AdminLayout,
   AdminCard,
@@ -11,7 +16,7 @@ import {
   Textarea,
   Toggle,
   SectionLabel,
-} from '@/components/AdminLayout'
+} from "@/components/AdminLayout";
 import {
   bulkPublish,
   deleteMediaItem,
@@ -21,7 +26,7 @@ import {
   updateAlbum,
   updateMediaItem,
   uploadMediaItem,
-} from '@/lib/gallery-fns'
+} from "@/lib/gallery-fns";
 import {
   DndContext,
   PointerSensor,
@@ -29,88 +34,117 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
-} from '@dnd-kit/core'
+} from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
   useSortable,
   rectSortingStrategy,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { ArrowLeft, Upload, Trash2, Image as ImageIcon, CheckSquare, Square, Star } from 'lucide-react'
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
+  ArrowLeft,
+  Upload,
+  Trash2,
+  Image as ImageIcon,
+  CheckSquare,
+  Square,
+  Star,
+} from "lucide-react";
 
-export const Route = createFileRoute('/admin/gallery/$albumId')({
+export const Route = createFileRoute("/admin/gallery/$albumId")({
+  loader: async ({ params }) => {
+    const data = await getAlbumById({ data: params.albumId });
+    if (!data) throw notFound();
+    return data;
+  },
   component: AlbumManager,
-})
+});
 
-type UploadProgress = { filename: string; progress: number; status: 'reading' | 'uploading' | 'done' | 'error' }
+type UploadProgress = {
+  filename: string;
+  progress: number;
+  status: "reading" | "uploading" | "done" | "error";
+};
 
 function AlbumManager() {
-  const { albumId } = Route.useParams()
-  const navigate = useNavigate()
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }))
-  const fileRef = useRef<HTMLInputElement>(null)
+  const { albumId } = Route.useParams();
+  const navigate = useNavigate();
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+  );
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  const [loading, setLoading] = useState(true)
-  const [albumTitle, setAlbumTitle] = useState('')
-  const [albumDesc, setAlbumDesc] = useState('')
-  const [albumPublished, setAlbumPublished] = useState(false)
-  const [cover, setCover] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true);
+  const [albumTitle, setAlbumTitle] = useState("");
+  const [albumDesc, setAlbumDesc] = useState("");
+  const [albumPublished, setAlbumPublished] = useState(false);
+  const [cover, setCover] = useState<string | null>(null);
 
-  const [items, setItems] = useState<Awaited<ReturnType<typeof getAlbumById>>['items']>([])
-  const [orderedIds, setOrderedIds] = useState<string[]>([])
-  const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [uploads, setUploads] = useState<UploadProgress[]>([])
-  const [savingAlbum, setSavingAlbum] = useState(false)
+  const [items, setItems] = useState<
+    Awaited<ReturnType<typeof getAlbumById>>["items"]
+  >([]);
+  const [orderedIds, setOrderedIds] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [uploads, setUploads] = useState<UploadProgress[]>([]);
+  const [savingAlbum, setSavingAlbum] = useState(false);
 
   async function refresh() {
-    setLoading(true)
+    setLoading(true);
     try {
-      const data = await getAlbumById({ data: albumId })
-      if (!data) throw notFound()
-      setAlbumTitle(data.album.title)
-      setAlbumDesc(data.album.description ?? '')
-      setAlbumPublished(data.album.is_published)
-      setCover(data.album.cover_image ?? null)
-      setItems(data.items)
-      setOrderedIds(data.items.map((i) => i.id))
-      setSelected(new Set())
+      const data = await getAlbumById({ data: albumId });
+      if (!data) {
+        void navigate({ to: "/admin/gallery" });
+        return;
+      }
+      setAlbumTitle(data.album.title);
+      setAlbumDesc(data.album.description ?? "");
+      setAlbumPublished(data.album.is_published);
+      setCover(data.album.cover_image ?? null);
+      setItems(data.items);
+      setOrderedIds(data.items.map((i) => i.id));
+      setSelected(new Set());
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   useEffect(() => {
-    refresh().catch((e) => toast.error(e instanceof Error ? e.message : 'Failed to load album'))
+    refresh().catch((e) =>
+      toast.error(e instanceof Error ? e.message : "Failed to load album"),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [albumId])
+  }, [albumId]);
 
-  const itemsById = useMemo(() => new Map(items.map((i) => [i.id, i])), [items])
+  const itemsById = useMemo(
+    () => new Map(items.map((i) => [i.id, i])),
+    [items],
+  );
   const orderedItems = useMemo(() => {
-    const list = orderedIds.map((id) => itemsById.get(id)).filter(Boolean)
-    if (list.length === items.length) return list
-    return items
-  }, [orderedIds, itemsById, items])
+    const list = orderedIds.map((id) => itemsById.get(id)).filter(Boolean);
+    if (list.length === items.length) return list;
+    return items;
+  }, [orderedIds, itemsById, items]);
 
   function toggleSelected(id: string) {
     setSelected((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   }
 
   function selectAll() {
-    setSelected(new Set(items.map((i) => i.id)))
+    setSelected(new Set(items.map((i) => i.id)));
   }
 
   function clearSelection() {
-    setSelected(new Set())
+    setSelected(new Set());
   }
 
   async function saveAlbumMeta() {
-    setSavingAlbum(true)
+    setSavingAlbum(true);
     try {
       await updateAlbum({
         data: {
@@ -122,87 +156,117 @@ function AlbumManager() {
             cover_image: cover,
           },
         },
-      })
-      toast.success('Album updated')
-      await refresh()
+      });
+      toast.success("Album updated");
+      await refresh();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Failed to save')
+      toast.error(e instanceof Error ? e.message : "Failed to save");
     } finally {
-      setSavingAlbum(false)
+      setSavingAlbum(false);
     }
   }
 
   async function onDeleteItem(id: string) {
-    if (!window.confirm('Delete this media item?')) return
+    if (!window.confirm("Delete this media item?")) return;
     try {
-      await deleteMediaItem({ data: id })
-      toast.success('Item deleted')
-      await refresh()
+      await deleteMediaItem({ data: id });
+      toast.success("Item deleted");
+      await refresh();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Failed to delete')
+      toast.error(e instanceof Error ? e.message : "Failed to delete");
     }
   }
 
   async function onBulkPublish(published: boolean) {
-    if (selected.size === 0) return
+    if (selected.size === 0) return;
     try {
-      await bulkPublish({ data: { ids: Array.from(selected), published } })
-      toast.success(published ? 'Published' : 'Unpublished')
-      await refresh()
+      await bulkPublish({ data: { ids: Array.from(selected), published } });
+      toast.success(published ? "Published" : "Unpublished");
+      await refresh();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Bulk update failed')
+      toast.error(e instanceof Error ? e.message : "Bulk update failed");
     }
   }
 
   async function onBulkDelete() {
-    if (selected.size === 0) return
-    if (!window.confirm(`Delete ${selected.size} selected items?`)) return
+    if (selected.size === 0) return;
+    if (!window.confirm(`Delete ${selected.size} selected items?`)) return;
     try {
       for (const id of Array.from(selected)) {
         // sequential to keep Cloudinary from being hammered
-        // eslint-disable-next-line no-await-in-loop
-        await deleteMediaItem({ data: id })
+
+        await deleteMediaItem({ data: id });
       }
-      toast.success('Deleted selected items')
-      await refresh()
+      toast.success("Deleted selected items");
+      await refresh();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Bulk delete failed')
+      toast.error(e instanceof Error ? e.message : "Bulk delete failed");
     }
   }
 
   function onDragEnd(event: DragEndEvent) {
-    const { active, over } = event
-    if (!over || active.id === over.id) return
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
     setOrderedIds((prev) => {
-      const oldIndex = prev.indexOf(String(active.id))
-      const newIndex = prev.indexOf(String(over.id))
-      const next = arrayMove(prev, oldIndex, newIndex)
+      const oldIndex = prev.indexOf(String(active.id));
+      const newIndex = prev.indexOf(String(over.id));
+      const next = arrayMove(prev, oldIndex, newIndex);
       reorderItems({ data: { albumId, ids: next } })
-        .then(() => toast.success('Order updated'))
-        .catch(() => toast.error('Failed to reorder'))
-        .finally(() => refresh())
-      return next
-    })
+        .then(() => toast.success("Order updated"))
+        .catch(() => toast.error("Failed to reorder"))
+        .finally(() => refresh());
+      return next;
+    });
   }
 
   async function handleFiles(files: FileList | null) {
-    if (!files || files.length === 0) return
-    const list = Array.from(files)
+    if (!files || files.length === 0) return;
+    const list = Array.from(files);
     for (const f of list) {
-      setUploads((prev) => [...prev, { filename: f.name, progress: 0, status: 'reading' }])
+      setUploads((prev) => [
+        ...prev,
+        { filename: f.name, progress: 0, status: "reading" },
+      ]);
       try {
         const base64 = await fileToBase64WithProgress(f, (p) => {
-          setUploads((prev) => prev.map((u) => (u.filename === f.name ? { ...u, progress: p, status: 'reading' } : u)))
-        })
-        setUploads((prev) => prev.map((u) => (u.filename === f.name ? { ...u, progress: 100, status: 'uploading' } : u)))
-        await uploadMediaItem({ data: { albumId, filename: f.name, mime: f.type || 'application/octet-stream', data: base64 } })
-        setUploads((prev) => prev.map((u) => (u.filename === f.name ? { ...u, status: 'done' } : u)))
+          setUploads((prev) =>
+            prev.map((u) =>
+              u.filename === f.name
+                ? { ...u, progress: p, status: "reading" }
+                : u,
+            ),
+          );
+        });
+        setUploads((prev) =>
+          prev.map((u) =>
+            u.filename === f.name
+              ? { ...u, progress: 100, status: "uploading" }
+              : u,
+          ),
+        );
+        await uploadMediaItem({
+          data: {
+            albumId,
+            filename: f.name,
+            mime: f.type || "application/octet-stream",
+            data: base64,
+          },
+        });
+        setUploads((prev) =>
+          prev.map((u) =>
+            u.filename === f.name ? { ...u, status: "done" } : u,
+          ),
+        );
       } catch {
-        setUploads((prev) => prev.map((u) => (u.filename === f.name ? { ...u, status: 'error' } : u)))
+        setUploads((prev) =>
+          prev.map((u) =>
+            u.filename === f.name ? { ...u, status: "error" } : u,
+          ),
+        );
       }
     }
-    if (fileRef.current) fileRef.current.value = ''
-    await refresh()
+    if (fileRef.current) fileRef.current.value = "";
+    await refresh();
   }
 
   if (loading) {
@@ -210,15 +274,18 @@ function AlbumManager() {
       <AdminLayout title="Gallery" breadcrumb="Gallery">
         <p className="text-sm text-ink-muted">Loading…</p>
       </AdminLayout>
-    )
+    );
   }
 
   return (
     <AdminLayout
-      title={albumTitle || 'Album'}
-      breadcrumb={`Gallery › ${albumTitle || 'Album'}`}
+      title={albumTitle || "Album"}
+      breadcrumb={`Gallery › ${albumTitle || "Album"}`}
       action={
-        <Link to="/admin/gallery" className="text-sm text-ink-muted inline-flex items-center gap-1 hover:text-brand">
+        <Link
+          to="/admin/gallery"
+          className="text-sm text-ink-muted inline-flex items-center gap-1 hover:text-brand"
+        >
           <ArrowLeft className="w-4 h-4" /> Back
         </Link>
       }
@@ -230,15 +297,30 @@ function AlbumManager() {
             className="border-2 border-dashed border-border rounded-lg p-10 text-center text-ink-muted hover:border-brand transition-colors"
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
-              e.preventDefault()
-              void handleFiles(e.dataTransfer.files)
+              e.preventDefault();
+              void handleFiles(e.dataTransfer.files);
             }}
           >
             <Upload className="w-10 h-10 mx-auto mb-3 text-brand" />
-            <div className="font-semibold text-ink">Drag files here or click to browse</div>
-            <div className="text-xs mt-1">Images or videos. Alt text required before publishing.</div>
-            <input ref={fileRef} type="file" multiple accept="image/*,video/*" className="hidden" onChange={(e) => void handleFiles(e.target.files)} />
-            <Button variant="outline" className="mt-4" onClick={() => fileRef.current?.click()}>
+            <div className="font-semibold text-ink">
+              Drag files here or click to browse
+            </div>
+            <div className="text-xs mt-1">
+              Images or videos. Alt text required before publishing.
+            </div>
+            <input
+              ref={fileRef}
+              type="file"
+              multiple
+              accept="image/*,video/*"
+              className="hidden"
+              onChange={(e) => void handleFiles(e.target.files)}
+            />
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => fileRef.current?.click()}
+            >
               Choose Files
             </Button>
           </div>
@@ -251,13 +333,19 @@ function AlbumManager() {
                     <div className="text-xs font-medium">{u.filename}</div>
                     <div className="h-2 bg-surface rounded mt-1 overflow-hidden">
                       <div
-                        className={`h-full ${u.status === 'error' ? 'bg-red-500' : 'bg-brand'} transition-all`}
+                        className={`h-full ${u.status === "error" ? "bg-red-500" : "bg-brand"} transition-all`}
                         style={{ width: `${u.progress}%` }}
                       />
                     </div>
                   </div>
                   <div className="text-xs text-ink-muted w-20 text-right">
-                    {u.status === 'reading' ? 'Reading…' : u.status === 'uploading' ? 'Uploading…' : u.status === 'done' ? 'Done' : 'Error'}
+                    {u.status === "reading"
+                      ? "Reading…"
+                      : u.status === "uploading"
+                        ? "Uploading…"
+                        : u.status === "done"
+                          ? "Done"
+                          : "Error"}
                   </div>
                 </div>
               ))}
@@ -268,17 +356,24 @@ function AlbumManager() {
         <AdminCard className="p-6 space-y-4">
           <SectionLabel>Album</SectionLabel>
           <Field label="Title">
-            <Input value={albumTitle} onChange={(e) => setAlbumTitle(e.target.value)} />
+            <Input
+              value={albumTitle}
+              onChange={(e) => setAlbumTitle(e.target.value)}
+            />
           </Field>
           <Field label="Description">
-            <Textarea rows={4} value={albumDesc} onChange={(e) => setAlbumDesc(e.target.value)} />
+            <Textarea
+              rows={4}
+              value={albumDesc}
+              onChange={(e) => setAlbumDesc(e.target.value)}
+            />
           </Field>
           <div className="flex items-center justify-between">
             <span className="text-sm">Published</span>
             <Toggle checked={albumPublished} onChange={setAlbumPublished} />
           </div>
           <Button onClick={() => void saveAlbumMeta()} disabled={savingAlbum}>
-            {savingAlbum ? 'Saving…' : 'Save Album'}
+            {savingAlbum ? "Saving…" : "Save Album"}
           </Button>
         </AdminCard>
       </div>
@@ -311,8 +406,12 @@ function AlbumManager() {
           onClick={selected.size === items.length ? clearSelection : selectAll}
           className="text-sm text-ink-muted inline-flex items-center gap-2 hover:text-ink"
         >
-          {selected.size === items.length ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
-          {selected.size === items.length ? 'Clear selection' : 'Select all'}
+          {selected.size === items.length ? (
+            <CheckSquare className="w-4 h-4" />
+          ) : (
+            <Square className="w-4 h-4" />
+          )}
+          {selected.size === items.length ? "Clear selection" : "Select all"}
         </button>
       </div>
 
@@ -321,7 +420,11 @@ function AlbumManager() {
           <p className="text-sm text-ink-muted">No items in this album yet.</p>
         </AdminCard>
       ) : (
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={onDragEnd}
+        >
           <SortableContext items={orderedIds} strategy={rectSortingStrategy}>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
               {orderedItems.map((it) => (
@@ -333,8 +436,18 @@ function AlbumManager() {
                   isCover={Boolean(cover && it.url === cover)}
                   onSelect={() => toggleSelected(it.id)}
                   onDelete={() => void onDeleteItem(it.id)}
-                  onSetCover={() => void setAlbumCover({ data: { albumId, itemId: it.id } }).then(refresh).catch(() => toast.error('Failed to set cover'))}
-                  onUpdate={(data) => void updateMediaItem({ data: { id: it.id, data } }).then(refresh).catch((e) => toast.error(e instanceof Error ? e.message : 'Failed'))}
+                  onSetCover={() =>
+                    void setAlbumCover({ data: { albumId, itemId: it.id } })
+                      .then(refresh)
+                      .catch(() => toast.error("Failed to set cover"))
+                  }
+                  onUpdate={(data) =>
+                    void updateMediaItem({ data: { id: it.id, data } })
+                      .then(refresh)
+                      .catch((e) =>
+                        toast.error(e instanceof Error ? e.message : "Failed"),
+                      )
+                  }
                 />
               ))}
             </div>
@@ -342,7 +455,7 @@ function AlbumManager() {
         </DndContext>
       )}
     </AdminLayout>
-  )
+  );
 }
 
 function SortableMediaCard({
@@ -355,35 +468,62 @@ function SortableMediaCard({
   onSetCover,
   onUpdate,
 }: {
-  id: string
-  item: { url: string; caption: string | null; alt_text: string | null; is_published: boolean; type: string }
-  isSelected: boolean
-  isCover: boolean
-  onSelect: () => void
-  onDelete: () => void
-  onSetCover: () => void
-  onUpdate: (data: { caption?: string | null; alt_text?: string | null; is_published?: boolean }) => void
+  id: string;
+  item: {
+    url: string;
+    caption: string | null;
+    alt_text: string | null;
+    is_published: boolean;
+    type: string;
+  };
+  isSelected: boolean;
+  isCover: boolean;
+  onSelect: () => void;
+  onDelete: () => void;
+  onSetCover: () => void;
+  onUpdate: (data: {
+    caption?: string | null;
+    alt_text?: string | null;
+    is_published?: boolean;
+  }) => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.75 : 1,
-  }
+  };
 
   return (
-    <div ref={setNodeRef} style={style} className="bg-white rounded-lg border border-border overflow-hidden">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="bg-white rounded-lg border border-border overflow-hidden"
+    >
       <button type="button" onClick={onSelect} className="w-full text-left">
         <div className="relative aspect-square bg-surface overflow-hidden">
-          {item.type === 'video' ? (
+          {item.type === "video" ? (
             <div className="absolute inset-0 grid place-items-center text-ink-muted">
               <ImageIcon className="w-10 h-10" />
               <span className="text-xs mt-2">Video</span>
             </div>
           ) : (
-            <img src={item.url} alt="" className="absolute inset-0 w-full h-full object-cover" />
+            <img
+              src={item.url}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
           )}
-          <span className={`absolute top-2 left-2 w-5 h-5 rounded border ${isSelected ? 'bg-brand border-brand' : 'bg-white/90 border-border'}`} />
+          <span
+            className={`absolute top-2 left-2 w-5 h-5 rounded border ${isSelected ? "bg-brand border-brand" : "bg-white/90 border-border"}`}
+          />
           {isCover && (
             <span className="absolute top-2 right-2 px-2 py-1 rounded-full text-[10px] bg-gold text-ink font-semibold inline-flex items-center gap-1">
               <Star className="w-3 h-3" /> Cover
@@ -394,18 +534,21 @@ function SortableMediaCard({
       <div className="p-3 space-y-2">
         <input
           className="w-full rounded border border-border px-2 py-1 text-xs"
-          value={item.caption ?? ''}
+          value={item.caption ?? ""}
           placeholder="Caption"
           onChange={(e) => onUpdate({ caption: e.target.value })}
         />
         <input
           className="w-full rounded border border-border px-2 py-1 text-xs"
-          value={item.alt_text ?? ''}
+          value={item.alt_text ?? ""}
           placeholder="Alt text (required to publish)"
           onChange={(e) => onUpdate({ alt_text: e.target.value })}
         />
         <div className="flex items-center justify-between text-xs">
-          <Toggle checked={item.is_published} onChange={(v) => onUpdate({ is_published: v })} />
+          <Toggle
+            checked={item.is_published}
+            onChange={(v) => onUpdate({ is_published: v })}
+          />
           <div className="flex items-center gap-1.5">
             <button
               type="button"
@@ -417,32 +560,42 @@ function SortableMediaCard({
             >
               <Upload className="w-3.5 h-3.5 rotate-90 opacity-60" />
             </button>
-            <button type="button" className="p-1.5 rounded hover:bg-surface text-ink-muted" onClick={onSetCover}>
+            <button
+              type="button"
+              className="p-1.5 rounded hover:bg-surface text-ink-muted"
+              onClick={onSetCover}
+            >
               <Star className="w-3.5 h-3.5" />
             </button>
-            <button type="button" className="p-1.5 rounded hover:bg-red-50 text-ink-muted hover:text-red-600" onClick={onDelete}>
+            <button
+              type="button"
+              className="p-1.5 rounded hover:bg-red-50 text-ink-muted hover:text-red-600"
+              onClick={onDelete}
+            >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-function fileToBase64WithProgress(file: File, onProgress: (p: number) => void): Promise<string> {
+function fileToBase64WithProgress(
+  file: File,
+  onProgress: (p: number) => void,
+): Promise<string> {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onprogress = (e) => {
-      if (!e.lengthComputable) return
-      onProgress(Math.round((e.loaded / e.total) * 100))
-    }
+      if (!e.lengthComputable) return;
+      onProgress(Math.round((e.loaded / e.total) * 100));
+    };
     reader.onload = () => {
-      const result = reader.result as string
-      resolve(result.split(',')[1] ?? '')
-    }
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
+      const result = reader.result as string;
+      resolve(result.split(",")[1] ?? "");
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
-

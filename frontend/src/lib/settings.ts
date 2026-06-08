@@ -1,46 +1,46 @@
-import { eq } from 'drizzle-orm'
-import { db } from '../../db/index'
-import { siteSettings } from '../../drizzle/schema/index'
+import { eq } from "drizzle-orm";
+import { db } from "../../db/index";
+import { siteSettings } from "../../drizzle/schema/index";
 
-const CACHE_TTL_MS = 60_000
+const CACHE_TTL_MS = 60_000;
 
 let cached: {
-  maintenanceMode: boolean
-  bookingEnabled: boolean
-  fetchedAt: number
-} | null = null
+  maintenanceMode: boolean;
+  bookingEnabled: boolean;
+  fetchedAt: number;
+} | null = null;
 
 async function loadSettings() {
-  const [row] = await db.select().from(siteSettings).limit(1)
+  const [row] = await db.select().from(siteSettings).limit(1);
   return {
     maintenanceMode: row?.maintenanceMode ?? false,
     bookingEnabled: row?.bookingEnabled ?? true,
-  }
+  };
 }
 
 async function getCached() {
-  const now = Date.now()
+  const now = Date.now();
   if (cached && now - cached.fetchedAt < CACHE_TTL_MS) {
-    return cached
+    return cached;
   }
-  const settings = await loadSettings()
-  cached = { ...settings, fetchedAt: now }
-  return cached
+  const settings = await loadSettings();
+  cached = { ...settings, fetchedAt: now };
+  return cached;
 }
 
 export async function getMaintenanceMode(): Promise<boolean> {
-  return (await getCached()).maintenanceMode
+  return (await getCached()).maintenanceMode;
 }
 
 export async function getBookingEnabled(): Promise<boolean> {
-  return (await getCached()).bookingEnabled
+  return (await getCached()).bookingEnabled;
 }
 
 export function invalidateSettingsCache() {
-  cached = null
+  cached = null;
 }
 
 export async function upsertSettingsCacheAfterUpdate() {
-  invalidateSettingsCache()
-  await getCached()
+  invalidateSettingsCache();
+  await getCached();
 }

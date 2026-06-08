@@ -1,47 +1,47 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { authClient } from '@/lib/auth-client'
-import { emailSchema } from '@/lib/validators/common'
-import { redirectIfAuthenticated } from '@/lib/auth-guard'
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { authClient } from "@/lib/auth-client";
+import { emailSchema } from "@/lib/validators/common";
+import { redirectIfAuthenticated } from "@/lib/auth-guard";
 
-const schema = z.object({ email: emailSchema })
+const schema = z.object({ email: emailSchema });
 
-type FormData = z.infer<typeof schema>
+type FormData = z.infer<typeof schema>;
 
-export const Route = createFileRoute('/admin/forgot-password')({
+export const Route = createFileRoute("/admin/forgot-password")({
   beforeLoad: redirectIfAuthenticated(),
   component: ForgotPassword,
-})
+});
 
 function ForgotPassword() {
-  const [sent, setSent] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormData>({ resolver: zodResolver(schema) })
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit = handleSubmit(async ({ email }) => {
-    setError(null)
-    const redirectTo = `${window.location.origin}/admin/reset-password`
+    setError(null);
+    const redirectTo = `${window.location.origin}/admin/reset-password`;
     const result = await authClient.forgetPassword({
       email,
       redirectTo,
-    })
+    });
     if (result.error) {
       setError(
         result.error.message ??
-          'Could not send reset email. Check RESEND_API_KEY in .env.',
-      )
-      return
+          "Could not send reset email. Check RESEND_API_KEY in .env.",
+      );
+      return;
     }
-    setSent(true)
-  })
+    setSent(true);
+  });
 
   return (
     <div className="min-h-screen grid place-items-center bg-brand-dark px-4">
@@ -67,10 +67,12 @@ function ForgotPassword() {
               <input
                 type="email"
                 className="w-full rounded border border-border px-3 py-2 text-sm"
-                {...register('email')}
+                {...register("email")}
               />
               {errors.email && (
-                <span className="text-xs text-red-600 mt-1 block">{errors.email.message}</span>
+                <span className="text-xs text-red-600 mt-1 block">
+                  {errors.email.message}
+                </span>
               )}
             </label>
             <button
@@ -78,7 +80,7 @@ function ForgotPassword() {
               disabled={isSubmitting}
               className="w-full px-4 py-2.5 rounded-md bg-brand text-white font-semibold hover:bg-brand-dark disabled:opacity-60"
             >
-              {isSubmitting ? 'Sending…' : 'Send reset link'}
+              {isSubmitting ? "Sending…" : "Send reset link"}
             </button>
           </form>
         )}
@@ -90,5 +92,5 @@ function ForgotPassword() {
         </p>
       </div>
     </div>
-  )
+  );
 }

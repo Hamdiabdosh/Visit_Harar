@@ -1,42 +1,44 @@
-import { Link } from '@tanstack/react-router'
-import { ArrowRight } from 'lucide-react'
-import { defaultHeroInput, dtoToPreviewProps } from '@/lib/hero-map'
-import type { HeroDto } from '@/lib/hero-map'
-import type { HeroInput } from '@/lib/validators/hero'
-import { optimizeImage } from '@/lib/cloudinary-url'
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
+import { defaultHeroInput, dtoToPreviewProps } from "@/lib/hero-map";
+import type { HeroDto } from "@/lib/hero-map";
+import type { HeroInput } from "@/lib/validators/hero";
+import { optimizeImage } from "@/lib/cloudinary-url";
 
 export type HeroSectionProps = {
-  hero?: Partial<HeroInput> | HeroDto | null
-  compact?: boolean
-}
+  hero?: Partial<HeroInput> | HeroDto | null;
+  compact?: boolean;
+};
 
 function CtaLink({
   href,
   className,
   children,
 }: {
-  href: string
-  className: string
-  children: React.ReactNode
+  href: string;
+  className: string;
+  children: React.ReactNode;
 }) {
-  if (href.startsWith('/') && !href.startsWith('//')) {
+  if (href.startsWith("/") && !href.startsWith("//")) {
     return (
       <Link to={href} className={className}>
         {children}
       </Link>
-    )
+    );
   }
   return (
     <a href={href} className={className}>
       {children}
     </a>
-  )
+  );
 }
 
 export function HeroSection({ hero, compact }: HeroSectionProps) {
-  const p = dtoToPreviewProps(hero ?? defaultHeroInput)
-  const minH = compact ? 'min-h-[480px]' : 'min-h-screen'
-  const bg = p.backgroundImage ? optimizeImage(p.backgroundImage, { width: 2200 }) : null
+  const p = dtoToPreviewProps(hero ?? defaultHeroInput);
+  const minH = compact ? "min-h-[480px]" : "min-h-screen";
+  const bg = p.backgroundImage
+    ? optimizeImage(p.backgroundImage, { width: 2200 })
+    : null;
 
   return (
     <section
@@ -53,13 +55,24 @@ export function HeroSection({ hero, compact }: HeroSectionProps) {
         className="absolute inset-0 opacity-[0.12] pointer-events-none"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(30deg, transparent 0 22px, rgba(200,169,106,0.5) 22px 23px), repeating-linear-gradient(-30deg, transparent 0 22px, rgba(200,169,106,0.5) 22px 23px), repeating-linear-gradient(90deg, transparent 0 22px, rgba(200,169,106,0.3) 22px 23px)',
+            "repeating-linear-gradient(30deg, transparent 0 22px, rgba(200,169,106,0.5) 22px 23px), repeating-linear-gradient(-30deg, transparent 0 22px, rgba(200,169,106,0.5) 22px 23px), repeating-linear-gradient(90deg, transparent 0 22px, rgba(200,169,106,0.3) 22px 23px)",
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/30" />
+      <div
+        className="absolute inset-0 bg-black/15 pointer-events-none"
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/25 to-transparent pointer-events-none"
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-black/25 pointer-events-none"
+        aria-hidden
+      />
 
       <div
-        className={`relative max-w-7xl mx-auto px-5 lg:px-8 w-full ${compact ? 'py-12' : 'pt-32 pb-24'}`}
+        className={`relative max-w-7xl mx-auto px-5 lg:px-8 w-full ${compact ? "py-12" : "pt-32 pb-24"}`}
       >
         {p.badgeText ? (
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/30 bg-white/5 backdrop-blur text-xs font-medium tracking-wide">
@@ -67,9 +80,9 @@ export function HeroSection({ hero, compact }: HeroSectionProps) {
           </span>
         ) : null}
         <h1
-          className={`font-serif font-bold mt-6 leading-[1.05] max-w-3xl ${compact ? 'text-2xl' : 'text-5xl md:text-7xl'}`}
+          className={`font-serif font-bold mt-6 leading-[1.05] max-w-3xl ${compact ? "text-2xl" : "text-5xl md:text-7xl"}`}
         >
-          {p.headline}{' '}
+          {p.headline}{" "}
           {p.headlineItalic ? (
             <span className="italic text-gold font-medium whitespace-pre-line">
               {p.headlineItalic}
@@ -78,7 +91,7 @@ export function HeroSection({ hero, compact }: HeroSectionProps) {
         </h1>
         {p.subheading ? (
           <p
-            className={`mt-6 text-white/80 max-w-xl leading-relaxed ${compact ? 'text-[10px]' : 'text-base md:text-lg'}`}
+            className={`mt-6 text-white/80 max-w-xl leading-relaxed ${compact ? "text-[10px]" : "text-base md:text-lg"}`}
           >
             {p.subheading}
           </p>
@@ -103,17 +116,17 @@ export function HeroSection({ hero, compact }: HeroSectionProps) {
         </div>
 
         <div
-          className={`grid grid-cols-3 max-w-2xl gap-6 border-t border-white/15 pt-8 ${compact ? 'mt-8' : 'mt-20'}`}
+          className={`grid grid-cols-3 max-w-2xl gap-6 border-t border-white/15 pt-8 ${compact ? "mt-8" : "mt-20"}`}
         >
           {p.stats.map((s) => (
             <div key={s.label}>
               <div
-                className={`font-serif text-gold font-bold ${compact ? 'text-sm' : 'text-3xl md:text-4xl'}`}
+                className={`font-serif text-gold font-bold ${compact ? "text-sm" : "text-3xl md:text-4xl"}`}
               >
                 {s.number}
               </div>
               <div
-                className={`uppercase tracking-wider text-white/60 mt-1 ${compact ? 'text-[8px]' : 'text-xs'}`}
+                className={`uppercase tracking-wider text-white/60 mt-1 ${compact ? "text-[8px]" : "text-xs"}`}
               >
                 {s.label}
               </div>
@@ -122,5 +135,5 @@ export function HeroSection({ hero, compact }: HeroSectionProps) {
         </div>
       </div>
     </section>
-  )
+  );
 }

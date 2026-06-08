@@ -1,62 +1,47 @@
-import { createFileRoute, Link, notFound } from '@tanstack/react-router'
-import { PublicLayout } from '@/components/PublicLayout'
-import { getAttractionBySlug } from '@/lib/attractions-fns'
-import { fullDescParagraphs } from '@/lib/attraction-map'
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { PublicLayout } from "@/components/PublicLayout";
+import { getAttractionBySlug } from "@/lib/attractions-fns";
+import { fullDescParagraphs } from "@/lib/attraction-map";
 import {
   categoryColor,
   categoryGradient,
   isAttractionCategory,
-} from '@/lib/attraction-styles'
-import { attractions as mockAttractions } from '@/lib/harar-data'
-import DOMPurify from 'isomorphic-dompurify'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { optimizeImage } from '@/lib/cloudinary-url'
-import { buildHeadAsync, excerptFromHtml } from '@/lib/metadata'
+} from "@/lib/attraction-styles";
+import DOMPurify from "isomorphic-dompurify";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { optimizeImage } from "@/lib/cloudinary-url";
+import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
 
-export const Route = createFileRoute('/attractions/$slug')({
+export const Route = createFileRoute("/attractions/$slug")({
   loader: async ({ params }) => {
-    const item = await getAttractionBySlug({ data: params.slug })
-    if (item) return { item, fromDb: true as const }
-
-    const mock = mockAttractions.find((a) => a.id === params.slug && a.published)
-    if (mock) {
-      return {
-        item: {
-          title: mock.title,
-          slug: mock.id,
-          category: mock.category,
-          full_desc: mock.full.join('\n\n'),
-          image: null as string | null,
-        },
-        fromDb: false as const,
-      }
-    }
-
-    throw notFound()
+    const item = await getAttractionBySlug({ data: params.slug });
+    if (!item) throw notFound();
+    return { item };
   },
   head: async ({ loaderData }) => {
-    const item = loaderData?.item
-    const shortDesc = item && 'short_desc' in item ? (item.short_desc as string | null) : null
+    const item = loaderData?.item;
     return buildHeadAsync({
-      title: item?.title ?? 'Attraction',
+      title: item?.title ?? "Attraction",
       description:
-        shortDesc ||
-        excerptFromHtml(item?.full_desc ?? '') ||
-        `Explore ${item?.title ?? 'Harar'} in Harar Jugol.`,
+        item?.short_desc ||
+        excerptFromHtml(item?.full_desc ?? "") ||
+        `Explore ${item?.title ?? "Harar"} in Harar Jugol.`,
       ogImage: item?.image,
-      canonicalPath: item ? `/attractions/${item.slug}` : '/attractions',
-    })
+      canonicalPath: item ? `/attractions/${item.slug}` : "/attractions",
+    });
   },
   component: AttractionDetail,
-})
+});
 
 function AttractionDetail() {
-  const { item } = Route.useLoaderData()
-  const cat = isAttractionCategory(item.category) ? item.category : 'Heritage'
-  const paragraphs = fullDescParagraphs(item.full_desc)
-  const isHtml = Boolean(item.full_desc && /<\/?[a-z][\s\S]*>/i.test(item.full_desc))
-  const safeHtml = isHtml ? DOMPurify.sanitize(item.full_desc ?? '') : null
-  const heroBg = item.image ? optimizeImage(item.image, { width: 1600 }) : null
+  const { item } = Route.useLoaderData();
+  const cat = isAttractionCategory(item.category) ? item.category : "Heritage";
+  const paragraphs = fullDescParagraphs(item.full_desc);
+  const isHtml = Boolean(
+    item.full_desc && /<\/?[a-z][\s\S]*>/i.test(item.full_desc),
+  );
+  const safeHtml = isHtml ? DOMPurify.sanitize(item.full_desc ?? "") : null;
+  const heroBg = item.image ? optimizeImage(item.image, { width: 1600 }) : null;
 
   return (
     <PublicLayout>
@@ -79,7 +64,9 @@ function AttractionDetail() {
           >
             {cat}
           </span>
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mt-4 leading-tight">{item.title}</h1>
+          <h1 className="font-serif text-4xl md:text-5xl font-bold mt-4 leading-tight">
+            {item.title}
+          </h1>
           {paragraphs.length > 0 ? (
             isHtml && safeHtml ? (
               <div
@@ -107,5 +94,5 @@ function AttractionDetail() {
         </div>
       </article>
     </PublicLayout>
-  )
+  );
 }

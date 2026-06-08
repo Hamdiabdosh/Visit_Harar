@@ -1,21 +1,27 @@
-import { Link } from '@tanstack/react-router'
+import { Link } from "@tanstack/react-router";
 import {
   categoryColor,
   categoryGradient,
   type AttractionCategory,
-} from '@/lib/attraction-styles'
-import { optimizeImage } from '@/lib/cloudinary-url'
+} from "@/lib/attraction-styles";
+import { optimizeImage } from "@/lib/cloudinary-url";
 
 export type AttractionCardData = {
-  title: string
-  slug: string
-  category: AttractionCategory
-  short_desc: string | null
-  image: string | null
-}
+  title: string;
+  slug: string;
+  category: AttractionCategory;
+  short_desc: string | null;
+  image: string | null;
+};
 
-export function AttractionCard({ title, slug, category, short_desc, image }: AttractionCardData) {
-  const bg = image ? optimizeImage(image, { width: 1200 }) : null
+export function AttractionCard({
+  title,
+  slug,
+  category,
+  short_desc,
+  image,
+}: AttractionCardData) {
+  const bg = image ? optimizeImage(image, { width: 1200 }) : null;
   return (
     <Link
       to="/attractions/$slug"
@@ -42,8 +48,10 @@ export function AttractionCard({ title, slug, category, short_desc, image }: Att
             {category}
           </span>
         </div>
-        {short_desc && <p className="text-sm text-ink-muted line-clamp-2">{short_desc}</p>}
+        {short_desc && (
+          <p className="text-sm text-ink-muted line-clamp-2">{short_desc}</p>
+        )}
       </div>
     </Link>
-  )
+  );
 }

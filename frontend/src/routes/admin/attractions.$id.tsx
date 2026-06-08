@@ -1,9 +1,14 @@
-import { createFileRoute, Link, useNavigate, useParams } from '@tanstack/react-router'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  useParams,
+} from "@tanstack/react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
   AdminLayout,
   AdminCard,
@@ -14,53 +19,52 @@ import {
   Select,
   SectionLabel,
   Toggle,
-} from '@/components/AdminLayout'
-import { RichTextEditor } from '@/components/admin/RichTextEditor'
-import { ATTRACTION_CATEGORIES } from '@/lib/attraction-styles'
-import { generateSlug } from '@/lib/slug'
+} from "@/components/AdminLayout";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { ATTRACTION_CATEGORIES } from "@/lib/attraction-styles";
+import { generateSlug } from "@/lib/slug";
 import {
   createAttraction,
   getAttractionById,
   updateAttraction,
-  uploadAttractionImage,
-} from '@/lib/attractions-fns'
+} from "@/lib/attractions-fns";
+import { ImageMediaField } from "@/components/admin/ImageMediaField";
 import {
   attractionInputSchema,
   type AttractionInput,
-} from '@/lib/validators/attractions'
-import { ArrowLeft, Image as ImageIcon } from 'lucide-react'
+} from "@/lib/validators/attractions";
+import { ArrowLeft } from "lucide-react";
 
-export const Route = createFileRoute('/admin/attractions/$id')({
+export const Route = createFileRoute("/admin/attractions/$id")({
   component: AttractionEditor,
-})
+});
 
 const defaultValues: AttractionInput = {
-  title: '',
-  slug: '',
-  short_desc: '',
-  full_desc: '',
+  title: "",
+  slug: "",
+  short_desc: "",
+  full_desc: "",
   image: undefined,
-  category: 'Heritage',
+  category: "Heritage",
   is_featured: false,
   is_published: false,
   sort_order: 0,
-}
+};
 
 function AttractionEditor() {
-  const { id } = useParams({ from: '/admin/attractions/$id' })
-  const isNew = id === 'new'
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
-  const fileRef = useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState(false)
-  const [slugTouched, setSlugTouched] = useState(false)
+  const { id } = useParams({ from: "/admin/attractions/$id" });
+  const isNew = id === "new";
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [mediaAssetId, setMediaAssetId] = useState<string | null>(null);
+  const [slugTouched, setSlugTouched] = useState(false);
 
   const { data: existing, isLoading } = useQuery({
-    queryKey: ['admin', 'attraction', id],
+    queryKey: ["admin", "attraction", id],
     queryFn: () => getAttractionById({ data: id }),
     enabled: !isNew,
     retry: false,
-  })
+  });
 
   const form = useForm<AttractionInput>({
     resolver: zodResolver(attractionInputSchema),
@@ -69,77 +73,62 @@ function AttractionEditor() {
       ? {
           title: existing.title,
           slug: existing.slug,
-          short_desc: existing.short_desc ?? '',
-          full_desc: existing.full_desc ?? '',
+          short_desc: existing.short_desc ?? "",
+          full_desc: existing.full_desc ?? "",
           image: existing.image ?? undefined,
-          category: existing.category as AttractionInput['category'],
+          category: existing.category as AttractionInput["category"],
           is_featured: existing.is_featured,
           is_published: existing.is_published,
           sort_order: existing.sort_order,
         }
       : undefined,
-  })
+  });
 
-  const title = form.watch('title')
-  const slug = form.watch('slug')
-  const shortDesc = form.watch('short_desc')
-  const fullDesc = form.watch('full_desc')
-  const image = form.watch('image')
-  const featured = form.watch('is_featured')
-  const published = form.watch('is_published')
+  const title = form.watch("title");
+  const slug = form.watch("slug");
+  const shortDesc = form.watch("short_desc");
+  const fullDesc = form.watch("full_desc");
+  const image = form.watch("image");
+  const featured = form.watch("is_featured");
+  const published = form.watch("is_published");
 
   useEffect(() => {
     if (!slugTouched && title && isNew) {
-      form.setValue('slug', generateSlug(title))
+      form.setValue("slug", generateSlug(title));
     }
-  }, [title, slugTouched, isNew, form])
+  }, [title, slugTouched, isNew, form]);
 
   const saveMutation = useMutation({
     mutationFn: async (publish: boolean) => {
-      const values = form.getValues()
-      const payload: AttractionInput = { ...values, is_published: publish }
+      const values = form.getValues();
+      const payload: AttractionInput = { ...values, is_published: publish };
       if (isNew) {
-        const created = await createAttraction({ data: payload })
-        return created
+        const created = await createAttraction({ data: payload });
+        return created;
       }
-      return updateAttraction({ data: { id, data: payload } })
+      return updateAttraction({ data: { id, data: payload } });
     },
     onSuccess: (result, publish) => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'attractions'] })
-      queryClient.invalidateQueries({ queryKey: ['public', 'attractions'] })
-      toast.success(publish ? 'Published' : 'Draft saved')
+      queryClient.invalidateQueries({ queryKey: ["admin", "attractions"] });
+      queryClient.invalidateQueries({ queryKey: ["public", "attractions"] });
+      toast.success(publish ? "Published" : "Draft saved");
       if (isNew && result?.id) {
-        navigate({ to: '/admin/attractions/$id', params: { id: result.id }, replace: true })
+        navigate({
+          to: "/admin/attractions/$id",
+          params: { id: result.id },
+          replace: true,
+        });
       }
     },
-    onError: () => toast.error('Failed to save'),
-  })
-
-  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setUploading(true)
-    try {
-      const base64 = await fileToBase64(file)
-      const { url } = await uploadAttractionImage({
-        data: { filename: file.name, data: base64 },
-      })
-      form.setValue('image', url, { shouldDirty: true })
-      toast.success('Image uploaded')
-    } catch {
-      toast.error('Upload failed — check Cloudinary credentials or paste an image URL')
-    } finally {
-      setUploading(false)
-      if (fileRef.current) fileRef.current.value = ''
-    }
-  }
+    onError: () => toast.error("Failed to save"),
+  });
 
   if (!isNew && isLoading) {
     return (
       <AdminLayout title="Edit Attraction" breadcrumb="Attractions">
         <p className="text-sm text-ink-muted">Loading…</p>
       </AdminLayout>
-    )
+    );
   }
 
   if (!isNew && !isLoading && !existing) {
@@ -147,20 +136,23 @@ function AttractionEditor() {
       <AdminLayout title="Not found" breadcrumb="Attractions">
         <AdminCard className="p-6">
           <p className="text-sm text-ink-muted">Attraction not found.</p>
-          <Link to="/admin/attractions" className="text-brand text-sm mt-3 inline-block">
+          <Link
+            to="/admin/attractions"
+            className="text-brand text-sm mt-3 inline-block"
+          >
             Back to list
           </Link>
         </AdminCard>
       </AdminLayout>
-    )
+    );
   }
 
-  const previewSlug = slug || generateSlug(title) || 'new-attraction'
+  const previewSlug = slug || generateSlug(title) || "new-attraction";
 
   return (
     <AdminLayout
-      title={isNew ? 'New Attraction' : 'Edit Attraction'}
-      breadcrumb={`Attractions › ${title || 'New'}`}
+      title={isNew ? "New Attraction" : "Edit Attraction"}
+      breadcrumb={`Attractions › ${title || "New"}`}
       action={
         <Link
           to="/admin/attractions"
@@ -174,14 +166,14 @@ function AttractionEditor() {
         <AdminCard className="p-6 space-y-5">
           <Field label="Title">
             <Input
-              {...form.register('title')}
+              {...form.register("title")}
               className="text-lg"
               placeholder="Harar Jugol Walled City"
             />
           </Field>
           <Field label="Slug">
             <Input
-              {...form.register('slug', {
+              {...form.register("slug", {
                 onChange: () => setSlugTouched(true),
               })}
               className="font-mono text-xs"
@@ -192,15 +184,18 @@ function AttractionEditor() {
             <Textarea
               rows={3}
               maxLength={160}
-              {...form.register('short_desc')}
+              {...form.register("short_desc")}
               placeholder="One-line summary for cards and SEO"
             />
           </Field>
-          <Field label="Full Description" hint="Rich text rendered publicly as HTML">
+          <Field
+            label="Full Description"
+            hint="Rich text rendered publicly as HTML"
+          >
             <RichTextEditor
-              value={fullDesc ?? ''}
+              value={fullDesc ?? ""}
               onChange={(html) =>
-                form.setValue('full_desc', html, { shouldDirty: true })
+                form.setValue("full_desc", html, { shouldDirty: true })
               }
               placeholder="Write the full story…"
             />
@@ -210,31 +205,21 @@ function AttractionEditor() {
         <div className="space-y-6">
           <AdminCard className="p-5">
             <SectionLabel>Media</SectionLabel>
-            {image ? (
-              <img src={image} alt="" className="w-full h-[150px] object-cover rounded mb-3" />
-            ) : (
-              <div className="border-2 border-dashed border-border rounded h-[150px] grid place-items-center text-ink-muted">
-                <ImageIcon className="w-8 h-8" />
-              </div>
-            )}
-            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFileChange} />
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              disabled={uploading}
-              onClick={() => fileRef.current?.click()}
-            >
-              {uploading ? 'Uploading…' : 'Upload Image'}
-            </Button>
-            <Field label="Or image URL">
-              <Input {...form.register('image')} placeholder="https://…" className="text-xs mt-3" />
-            </Field>
+            <ImageMediaField
+              label="Image"
+              module="attractions"
+              value={image}
+              onChange={(url) =>
+                form.setValue("image", url, { shouldDirty: true })
+              }
+              mediaAssetId={mediaAssetId}
+              onMediaAssetIdChange={setMediaAssetId}
+            />
           </AdminCard>
 
           <AdminCard className="p-5">
             <SectionLabel>Category</SectionLabel>
-            <Select {...form.register('category')}>
+            <Select {...form.register("category")}>
               {ATTRACTION_CATEGORIES.map((c) => (
                 <option key={c} value={c}>
                   {c}
@@ -250,14 +235,18 @@ function AttractionEditor() {
                 <span className="text-sm">Featured</span>
                 <Toggle
                   checked={featured}
-                  onChange={(v) => form.setValue('is_featured', v, { shouldDirty: true })}
+                  onChange={(v) =>
+                    form.setValue("is_featured", v, { shouldDirty: true })
+                  }
                 />
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Published</span>
                 <Toggle
                   checked={published}
-                  onChange={(v) => form.setValue('is_published', v, { shouldDirty: true })}
+                  onChange={(v) =>
+                    form.setValue("is_published", v, { shouldDirty: true })
+                  }
                 />
               </div>
             </div>
@@ -273,12 +262,14 @@ function AttractionEditor() {
               </div>
               <div className="p-3">
                 <div className="text-blue-700 text-sm font-medium truncate">
-                  {title || 'New Attraction'} — Visit Harar
+                  {title || "New Attraction"} — Visit Harar
                 </div>
                 <div className="text-emerald-700 text-[11px]">
                   visitharar.gov.et/attractions/{previewSlug}
                 </div>
-                <div className="text-xs text-ink-muted mt-1 line-clamp-2">{shortDesc}</div>
+                <div className="text-xs text-ink-muted mt-1 line-clamp-2">
+                  {shortDesc}
+                </div>
               </div>
             </div>
           </AdminCard>
@@ -286,7 +277,10 @@ function AttractionEditor() {
       </div>
 
       <div className="mt-6 -mx-8 px-8 py-4 bg-white border-t border-border flex items-center justify-between sticky bottom-0">
-        <Link to="/admin/attractions" className="text-sm text-ink-muted inline-flex items-center gap-1">
+        <Link
+          to="/admin/attractions"
+          className="text-sm text-ink-muted inline-flex items-center gap-1"
+        >
           <ArrowLeft className="w-4 h-4" /> Back
         </Link>
         <div className="flex gap-2">
@@ -297,23 +291,14 @@ function AttractionEditor() {
           >
             Save Draft
           </Button>
-          <Button disabled={saveMutation.isPending} onClick={() => saveMutation.mutate(true)}>
+          <Button
+            disabled={saveMutation.isPending}
+            onClick={() => saveMutation.mutate(true)}
+          >
             Publish
           </Button>
         </div>
       </div>
     </AdminLayout>
-  )
-}
-
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = reader.result as string
-      resolve(result.split(',')[1] ?? '')
-    }
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
+  );
 }

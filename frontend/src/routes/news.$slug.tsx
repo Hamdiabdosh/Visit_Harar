@@ -1,44 +1,54 @@
-import { createFileRoute, Link, notFound } from '@tanstack/react-router'
-import { PublicLayout } from '@/components/PublicLayout'
-import { getAnnouncementBySlug } from '@/lib/announcements-fns'
-import DOMPurify from 'isomorphic-dompurify'
-import { ArrowLeft } from 'lucide-react'
-import { optimizeImage } from '@/lib/cloudinary-url'
-import { buildHeadAsync, excerptFromHtml } from '@/lib/metadata'
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { PublicLayout } from "@/components/PublicLayout";
+import { getAnnouncementBySlug } from "@/lib/announcements-fns";
+import DOMPurify from "isomorphic-dompurify";
+import { ArrowLeft } from "lucide-react";
+import { optimizeImage } from "@/lib/cloudinary-url";
+import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
 
-export const Route = createFileRoute('/news/$slug')({
+export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }) => {
-    const item = await getAnnouncementBySlug({ data: params.slug })
-    if (!item) throw notFound()
-    return { item }
+    const item = await getAnnouncementBySlug({ data: params.slug });
+    if (!item) throw notFound();
+    return { item };
   },
   head: async ({ loaderData }) => {
-    const item = loaderData?.item
+    const item = loaderData?.item;
     return buildHeadAsync({
-      title: item?.title ?? 'News',
-      description: excerptFromHtml(item?.body) ?? 'News from Visit Harar.',
+      title: item?.title ?? "News",
+      description: excerptFromHtml(item?.body) ?? "News from Visit Harar.",
       ogImage: item?.cover_image,
-      canonicalPath: item ? `/news/${item.slug}` : '/news',
-    })
+      canonicalPath: item ? `/news/${item.slug}` : "/news",
+    });
   },
   component: NewsDetail,
-})
+});
 
 function formatDate(input: Date | null) {
-  if (!input) return ''
-  return input.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  if (!input) return "";
+  return input.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 function NewsDetail() {
-  const { item } = Route.useLoaderData()
-  const safeBody = DOMPurify.sanitize(item.body ?? '')
-  const coverSrc = item.cover_image ? optimizeImage(item.cover_image, { width: 1600 }) : null
+  const { item } = Route.useLoaderData();
+  const safeBody = DOMPurify.sanitize(item.body ?? "");
+  const coverSrc = item.cover_image
+    ? optimizeImage(item.cover_image, { width: 1600 })
+    : null;
 
   return (
     <PublicLayout>
       <div className="h-[40vh] bg-surface relative overflow-hidden">
         {coverSrc ? (
-          <img src={coverSrc} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img
+            src={coverSrc}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-brand/20 via-gold/10 to-surface" />
         )}
@@ -55,18 +65,25 @@ function NewsDetail() {
             <span className="px-2 py-0.5 rounded-full bg-brand/10 text-brand font-semibold">
               {item.type}
             </span>
-            <span className="text-ink-muted">{formatDate(item.published_at)}</span>
+            <span className="text-ink-muted">
+              {formatDate(item.published_at)}
+            </span>
           </div>
-          <h1 className="font-serif text-4xl font-bold leading-tight">{item.title}</h1>
-          {item.type === 'Event' && (item.event_date || item.event_location) && (
-            <div className="mt-4 rounded-md border border-border bg-surface px-4 py-3 text-sm">
-              <div className="font-semibold">Event details</div>
-              <div className="text-ink-muted mt-1">
-                {item.event_date ? <div>Date: {item.event_date}</div> : null}
-                {item.event_location ? <div>Location: {item.event_location}</div> : null}
+          <h1 className="font-serif text-4xl font-bold leading-tight">
+            {item.title}
+          </h1>
+          {item.type === "Event" &&
+            (item.event_date || item.event_location) && (
+              <div className="mt-4 rounded-md border border-border bg-surface px-4 py-3 text-sm">
+                <div className="font-semibold">Event details</div>
+                <div className="text-ink-muted mt-1">
+                  {item.event_date ? <div>Date: {item.event_date}</div> : null}
+                  {item.event_location ? (
+                    <div>Location: {item.event_location}</div>
+                  ) : null}
+                </div>
               </div>
-            </div>
-          )}
+            )}
           <div
             className="mt-6 text-ink-muted leading-relaxed prose prose-stone max-w-none"
             dangerouslySetInnerHTML={{ __html: safeBody }}
@@ -74,6 +91,5 @@ function NewsDetail() {
         </div>
       </article>
     </PublicLayout>
-  )
+  );
 }
-

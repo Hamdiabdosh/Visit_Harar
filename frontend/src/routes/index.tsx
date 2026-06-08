@@ -10,7 +10,14 @@ import { getLatestAnnouncements } from "@/lib/announcements-fns";
 import { getGuides } from "@/lib/guides-fns";
 import { getLatestGalleryItems } from "@/lib/gallery-fns";
 import { getPublishedPage } from "@/lib/pages-fns";
-import { Pin, Mountain, Globe, Users, ArrowRight, Landmark } from "lucide-react";
+import {
+  Pin,
+  Mountain,
+  Globe,
+  Users,
+  ArrowRight,
+  Landmark,
+} from "lucide-react";
 import { ErrorBoundary } from "@/components/public/ErrorBoundary";
 import { SectionHeader } from "@/components/public/SectionHeader";
 import { AnnouncementCard } from "@/components/public/AnnouncementCard";
@@ -25,7 +32,14 @@ import { buildHeadAsync } from "@/lib/metadata";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
-    const [hero, featured, latestAnnouncements, featuredGuides, galleryItems, aboutPage] = await Promise.all([
+    const [
+      hero,
+      featured,
+      latestAnnouncements,
+      featuredGuides,
+      galleryItems,
+      aboutPage,
+    ] = await Promise.all([
       getPublishedHero(),
       getAttractions({ data: { featured: true, published: true, limit: 6 } }),
       getLatestAnnouncements({ data: 3 }),
@@ -33,7 +47,14 @@ export const Route = createFileRoute("/")({
       getLatestGalleryItems({ data: 8 }),
       getPublishedPage({ data: "about" }),
     ]);
-    return { hero, featured, latestAnnouncements, featuredGuides, galleryItems, aboutPage };
+    return {
+      hero,
+      featured,
+      latestAnnouncements,
+      featuredGuides,
+      galleryItems,
+      aboutPage,
+    };
   },
   head: async ({ loaderData }) =>
     buildHeadAsync({
@@ -47,7 +68,14 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { hero, featured, latestAnnouncements, featuredGuides, galleryItems, aboutPage } = Route.useLoaderData();
+  const {
+    hero,
+    featured,
+    latestAnnouncements,
+    featuredGuides,
+    galleryItems,
+    aboutPage,
+  } = Route.useLoaderData();
   return (
     <PublicLayout transparentNav>
       <ErrorBoundary>
@@ -79,7 +107,9 @@ function FeaturedAttractions({ items }: { items: AttractionDto[] }) {
   const cards = items.map((a) => ({
     title: a.title,
     slug: a.slug,
-    category: isAttractionCategory(a.category) ? a.category : ("Heritage" as const),
+    category: isAttractionCategory(a.category)
+      ? a.category
+      : ("Heritage" as const),
     short_desc: a.short_desc,
     image: a.image,
   }));
@@ -101,7 +131,10 @@ function FeaturedAttractions({ items }: { items: AttractionDto[] }) {
 }
 
 function stripHtml(html: string) {
-  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function Announcements({ items }: { items: AnnouncementDto[] }) {
@@ -110,10 +143,15 @@ function Announcements({ items }: { items: AnnouncementDto[] }) {
       <div className="max-w-7xl mx-auto px-5 lg:px-8">
         <div className="flex items-end justify-between gap-4 mb-8">
           <div>
-            <div className="text-xs uppercase tracking-wider text-ink-muted font-semibold">Latest</div>
+            <div className="text-xs uppercase tracking-wider text-ink-muted font-semibold">
+              Latest
+            </div>
             <h2 className="font-serif text-3xl font-bold">News & Events</h2>
           </div>
-          <Link to="/news" className="text-sm font-semibold text-brand hover:text-gold">
+          <Link
+            to="/news"
+            className="text-sm font-semibold text-brand hover:text-gold"
+          >
             View all →
           </Link>
         </div>
@@ -140,7 +178,11 @@ function Announcements({ items }: { items: AnnouncementDto[] }) {
 function FeaturedGuides({ items }: { items: GuideDto[] }) {
   return (
     <section className="py-24 max-w-7xl mx-auto px-5 lg:px-8">
-      <SectionHeader eyebrow="Trusted Locals" title="Licensed Guides" subtitle="Bureau-certified guides who grew up inside the walls of Harar." />
+      <SectionHeader
+        eyebrow="Trusted Locals"
+        title="Licensed Guides"
+        subtitle="Bureau-certified guides who grew up inside the walls of Harar."
+      />
       <div className="grid md:grid-cols-3 gap-6">
         {items.map((g) => (
           <GuideCard
@@ -161,6 +203,8 @@ function FeaturedGuides({ items }: { items: GuideDto[] }) {
 }
 
 function GalleryTeaser({ items }: { items: GalleryItemDto[] }) {
+  if (items.length === 0) return null;
+
   return (
     <section className="py-20 bg-surface">
       <div className="max-w-7xl mx-auto px-5 lg:px-8">
@@ -172,12 +216,17 @@ function GalleryTeaser({ items }: { items: GalleryItemDto[] }) {
               url={it.url}
               thumbnail_url={it.thumbnail_url}
               caption={it.caption}
+              alt={it.alt_text}
               type={it.type}
+              albumId={it.album_id}
             />
           ))}
         </div>
         <div className="text-center mt-8">
-          <Link to="/gallery" className="text-brand font-semibold inline-flex items-center gap-1 hover:text-gold">
+          <Link
+            to="/gallery"
+            className="text-brand font-semibold inline-flex items-center gap-1 hover:text-gold"
+          >
             View Full Gallery <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -187,28 +236,39 @@ function GalleryTeaser({ items }: { items: GalleryItemDto[] }) {
 }
 
 function AboutTeaser({ page }: { page: PageDto | null }) {
-  const content = (page?.content ?? {}) as any;
-  const intro = typeof content.intro_text === "string" ? content.intro_text : null;
-  const facts: { label: string; value: string }[] = Array.isArray(content.quick_facts) ? content.quick_facts : [];
+  const content = (page?.content ?? {}) as Record<string, unknown>;
+  const intro =
+    typeof content.intro_text === "string" ? content.intro_text : null;
+  const facts: { label: string; value: string }[] = Array.isArray(
+    content.quick_facts,
+  )
+    ? content.quick_facts
+    : [];
 
   return (
     <section className="py-24 max-w-7xl mx-auto px-5 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
       <div>
-        <div className="text-xs uppercase tracking-[0.2em] text-gold font-semibold mb-3">About Harar</div>
-        <h2 className="font-serif text-4xl font-bold text-ink leading-tight">The Walled City of Saints</h2>
+        <div className="text-xs uppercase tracking-[0.2em] text-gold font-semibold mb-3">
+          About Harar
+        </div>
+        <h2 className="font-serif text-4xl font-bold text-ink leading-tight">
+          The Walled City of Saints
+        </h2>
         <div className="mt-5 space-y-4 text-ink-muted leading-relaxed">
           {intro ? (
             <p className="line-clamp-4">{stripHtml(intro)}</p>
           ) : (
             <>
               <p>
-                Founded in the 7th century, Harar grew into the most important trading and Islamic centre on the Horn of
-                Africa. Its fortified walls were built in the 16th century to defend against attack — and they remain
-                largely intact today.
+                Founded in the 7th century, Harar grew into the most important
+                trading and Islamic centre on the Horn of Africa. Its fortified
+                walls were built in the 16th century to defend against attack —
+                and they remain largely intact today.
               </p>
               <p>
-                Step inside the gates and time slows. Bright doors, narrow alleys, calls to prayer and the smell of incense
-                and freshly roasted coffee greet you.
+                Step inside the gates and time slows. Bright doors, narrow
+                alleys, calls to prayer and the smell of incense and freshly
+                roasted coffee greet you.
               </p>
             </>
           )}
@@ -225,7 +285,9 @@ function AboutTeaser({ page }: { page: PageDto | null }) {
       </div>
       <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
         {(facts.length > 0
-          ? facts.slice(0, 4).map((f) => ({ icon: Globe, label: `${f.label}: ${f.value}` }))
+          ? facts
+              .slice(0, 4)
+              .map((f) => ({ icon: Globe, label: `${f.label}: ${f.value}` }))
           : [
               { icon: Mountain, label: "1,885m elevation" },
               { icon: Landmark, label: "1,000+ years old" },
@@ -233,7 +295,10 @@ function AboutTeaser({ page }: { page: PageDto | null }) {
               { icon: Users, label: "~99,000 residents" },
             ]
         ).map(({ icon: Icon, label }) => (
-          <div key={label} className="flex items-center gap-3 p-4 rounded-lg bg-surface">
+          <div
+            key={label}
+            className="flex items-center gap-3 p-4 rounded-lg bg-surface"
+          >
             <Icon className="w-5 h-5 text-brand" />
             <span className="text-sm font-medium text-ink">{label}</span>
           </div>
@@ -247,15 +312,24 @@ function CTABanner() {
   return (
     <section className="py-20 bg-brand-dark text-white">
       <div className="max-w-4xl mx-auto px-5 text-center">
-        <h2 className="font-serif text-4xl md:text-5xl font-bold text-gold">Ready to Experience Harar?</h2>
+        <h2 className="font-serif text-4xl md:text-5xl font-bold text-gold">
+          Ready to Experience Harar?
+        </h2>
         <p className="mt-4 text-white/75 max-w-xl mx-auto">
-          Book a licensed local guide and step into one of the world's most extraordinary living cities.
+          Book a licensed local guide and step into one of the world's most
+          extraordinary living cities.
         </p>
         <div className="mt-8 flex justify-center gap-3 flex-wrap">
-          <Link to="/plan-your-trip" className="px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark hover:text-white transition-colors">
+          <Link
+            to="/plan-your-trip"
+            className="px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark hover:text-white transition-colors"
+          >
             Plan Your Visit
           </Link>
-          <Link to="/guides" className="px-6 py-3 rounded-md border border-white/40 hover:bg-white/10 transition-colors font-medium">
+          <Link
+            to="/guides"
+            className="px-6 py-3 rounded-md border border-white/40 hover:bg-white/10 transition-colors font-medium"
+          >
             Browse Guides
           </Link>
         </div>
@@ -263,5 +337,3 @@ function CTABanner() {
     </section>
   );
 }
-
-

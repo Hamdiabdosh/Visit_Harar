@@ -1,10 +1,10 @@
-import { z } from 'zod'
-import { emailSchema, slugSchema, urlSchema } from './common'
+import { z } from "zod";
+import { cloudinaryUrlSchema, emailSchema, slugSchema } from "./common";
 
 export const guideInputSchema = z.object({
   name: z.string().min(1).max(200),
   slug: slugSchema.optional(),
-  photo: urlSchema.optional(),
+  photo: cloudinaryUrlSchema.optional(),
   bio: z.string().optional(),
   languages: z.array(z.string().min(1).max(50)).default([]),
   specialties: z.array(z.string().min(1).max(50)).default([]),
@@ -15,6 +15,6 @@ export const guideInputSchema = z.object({
   is_available: z.boolean().default(true),
   is_published: z.boolean().default(false),
   sort_order: z.number().int().default(0),
-})
+});
 
-export type GuideInput = z.infer<typeof guideInputSchema>
+export type GuideInput = z.infer<typeof guideInputSchema>;

@@ -78,15 +78,15 @@
   --radius: 0.625rem;
   --brand: oklch(0.48 0.09 148);
   --brand-dark: oklch(0.32 0.07 148);
-  --gold: oklch(0.74 0.10 80);
+  --gold: oklch(0.74 0.1 80);
   --gold-dark: oklch(0.62 0.11 75);
   --surface: oklch(0.975 0.005 90);
   --ink: oklch(0.18 0.005 90);
   --ink-muted: oklch(0.48 0.01 90);
   --status-pending: oklch(0.78 0.16 75);
   --status-confirmed: oklch(0.62 0.17 145);
-  --status-declined: oklch(0.60 0.22 25);
-  --status-cancelled: oklch(0.70 0 0);
+  --status-declined: oklch(0.6 0.22 25);
+  --status-cancelled: oklch(0.7 0 0);
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -167,7 +167,13 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, h4, h5, h6, .font-serif {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-serif {
     font-family: var(--font-serif);
   }
 }

@@ -1,55 +1,60 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { authClient } from '@/lib/auth-client'
-import { redirectIfAuthenticated } from '@/lib/auth-guard'
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { authClient } from "@/lib/auth-client";
+import { redirectIfAuthenticated } from "@/lib/auth-guard";
 
 const schema = z
   .object({
-    password: z.string().min(8, 'Password must be at least 8 characters'),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     confirm: z.string(),
   })
   .refine((d) => d.password === d.confirm, {
-    message: 'Passwords do not match',
-    path: ['confirm'],
-  })
+    message: "Passwords do not match",
+    path: ["confirm"],
+  });
 
-type FormData = z.infer<typeof schema>
+type FormData = z.infer<typeof schema>;
 
-export const Route = createFileRoute('/admin/reset-password')({
+export const Route = createFileRoute("/admin/reset-password")({
   validateSearch: (s: Record<string, unknown>) => ({
-    token: (s.token as string) ?? '',
+    token: (s.token as string) ?? "",
   }),
   beforeLoad: redirectIfAuthenticated(),
   component: ResetPassword,
-})
+});
 
 function ResetPassword() {
-  const navigate = useNavigate()
-  const { token } = Route.useSearch()
+  const navigate = useNavigate();
+  const { token } = Route.useSearch();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
-  } = useForm<FormData>({ resolver: zodResolver(schema) })
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit = handleSubmit(async ({ password }) => {
     if (!token) {
-      setError('root', { message: 'Invalid or missing reset token.' })
-      return
+      setError("root", { message: "Invalid or missing reset token." });
+      return;
     }
-    const result = await authClient.resetPassword({ newPassword: password, token })
+    const result = await authClient.resetPassword({
+      newPassword: password,
+      token,
+    });
     if (result.error) {
-      setError('root', {
-        message: result.error.message ?? 'Could not reset password. The link may have expired.',
-      })
-      return
+      setError("root", {
+        message:
+          result.error.message ??
+          "Could not reset password. The link may have expired.",
+      });
+      return;
     }
-    await navigate({ to: '/admin/login' })
-  })
+    await navigate({ to: "/admin/login" });
+  });
 
   return (
     <div className="min-h-screen grid place-items-center bg-brand-dark px-4">
@@ -70,22 +75,28 @@ function ResetPassword() {
           <input
             type="password"
             className="w-full rounded border border-border px-3 py-2 text-sm"
-            {...register('password')}
+            {...register("password")}
           />
           {errors.password && (
-            <span className="text-xs text-red-600 mt-1 block">{errors.password.message}</span>
+            <span className="text-xs text-red-600 mt-1 block">
+              {errors.password.message}
+            </span>
           )}
         </label>
 
         <label className="block">
-          <span className="block text-xs font-semibold mb-1">Confirm password</span>
+          <span className="block text-xs font-semibold mb-1">
+            Confirm password
+          </span>
           <input
             type="password"
             className="w-full rounded border border-border px-3 py-2 text-sm"
-            {...register('confirm')}
+            {...register("confirm")}
           />
           {errors.confirm && (
-            <span className="text-xs text-red-600 mt-1 block">{errors.confirm.message}</span>
+            <span className="text-xs text-red-600 mt-1 block">
+              {errors.confirm.message}
+            </span>
           )}
         </label>
 
@@ -94,7 +105,7 @@ function ResetPassword() {
           disabled={isSubmitting}
           className="w-full px-4 py-2.5 rounded-md bg-brand text-white font-semibold hover:bg-brand-dark disabled:opacity-60"
         >
-          {isSubmitting ? 'Saving…' : 'Update password'}
+          {isSubmitting ? "Saving…" : "Update password"}
         </button>
 
         <p className="text-center text-xs">
@@ -104,5 +115,5 @@ function ResetPassword() {
         </p>
       </form>
     </div>
-  )
+  );
 }

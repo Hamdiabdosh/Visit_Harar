@@ -1,13 +1,13 @@
-import { X } from 'lucide-react'
+import { X } from "lucide-react";
 
 export function TagInput({
   value,
   onChange,
-  placeholder = 'Type and press Enter…',
+  placeholder = "Type and press Enter…",
 }: {
-  value: string[]
-  onChange: (next: string[]) => void
-  placeholder?: string
+  value: string[];
+  onChange: (next: string[]) => void;
+  placeholder?: string;
 }) {
   return (
     <div className="rounded border border-border bg-white px-2 py-1.5 flex flex-wrap gap-1.5 min-h-[40px]">
@@ -29,18 +29,17 @@ export function TagInput({
       ))}
       <input
         onKeyDown={(e) => {
-          const target = e.target as HTMLInputElement
-          if (e.key === 'Enter' && target.value.trim()) {
-            e.preventDefault()
-            const tag = target.value.trim()
-            if (!value.includes(tag)) onChange([...value, tag])
-            target.value = ''
+          const target = e.target as HTMLInputElement;
+          if (e.key === "Enter" && target.value.trim()) {
+            e.preventDefault();
+            const tag = target.value.trim();
+            if (!value.includes(tag)) onChange([...value, tag]);
+            target.value = "";
           }
         }}
         placeholder={placeholder}
         className="flex-1 min-w-[140px] outline-none px-1 text-sm"
       />
     </div>
-  )
+  );
 }
-

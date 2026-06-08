@@ -1,17 +1,17 @@
-import { Component } from 'react'
+import { Component } from "react";
 
 export class ErrorBoundary extends Component<
   { fallback?: React.ReactNode; children: React.ReactNode },
   { hasError: boolean }
 > {
-  state = { hasError: false }
+  state = { hasError: false };
 
   static getDerivedStateFromError() {
-    return { hasError: true }
+    return { hasError: true };
   }
 
   componentDidCatch(err: unknown) {
-    console.error('[SectionErrorBoundary]', err)
+    console.error("[SectionErrorBoundary]", err);
   }
 
   render() {
@@ -22,9 +22,8 @@ export class ErrorBoundary extends Component<
             This section is temporarily unavailable.
           </div>
         )
-      )
+      );
     }
-    return this.props.children
+    return this.props.children;
   }
 }
-

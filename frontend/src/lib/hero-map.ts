@@ -1,29 +1,29 @@
-import type { HeroContent } from '@/lib/types'
-import type { HeroInput } from '@/lib/validators/hero'
+import type { HeroContent } from "@/lib/types";
+import type { HeroInput } from "@/lib/validators/hero";
 
 /** API / form shape (snake_case) for hero content. */
 export type HeroDto = {
-  id: string
-  badge_text: string | null
-  headline: string | null
-  headline_italic: string | null
-  subheading: string | null
-  cta_primary_text: string | null
-  cta_primary_url: string | null
-  cta_ghost_text: string | null
-  cta_ghost_url: string | null
-  background_image: string | null
-  stat_1_number: string | null
-  stat_1_label: string | null
-  stat_2_number: string | null
-  stat_2_label: string | null
-  stat_3_number: string | null
-  stat_3_label: string | null
-  is_published: boolean
-  updated_by: string | null
-  updated_at: Date
-  updated_by_name?: string | null
-}
+  id: string;
+  badge_text: string | null;
+  headline: string | null;
+  headline_italic: string | null;
+  subheading: string | null;
+  cta_primary_text: string | null;
+  cta_primary_url: string | null;
+  cta_ghost_text: string | null;
+  cta_ghost_url: string | null;
+  background_image: string | null;
+  stat_1_number: string | null;
+  stat_1_label: string | null;
+  stat_2_number: string | null;
+  stat_2_label: string | null;
+  stat_3_number: string | null;
+  stat_3_label: string | null;
+  is_published: boolean;
+  updated_by: string | null;
+  updated_at: Date;
+  updated_by_name?: string | null;
+};
 
 export function rowToHeroDto(
   row: HeroContent,
@@ -50,7 +50,7 @@ export function rowToHeroDto(
     updated_by: row.updatedBy,
     updated_at: row.updatedAt,
     updated_by_name: updatedByName ?? null,
-  }
+  };
 }
 
 export function inputToRowValues(input: HeroInput, userId: string) {
@@ -73,32 +73,32 @@ export function inputToRowValues(input: HeroInput, userId: string) {
     isPublished: input.is_published ?? false,
     updatedBy: userId,
     updatedAt: new Date(),
-  }
+  };
 }
 
 export const defaultHeroInput: HeroInput = {
-  badge_text: 'UNESCO World Heritage Site · Inscribed 2006',
-  headline: 'Discover',
-  headline_italic: 'Harar,\nCity of Saints',
+  badge_text: "UNESCO World Heritage Site · Inscribed 2006",
+  headline: "Discover",
+  headline_italic: "Harar,\nCity of Saints",
   subheading:
     "Africa's fourth holiest city in Islam — a living medieval walled city of ancient mosques, vibrant markets and the legendary hyena men, nestled in the highlands of eastern Ethiopia.",
-  cta_primary_text: 'Plan Your Visit',
-  cta_primary_url: '/plan-your-trip',
-  cta_ghost_text: 'Watch the City',
-  cta_ghost_url: '#',
+  cta_primary_text: "Plan Your Visit",
+  cta_primary_url: "/plan-your-trip",
+  cta_ghost_text: "Watch the City",
+  cta_ghost_url: "#",
   background_image: undefined,
-  stat_1_number: '82',
-  stat_1_label: 'Mosques',
-  stat_2_number: '102',
-  stat_2_label: 'Shrines',
-  stat_3_number: '1,000+',
-  stat_3_label: 'Years of History',
+  stat_1_number: "82",
+  stat_1_label: "Mosques",
+  stat_2_number: "102",
+  stat_2_label: "Shrines",
+  stat_3_number: "1,000+",
+  stat_3_label: "Years of History",
   is_published: false,
-}
+};
 
 export function dtoToPreviewProps(dto: Partial<HeroInput> | HeroDto) {
   const headlineItalic =
-    'headline_italic' in dto ? dto.headline_italic : undefined
+    "headline_italic" in dto ? dto.headline_italic : undefined;
   return {
     badgeText: dto.badge_text ?? defaultHeroInput.badge_text,
     headline: dto.headline ?? defaultHeroInput.headline,
@@ -123,5 +123,5 @@ export function dtoToPreviewProps(dto: Partial<HeroInput> | HeroDto) {
         label: dto.stat_3_label ?? defaultHeroInput.stat_3_label!,
       },
     ],
-  }
+  };
 }

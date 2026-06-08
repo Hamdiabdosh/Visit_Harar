@@ -1,13 +1,13 @@
-import { Link } from '@tanstack/react-router'
+import { Link } from "@tanstack/react-router";
 
 export function ComingSoon({
-  title = 'Coming soon',
-  message = 'This page will be published soon.',
-  backTo = '/',
+  title = "Coming soon",
+  message = "This page will be published soon.",
+  backTo = "/",
 }: {
-  title?: string
-  message?: string
-  backTo?: string
+  title?: string;
+  message?: string;
+  backTo?: string;
 }) {
   return (
     <section className="max-w-3xl mx-auto px-5 lg:px-8 py-16">
@@ -24,6 +24,5 @@ export function ComingSoon({
         </div>
       </div>
     </section>
-  )
+  );
 }
-

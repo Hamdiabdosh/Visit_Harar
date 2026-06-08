@@ -35,12 +35,15 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/news",
           "/contact",
           "/book",
+          "/book/status",
         ];
 
         const [attractions, guides, announcements, albums] = await Promise.all([
           getAttractions({ data: { published: true } }),
           getGuides({ data: { published: true } }),
-          getAnnouncements({ data: { publishedOnly: true, page: 1, perPage: 500 } }),
+          getAnnouncements({
+            data: { publishedOnly: true, page: 1, perPage: 500 },
+          }),
           getPublishedAlbums(),
         ]);
 

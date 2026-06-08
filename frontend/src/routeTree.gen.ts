@@ -29,6 +29,7 @@ import { Route as NewsIdRouteImport } from './routes/news.$id'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as GuidesIdRouteImport } from './routes/guides.$id'
 import { Route as GalleryIdRouteImport } from './routes/gallery.$id'
+import { Route as BookStatusRouteImport } from './routes/book.status'
 import { Route as AttractionsSlugRouteImport } from './routes/attractions.$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
@@ -45,6 +46,10 @@ import { Route as AdminBookingsRouteImport } from './routes/admin/bookings'
 import { Route as AdminAuditRouteImport } from './routes/admin/audit'
 import { Route as AdminAttractionsRouteImport } from './routes/admin/attractions'
 import { Route as AdminAnnouncementsRouteImport } from './routes/admin/announcements'
+import { Route as AdminGuidesIndexRouteImport } from './routes/admin/guides.index'
+import { Route as AdminGalleryIndexRouteImport } from './routes/admin/gallery.index'
+import { Route as AdminBookingsIndexRouteImport } from './routes/admin/bookings.index'
+import { Route as AdminAttractionsIndexRouteImport } from './routes/admin/attractions.index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AdminPagesPageKeyRouteImport } from './routes/admin/pages.$pageKey'
 import { Route as AdminGuidesIdRouteImport } from './routes/admin/guides.$id'
@@ -153,6 +158,11 @@ const GalleryIdRoute = GalleryIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => GalleryRoute,
 } as any)
+const BookStatusRoute = BookStatusRouteImport.update({
+  id: '/status',
+  path: '/status',
+  getParentRoute: () => BookRoute,
+} as any)
 const AttractionsSlugRoute = AttractionsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -233,6 +243,26 @@ const AdminAnnouncementsRoute = AdminAnnouncementsRouteImport.update({
   path: '/announcements',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminGuidesIndexRoute = AdminGuidesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminGuidesRoute,
+} as any)
+const AdminGalleryIndexRoute = AdminGalleryIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminGalleryRoute,
+} as any)
+const AdminBookingsIndexRoute = AdminBookingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminBookingsRoute,
+} as any)
+const AdminAttractionsIndexRoute = AdminAttractionsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminAttractionsRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -274,7 +304,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/attractions': typeof AttractionsRouteWithChildren
-  '/book': typeof BookRoute
+  '/book': typeof BookRouteWithChildren
   '/contact': typeof ContactRoute
   '/culture': typeof CultureRoute
   '/gallery': typeof GalleryRouteWithChildren
@@ -300,6 +330,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/attractions/$slug': typeof AttractionsSlugRoute
+  '/book/status': typeof BookStatusRoute
   '/gallery/$id': typeof GalleryIdRoute
   '/guides/$id': typeof GuidesIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -313,12 +344,16 @@ export interface FileRoutesByFullPath {
   '/admin/guides/$id': typeof AdminGuidesIdRoute
   '/admin/pages/$pageKey': typeof AdminPagesPageKeyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/attractions/': typeof AdminAttractionsIndexRoute
+  '/admin/bookings/': typeof AdminBookingsIndexRoute
+  '/admin/gallery/': typeof AdminGalleryIndexRoute
+  '/admin/guides/': typeof AdminGuidesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/attractions': typeof AttractionsRouteWithChildren
-  '/book': typeof BookRoute
+  '/book': typeof BookRouteWithChildren
   '/contact': typeof ContactRoute
   '/culture': typeof CultureRoute
   '/gallery': typeof GalleryRouteWithChildren
@@ -329,13 +364,9 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/announcements': typeof AdminAnnouncementsRouteWithChildren
-  '/admin/attractions': typeof AdminAttractionsRouteWithChildren
   '/admin/audit': typeof AdminAuditRoute
-  '/admin/bookings': typeof AdminBookingsRouteWithChildren
   '/admin/contact': typeof AdminContactRoute
   '/admin/forgot-password': typeof AdminForgotPasswordRoute
-  '/admin/gallery': typeof AdminGalleryRouteWithChildren
-  '/admin/guides': typeof AdminGuidesRouteWithChildren
   '/admin/hero': typeof AdminHeroRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
@@ -344,6 +375,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/attractions/$slug': typeof AttractionsSlugRoute
+  '/book/status': typeof BookStatusRoute
   '/gallery/$id': typeof GalleryIdRoute
   '/guides/$id': typeof GuidesIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -357,6 +389,10 @@ export interface FileRoutesByTo {
   '/admin/guides/$id': typeof AdminGuidesIdRoute
   '/admin/pages/$pageKey': typeof AdminPagesPageKeyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/attractions': typeof AdminAttractionsIndexRoute
+  '/admin/bookings': typeof AdminBookingsIndexRoute
+  '/admin/gallery': typeof AdminGalleryIndexRoute
+  '/admin/guides': typeof AdminGuidesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -364,7 +400,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/attractions': typeof AttractionsRouteWithChildren
-  '/book': typeof BookRoute
+  '/book': typeof BookRouteWithChildren
   '/contact': typeof ContactRoute
   '/culture': typeof CultureRoute
   '/gallery': typeof GalleryRouteWithChildren
@@ -390,6 +426,7 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/attractions/$slug': typeof AttractionsSlugRoute
+  '/book/status': typeof BookStatusRoute
   '/gallery/$id': typeof GalleryIdRoute
   '/guides/$id': typeof GuidesIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
@@ -403,6 +440,10 @@ export interface FileRoutesById {
   '/admin/guides/$id': typeof AdminGuidesIdRoute
   '/admin/pages/$pageKey': typeof AdminPagesPageKeyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/attractions/': typeof AdminAttractionsIndexRoute
+  '/admin/bookings/': typeof AdminBookingsIndexRoute
+  '/admin/gallery/': typeof AdminGalleryIndexRoute
+  '/admin/guides/': typeof AdminGuidesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -437,6 +478,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/users'
     | '/attractions/$slug'
+    | '/book/status'
     | '/gallery/$id'
     | '/guides/$id'
     | '/guides/$slug'
@@ -450,6 +492,10 @@ export interface FileRouteTypes {
     | '/admin/guides/$id'
     | '/admin/pages/$pageKey'
     | '/api/auth/$'
+    | '/admin/attractions/'
+    | '/admin/bookings/'
+    | '/admin/gallery/'
+    | '/admin/guides/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -466,13 +512,9 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/admin/announcements'
-    | '/admin/attractions'
     | '/admin/audit'
-    | '/admin/bookings'
     | '/admin/contact'
     | '/admin/forgot-password'
-    | '/admin/gallery'
-    | '/admin/guides'
     | '/admin/hero'
     | '/admin/login'
     | '/admin/media'
@@ -481,6 +523,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/users'
     | '/attractions/$slug'
+    | '/book/status'
     | '/gallery/$id'
     | '/guides/$id'
     | '/guides/$slug'
@@ -494,6 +537,10 @@ export interface FileRouteTypes {
     | '/admin/guides/$id'
     | '/admin/pages/$pageKey'
     | '/api/auth/$'
+    | '/admin/attractions'
+    | '/admin/bookings'
+    | '/admin/gallery'
+    | '/admin/guides'
   id:
     | '__root__'
     | '/'
@@ -526,6 +573,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/users'
     | '/attractions/$slug'
+    | '/book/status'
     | '/gallery/$id'
     | '/guides/$id'
     | '/guides/$slug'
@@ -539,6 +587,10 @@ export interface FileRouteTypes {
     | '/admin/guides/$id'
     | '/admin/pages/$pageKey'
     | '/api/auth/$'
+    | '/admin/attractions/'
+    | '/admin/bookings/'
+    | '/admin/gallery/'
+    | '/admin/guides/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -546,7 +598,7 @@ export interface RootRouteChildren {
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AttractionsRoute: typeof AttractionsRouteWithChildren
-  BookRoute: typeof BookRoute
+  BookRoute: typeof BookRouteWithChildren
   ContactRoute: typeof ContactRoute
   CultureRoute: typeof CultureRoute
   GalleryRoute: typeof GalleryRouteWithChildren
@@ -701,6 +753,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GalleryIdRouteImport
       parentRoute: typeof GalleryRoute
     }
+    '/book/status': {
+      id: '/book/status'
+      path: '/status'
+      fullPath: '/book/status'
+      preLoaderRoute: typeof BookStatusRouteImport
+      parentRoute: typeof BookRoute
+    }
     '/attractions/$slug': {
       id: '/attractions/$slug'
       path: '/$slug'
@@ -813,6 +872,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAnnouncementsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/guides/': {
+      id: '/admin/guides/'
+      path: '/'
+      fullPath: '/admin/guides/'
+      preLoaderRoute: typeof AdminGuidesIndexRouteImport
+      parentRoute: typeof AdminGuidesRoute
+    }
+    '/admin/gallery/': {
+      id: '/admin/gallery/'
+      path: '/'
+      fullPath: '/admin/gallery/'
+      preLoaderRoute: typeof AdminGalleryIndexRouteImport
+      parentRoute: typeof AdminGalleryRoute
+    }
+    '/admin/bookings/': {
+      id: '/admin/bookings/'
+      path: '/'
+      fullPath: '/admin/bookings/'
+      preLoaderRoute: typeof AdminBookingsIndexRouteImport
+      parentRoute: typeof AdminBookingsRoute
+    }
+    '/admin/attractions/': {
+      id: '/admin/attractions/'
+      path: '/'
+      fullPath: '/admin/attractions/'
+      preLoaderRoute: typeof AdminAttractionsIndexRouteImport
+      parentRoute: typeof AdminAttractionsRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -878,10 +965,12 @@ const AdminAnnouncementsRouteWithChildren =
 
 interface AdminAttractionsRouteChildren {
   AdminAttractionsIdRoute: typeof AdminAttractionsIdRoute
+  AdminAttractionsIndexRoute: typeof AdminAttractionsIndexRoute
 }
 
 const AdminAttractionsRouteChildren: AdminAttractionsRouteChildren = {
   AdminAttractionsIdRoute: AdminAttractionsIdRoute,
+  AdminAttractionsIndexRoute: AdminAttractionsIndexRoute,
 }
 
 const AdminAttractionsRouteWithChildren =
@@ -889,10 +978,12 @@ const AdminAttractionsRouteWithChildren =
 
 interface AdminBookingsRouteChildren {
   AdminBookingsRefRoute: typeof AdminBookingsRefRoute
+  AdminBookingsIndexRoute: typeof AdminBookingsIndexRoute
 }
 
 const AdminBookingsRouteChildren: AdminBookingsRouteChildren = {
   AdminBookingsRefRoute: AdminBookingsRefRoute,
+  AdminBookingsIndexRoute: AdminBookingsIndexRoute,
 }
 
 const AdminBookingsRouteWithChildren = AdminBookingsRoute._addFileChildren(
@@ -901,10 +992,12 @@ const AdminBookingsRouteWithChildren = AdminBookingsRoute._addFileChildren(
 
 interface AdminGalleryRouteChildren {
   AdminGalleryAlbumIdRoute: typeof AdminGalleryAlbumIdRoute
+  AdminGalleryIndexRoute: typeof AdminGalleryIndexRoute
 }
 
 const AdminGalleryRouteChildren: AdminGalleryRouteChildren = {
   AdminGalleryAlbumIdRoute: AdminGalleryAlbumIdRoute,
+  AdminGalleryIndexRoute: AdminGalleryIndexRoute,
 }
 
 const AdminGalleryRouteWithChildren = AdminGalleryRoute._addFileChildren(
@@ -913,10 +1006,12 @@ const AdminGalleryRouteWithChildren = AdminGalleryRoute._addFileChildren(
 
 interface AdminGuidesRouteChildren {
   AdminGuidesIdRoute: typeof AdminGuidesIdRoute
+  AdminGuidesIndexRoute: typeof AdminGuidesIndexRoute
 }
 
 const AdminGuidesRouteChildren: AdminGuidesRouteChildren = {
   AdminGuidesIdRoute: AdminGuidesIdRoute,
+  AdminGuidesIndexRoute: AdminGuidesIndexRoute,
 }
 
 const AdminGuidesRouteWithChildren = AdminGuidesRoute._addFileChildren(
@@ -989,6 +1084,16 @@ const AttractionsRouteWithChildren = AttractionsRoute._addFileChildren(
   AttractionsRouteChildren,
 )
 
+interface BookRouteChildren {
+  BookStatusRoute: typeof BookStatusRoute
+}
+
+const BookRouteChildren: BookRouteChildren = {
+  BookStatusRoute: BookStatusRoute,
+}
+
+const BookRouteWithChildren = BookRoute._addFileChildren(BookRouteChildren)
+
 interface GalleryRouteChildren {
   GalleryIdRoute: typeof GalleryIdRoute
 }
@@ -1030,7 +1135,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRouteRoute: AdminRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AttractionsRoute: AttractionsRouteWithChildren,
-  BookRoute: BookRoute,
+  BookRoute: BookRouteWithChildren,
   ContactRoute: ContactRoute,
   CultureRoute: CultureRoute,
   GalleryRoute: GalleryRouteWithChildren,

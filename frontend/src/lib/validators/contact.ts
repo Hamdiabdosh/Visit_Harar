@@ -1,10 +1,10 @@
-import { z } from 'zod'
-import { emailSchema, urlSchema } from './common'
+import { z } from "zod";
+import { emailSchema, urlSchema } from "./common";
 
 export const workingHoursRowSchema = z.object({
   day: z.string().min(1).max(50),
   hours: z.string().min(1).max(100),
-})
+});
 
 export const contactInputSchema = z.object({
   office_name: z.string().max(200).optional(),
@@ -22,6 +22,6 @@ export const contactInputSchema = z.object({
   twitter_url: urlSchema.optional(),
   instagram_url: urlSchema.optional(),
   is_published: z.boolean().default(false),
-})
+});
 
-export type ContactInput = z.infer<typeof contactInputSchema>
+export type ContactInput = z.infer<typeof contactInputSchema>;

@@ -1,80 +1,80 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { AdminLayout, AdminCard, Toggle } from '@/components/AdminLayout'
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
+import { AdminLayout, AdminCard, Toggle } from "@/components/AdminLayout";
 import {
   deleteAnnouncement,
   getAnnouncements,
   pinAnnouncement,
   togglePublished,
   unpinAnnouncement,
-} from '@/lib/announcements-fns'
-import { Pin, Pencil, Trash2, Plus } from 'lucide-react'
+} from "@/lib/announcements-fns";
+import { Pin, Pencil, Trash2, Plus } from "lucide-react";
 
-export const Route = createFileRoute('/admin/announcements')({
+export const Route = createFileRoute("/admin/announcements")({
   component: AnnouncementsAdmin,
-})
+});
 
-const tabs = ['All', 'News', 'Event', 'Notice'] as const
+const tabs = ["All", "News", "Event", "Notice"] as const;
 
 function AnnouncementsAdmin() {
-  const queryClient = useQueryClient()
-  const [tab, setTab] = useState<(typeof tabs)[number]>('All')
+  const queryClient = useQueryClient();
+  const [tab, setTab] = useState<(typeof tabs)[number]>("All");
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['admin', 'announcements', tab],
+    queryKey: ["admin", "announcements", tab],
     queryFn: () =>
       getAnnouncements({
         data: {
-          type: tab === 'All' ? undefined : tab,
+          type: tab === "All" ? undefined : tab,
           publishedOnly: false,
           page: 1,
           perPage: 50,
         },
       }),
     retry: false,
-  })
+  });
 
-  const items = data?.items ?? []
+  const items = data?.items ?? [];
 
   const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: ['admin', 'announcements'] })
+    queryClient.invalidateQueries({ queryKey: ["admin", "announcements"] });
 
   const pub = useMutation({
     mutationFn: (id: string) => togglePublished({ data: id }),
     onSuccess: () => {
-      invalidate()
-      queryClient.invalidateQueries({ queryKey: ['public', 'news'] })
+      invalidate();
+      queryClient.invalidateQueries({ queryKey: ["public", "news"] });
     },
-    onError: () => toast.error('Failed to toggle published'),
-  })
+    onError: () => toast.error("Failed to toggle published"),
+  });
 
   const del = useMutation({
     mutationFn: (id: string) => deleteAnnouncement({ data: id }),
     onSuccess: () => {
-      invalidate()
-      queryClient.invalidateQueries({ queryKey: ['public', 'news'] })
-      toast.success('Deleted')
+      invalidate();
+      queryClient.invalidateQueries({ queryKey: ["public", "news"] });
+      toast.success("Deleted");
     },
-    onError: () => toast.error('Failed to delete'),
-  })
+    onError: () => toast.error("Failed to delete"),
+  });
 
   const pin = useMutation({
     mutationFn: (id: string) => pinAnnouncement({ data: id }),
     onSuccess: () => invalidate(),
-    onError: () => toast.error('Failed to pin'),
-  })
+    onError: () => toast.error("Failed to pin"),
+  });
 
   const unpin = useMutation({
     mutationFn: (id: string) => unpinAnnouncement({ data: id }),
     onSuccess: () => invalidate(),
-    onError: () => toast.error('Failed to unpin'),
-  })
+    onError: () => toast.error("Failed to unpin"),
+  });
 
   function onDelete(id: string, title: string) {
     if (window.confirm(`Delete "${title}"? This cannot be undone.`)) {
-      del.mutate(id)
+      del.mutate(id);
     }
   }
 
@@ -85,7 +85,7 @@ function AnnouncementsAdmin() {
       action={
         <Link
           to="/admin/announcements/$id"
-          params={{ id: 'new' }}
+          params={{ id: "new" }}
           className="px-4 py-2 rounded-md bg-brand text-white text-sm font-semibold inline-flex items-center gap-1.5 hover:bg-brand-dark"
         >
           <Plus className="w-4 h-4" /> New Announcement
@@ -98,18 +98,20 @@ function AnnouncementsAdmin() {
             key={t}
             onClick={() => setTab(t)}
             className={`px-3 py-1.5 rounded-md text-sm font-medium ${
-              tab === t ? 'bg-brand text-white' : 'hover:bg-surface'
+              tab === t ? "bg-brand text-white" : "hover:bg-surface"
             }`}
           >
             {t}
-            {t !== 'All' ? 's' : ''}
+            {t !== "All" ? "s" : ""}
           </button>
         ))}
       </AdminCard>
 
       {isError ? (
         <AdminCard className="p-6 border-amber-200 bg-amber-50">
-          <p className="text-sm text-amber-800">Could not load announcements.</p>
+          <p className="text-sm text-amber-800">
+            Could not load announcements.
+          </p>
         </AdminCard>
       ) : isLoading ? (
         <p className="text-sm text-ink-muted">Loading…</p>
@@ -129,21 +131,32 @@ function AnnouncementsAdmin() {
             </thead>
             <tbody>
               {items.map((a) => (
-                <tr key={a.id} className="border-b border-border last:border-0 hover:bg-surface">
+                <tr
+                  key={a.id}
+                  className="border-b border-border last:border-0 hover:bg-surface"
+                >
                   <td className="p-3 text-center">
                     <button
                       type="button"
                       className="p-1 rounded hover:bg-white"
-                      aria-label={a.is_pinned ? 'Unpin' : 'Pin'}
-                      onClick={() => (a.is_pinned ? unpin.mutate(a.id) : pin.mutate(a.id))}
-                      title={a.is_pinned ? 'Unpin' : 'Pin'}
+                      aria-label={a.is_pinned ? "Unpin" : "Pin"}
+                      onClick={() =>
+                        a.is_pinned ? unpin.mutate(a.id) : pin.mutate(a.id)
+                      }
+                      title={a.is_pinned ? "Unpin" : "Pin"}
                     >
-                      <Pin className={`w-4 h-4 ${a.is_pinned ? 'text-gold' : 'text-gray-300'}`} />
+                      <Pin
+                        className={`w-4 h-4 ${a.is_pinned ? "text-gold" : "text-gray-300"}`}
+                      />
                     </button>
                   </td>
                   <td className="p-3">
                     {a.cover_image ? (
-                      <img src={a.cover_image} alt="" className="w-12 h-8 rounded object-cover" />
+                      <img
+                        src={a.cover_image}
+                        alt=""
+                        className="w-12 h-8 rounded object-cover"
+                      />
                     ) : (
                       <div className="w-12 h-8 rounded bg-surface border border-border" />
                     )}
@@ -155,11 +168,14 @@ function AnnouncementsAdmin() {
                     </span>
                   </td>
                   <td className="p-3 text-ink-muted text-xs text-center">
-                    {a.type === 'Event' ? a.event_date ?? '—' : '—'}
+                    {a.type === "Event" ? (a.event_date ?? "—") : "—"}
                   </td>
                   <td className="p-3 text-center">
                     <div className="inline-block">
-                      <Toggle checked={a.is_published} onChange={() => pub.mutate(a.id)} />
+                      <Toggle
+                        checked={a.is_published}
+                        onChange={() => pub.mutate(a.id)}
+                      />
                     </div>
                   </td>
                   <td className="p-3 text-right whitespace-nowrap">
@@ -185,5 +201,5 @@ function AnnouncementsAdmin() {
         </AdminCard>
       )}
     </AdminLayout>
-  )
+  );
 }

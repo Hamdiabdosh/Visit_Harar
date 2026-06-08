@@ -25,5 +25,5 @@ export function getServerConfig() {
     appUrl: process.env.APP_URL,
     resendApiKey: process.env.RESEND_API_KEY,
     resendFromEmail: process.env.RESEND_FROM_EMAIL,
-  }
+  };
 }

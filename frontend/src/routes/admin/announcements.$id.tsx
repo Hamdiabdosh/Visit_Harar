@@ -1,8 +1,13 @@
-import { createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
+import {
+  createFileRoute,
+  Link,
+  notFound,
+  useNavigate,
+} from "@tanstack/react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
   AdminLayout,
   AdminCard,
@@ -11,8 +16,8 @@ import {
   Input,
   Select,
   Toggle,
-} from '@/components/AdminLayout'
-import { RichTextEditor } from '@/components/admin/RichTextEditor'
+} from "@/components/AdminLayout";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import {
   createAnnouncement,
   deleteAnnouncement,
@@ -20,50 +25,56 @@ import {
   pinAnnouncement,
   unpinAnnouncement,
   updateAnnouncement,
-  uploadAnnouncementCover,
-} from '@/lib/announcements-fns'
-import { generateSlug } from '@/lib/slug'
-import { announcementInputSchema, type AnnouncementInput } from '@/lib/validators/announcements'
-import { ArrowLeft, Image as ImageIcon, Trash2 } from 'lucide-react'
+} from "@/lib/announcements-fns";
+import { generateSlug } from "@/lib/slug";
+import {
+  announcementInputSchema,
+  type AnnouncementInput,
+} from "@/lib/validators/announcements";
+import { ImageMediaField } from "@/components/admin/ImageMediaField";
+import { ArrowLeft, Trash2 } from "lucide-react";
 
-export const Route = createFileRoute('/admin/announcements/$id')({
+export const Route = createFileRoute("/admin/announcements/$id")({
   component: AnnouncementEditor,
-})
+});
 
 const defaultValues: AnnouncementInput = {
-  title: '',
-  slug: '',
-  type: 'News',
-  body: '',
+  title: "",
+  slug: "",
+  type: "News",
+  body: "",
   cover_image: undefined,
   event_date: undefined,
   event_location: undefined,
   is_pinned: false,
   is_published: false,
-}
+};
 
 function AnnouncementEditor() {
-  const { id } = Route.useParams()
-  const isNew = id === 'new'
-  const navigate = useNavigate()
-  const fileRef = useRef<HTMLInputElement>(null)
-  const [slugTouched, setSlugTouched] = useState(false)
-  const [uploading, setUploading] = useState(false)
+  const { id } = Route.useParams();
+  const isNew = id === "new";
+  const navigate = useNavigate();
+  const [slugTouched, setSlugTouched] = useState(false);
+  const [mediaAssetId, setMediaAssetId] = useState<string | null>(null);
 
-  const [existing, setExisting] = useState<Awaited<ReturnType<typeof getAnnouncementById>> | null>(null)
-  const [loading, setLoading] = useState(!isNew)
+  const [existing, setExisting] = useState<Awaited<
+    ReturnType<typeof getAnnouncementById>
+  > | null>(null);
+  const [loading, setLoading] = useState(!isNew);
 
   useEffect(() => {
-    if (isNew) return
-    setLoading(true)
+    if (isNew) return;
+    setLoading(true);
     getAnnouncementById({ data: id })
       .then((row) => {
-        if (!row) throw notFound()
-        setExisting(row)
+        if (!row) throw notFound();
+        setExisting(row);
       })
-      .catch((e) => toast.error(e instanceof Error ? e.message : 'Failed to load'))
-      .finally(() => setLoading(false))
-  }, [id, isNew])
+      .catch((e) =>
+        toast.error(e instanceof Error ? e.message : "Failed to load"),
+      )
+      .finally(() => setLoading(false));
+  }, [id, isNew]);
 
   const form = useForm<AnnouncementInput>({
     resolver: zodResolver(announcementInputSchema),
@@ -73,7 +84,7 @@ function AnnouncementEditor() {
           title: existing.title,
           slug: existing.slug,
           type: existing.type,
-          body: existing.body ?? '',
+          body: existing.body ?? "",
           cover_image: existing.cover_image ?? undefined,
           event_date: existing.event_date ?? undefined,
           event_location: existing.event_location ?? undefined,
@@ -81,71 +92,60 @@ function AnnouncementEditor() {
           is_published: existing.is_published,
         }
       : undefined,
-  })
+  });
 
-  const title = form.watch('title')
-  const slug = form.watch('slug')
-  const type = form.watch('type')
-  const body = form.watch('body') ?? ''
-  const cover = form.watch('cover_image')
-  const pinned = form.watch('is_pinned')
-  const published = form.watch('is_published')
+  const title = form.watch("title");
+  const slug = form.watch("slug");
+  const type = form.watch("type");
+  const body = form.watch("body") ?? "";
+  const cover = form.watch("cover_image");
+  const pinned = form.watch("is_pinned");
+  const published = form.watch("is_published");
 
   useEffect(() => {
     if (!slugTouched && title && isNew) {
-      form.setValue('slug', generateSlug(title))
+      form.setValue("slug", generateSlug(title));
     }
-  }, [title, slugTouched, isNew, form])
-
-  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setUploading(true)
-    try {
-      const base64 = await fileToBase64(file)
-      const { url } = await uploadAnnouncementCover({ data: { filename: file.name, data: base64 } })
-      form.setValue('cover_image', url, { shouldDirty: true })
-      toast.success('Cover uploaded')
-    } catch {
-      toast.error('Upload failed — check Cloudinary credentials or paste a URL')
-    } finally {
-      setUploading(false)
-      if (fileRef.current) fileRef.current.value = ''
-    }
-  }
+  }, [title, slugTouched, isNew, form]);
 
   async function save(publish: boolean) {
-    const values = form.getValues()
-    const payload: AnnouncementInput = { ...values, is_published: publish }
+    const values = form.getValues();
+    const payload: AnnouncementInput = { ...values, is_published: publish };
     try {
       if (isNew) {
-        const created = await createAnnouncement({ data: payload })
+        const created = await createAnnouncement({ data: payload });
         if (created.is_pinned) {
-          await pinAnnouncement({ data: created.id })
+          await pinAnnouncement({ data: created.id });
         }
-        toast.success(publish ? 'Published' : 'Draft saved')
-        await navigate({ to: '/admin/announcements/$id', params: { id: created.id }, replace: true })
+        toast.success(publish ? "Published" : "Draft saved");
+        await navigate({
+          to: "/admin/announcements/$id",
+          params: { id: created.id },
+          replace: true,
+        });
       } else {
-        const updated = await updateAnnouncement({ data: { id, data: payload } })
-        if (payload.is_pinned) await pinAnnouncement({ data: id })
-        else await unpinAnnouncement({ data: id })
-        toast.success(publish ? 'Published' : 'Saved')
-        setExisting(updated)
+        const updated = await updateAnnouncement({
+          data: { id, data: payload },
+        });
+        if (payload.is_pinned) await pinAnnouncement({ data: id });
+        else await unpinAnnouncement({ data: id });
+        toast.success(publish ? "Published" : "Saved");
+        setExisting(updated);
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Failed to save')
+      toast.error(e instanceof Error ? e.message : "Failed to save");
     }
   }
 
   async function onDelete() {
-    if (isNew) return
-    if (!window.confirm('Delete this announcement?')) return
+    if (isNew) return;
+    if (!window.confirm("Delete this announcement?")) return;
     try {
-      await deleteAnnouncement({ data: id })
-      toast.success('Deleted')
-      await navigate({ to: '/admin/announcements' })
+      await deleteAnnouncement({ data: id });
+      toast.success("Deleted");
+      await navigate({ to: "/admin/announcements" });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Failed to delete')
+      toast.error(e instanceof Error ? e.message : "Failed to delete");
     }
   }
 
@@ -154,13 +154,13 @@ function AnnouncementEditor() {
       <AdminLayout title="Announcement" breadcrumb="Announcements">
         <p className="text-sm text-ink-muted">Loading…</p>
       </AdminLayout>
-    )
+    );
   }
 
   return (
     <AdminLayout
-      title={isNew ? 'New Announcement' : 'Edit Announcement'}
-      breadcrumb={`Announcements › ${title || 'New'}`}
+      title={isNew ? "New Announcement" : "Edit Announcement"}
+      breadcrumb={`Announcements › ${title || "New"}`}
       action={
         <Link
           to="/admin/announcements"
@@ -173,36 +173,47 @@ function AnnouncementEditor() {
       <div className="grid lg:grid-cols-[2fr_1fr] gap-6">
         <AdminCard className="p-6 space-y-5">
           <Field label="Title">
-            <Input {...form.register('title')} className="text-lg" placeholder="Eid al-Fitr Celebrations 2026" />
+            <Input
+              {...form.register("title")}
+              className="text-lg"
+              placeholder="Eid al-Fitr Celebrations 2026"
+            />
           </Field>
           <Field label="Slug">
             <Input
-              {...form.register('slug', { onChange: () => setSlugTouched(true) })}
+              {...form.register("slug", {
+                onChange: () => setSlugTouched(true),
+              })}
               className="font-mono text-xs"
               placeholder="eid-al-fitr-celebrations-2026"
             />
           </Field>
           <Field label="Type">
-            <Select {...form.register('type')}>
+            <Select {...form.register("type")}>
               <option value="News">News</option>
               <option value="Event">Event</option>
               <option value="Notice">Notice</option>
             </Select>
           </Field>
-          {type === 'Event' && (
+          {type === "Event" && (
             <div className="grid md:grid-cols-2 gap-4">
               <Field label="Event Date">
-                <Input type="date" {...form.register('event_date')} />
+                <Input type="date" {...form.register("event_date")} />
               </Field>
               <Field label="Event Location">
-                <Input placeholder="Grand Jami Mosque, Jugol" {...form.register('event_location')} />
+                <Input
+                  placeholder="Grand Jami Mosque, Jugol"
+                  {...form.register("event_location")}
+                />
               </Field>
             </div>
           )}
           <Field label="Body">
             <RichTextEditor
               value={body}
-              onChange={(html) => form.setValue('body', html, { shouldDirty: true })}
+              onChange={(html) =>
+                form.setValue("body", html, { shouldDirty: true })
+              }
               placeholder="Write the announcement…"
             />
           </Field>
@@ -211,26 +222,16 @@ function AnnouncementEditor() {
         <div className="space-y-6">
           <AdminCard className="p-5">
             <Field label="Cover Image">
-              {cover ? (
-                <img src={cover} alt="" className="w-full h-[150px] object-cover rounded mb-3" />
-              ) : (
-                <div className="border-2 border-dashed border-border rounded h-[150px] grid place-items-center text-ink-muted">
-                  <ImageIcon className="w-8 h-8" />
-                </div>
-              )}
-              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFileChange} />
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full mt-3"
-                disabled={uploading}
-                onClick={() => fileRef.current?.click()}
-              >
-                {uploading ? 'Uploading…' : 'Upload Cover'}
-              </Button>
-              <Field label="Or cover URL">
-                <Input {...form.register('cover_image')} placeholder="https://…" className="text-xs mt-3" />
-              </Field>
+              <ImageMediaField
+                label="Cover image"
+                module="announcements"
+                value={cover}
+                onChange={(url) =>
+                  form.setValue("cover_image", url, { shouldDirty: true })
+                }
+                mediaAssetId={mediaAssetId}
+                onMediaAssetIdChange={setMediaAssetId}
+              />
             </Field>
           </AdminCard>
 
@@ -239,26 +240,35 @@ function AnnouncementEditor() {
               <span className="text-sm">Pinned</span>
               <Toggle
                 checked={pinned}
-                onChange={(v) => form.setValue('is_pinned', v, { shouldDirty: true })}
+                onChange={(v) =>
+                  form.setValue("is_pinned", v, { shouldDirty: true })
+                }
               />
             </div>
             {pinned && (
               <p className="text-xs text-amber-700">
-                Only one announcement can be pinned. Pinning will unpin the current pinned post.
+                Only one announcement can be pinned. Pinning will unpin the
+                current pinned post.
               </p>
             )}
             <div className="flex items-center justify-between">
               <span className="text-sm">Published</span>
               <Toggle
                 checked={published}
-                onChange={(v) => form.setValue('is_published', v, { shouldDirty: true })}
+                onChange={(v) =>
+                  form.setValue("is_published", v, { shouldDirty: true })
+                }
               />
             </div>
           </AdminCard>
 
           {!isNew && (
             <AdminCard className="p-5">
-              <Button variant="danger" className="w-full" onClick={() => void onDelete()}>
+              <Button
+                variant="danger"
+                className="w-full"
+                onClick={() => void onDelete()}
+              >
                 <Trash2 className="w-4 h-4" /> Delete
               </Button>
             </AdminCard>
@@ -273,18 +283,5 @@ function AnnouncementEditor() {
         <Button onClick={() => void save(true)}>Publish</Button>
       </div>
     </AdminLayout>
-  )
+  );
 }
-
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      const result = reader.result as string
-      resolve(result.split(',')[1] ?? '')
-    }
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
-}
-

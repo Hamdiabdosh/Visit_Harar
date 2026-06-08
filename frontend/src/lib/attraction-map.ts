@@ -1,24 +1,24 @@
-import type { Attraction } from '@/lib/types'
-import type { AttractionInput } from '@/lib/validators/attractions'
-import type { AttractionCategory } from '@/lib/attraction-styles'
+import type { Attraction } from "@/lib/types";
+import type { AttractionInput } from "@/lib/validators/attractions";
+import type { AttractionCategory } from "@/lib/attraction-styles";
 
 export type AttractionDto = {
-  id: string
-  title: string
-  slug: string
-  short_desc: string | null
-  full_desc: string | null
-  image: string | null
-  category: AttractionCategory
-  is_featured: boolean
-  is_published: boolean
-  sort_order: number
-  created_by: string | null
-  updated_by: string | null
-  created_at: Date
-  updated_at: Date
-  updated_by_name?: string | null
-}
+  id: string;
+  title: string;
+  slug: string;
+  short_desc: string | null;
+  full_desc: string | null;
+  image: string | null;
+  category: AttractionCategory;
+  is_featured: boolean;
+  is_published: boolean;
+  sort_order: number;
+  created_by: string | null;
+  updated_by: string | null;
+  created_at: Date;
+  updated_at: Date;
+  updated_by_name?: string | null;
+};
 
 export function rowToAttractionDto(
   row: Attraction,
@@ -40,7 +40,7 @@ export function rowToAttractionDto(
     created_at: row.createdAt,
     updated_at: row.updatedAt,
     updated_by_name: updatedByName ?? null,
-  }
+  };
 }
 
 export function inputToRowValues(
@@ -60,13 +60,18 @@ export function inputToRowValues(
     sortOrder: input.sort_order ?? 0,
     updatedBy: userId,
     updatedAt: new Date(),
-  }
+  };
 }
 
-export function fullDescParagraphs(fullDesc: string | null | undefined): string[] {
-  if (!fullDesc?.trim()) return []
-  if (fullDesc.includes('<p>') || fullDesc.includes('<br')) {
-    return [fullDesc]
+export function fullDescParagraphs(
+  fullDesc: string | null | undefined,
+): string[] {
+  if (!fullDesc?.trim()) return [];
+  if (fullDesc.includes("<p>") || fullDesc.includes("<br")) {
+    return [fullDesc];
   }
-  return fullDesc.split(/\n\n+/).map((p) => p.trim()).filter(Boolean)
+  return fullDesc
+    .split(/\n\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
 }

@@ -1,4 +1,4 @@
-export function LoadingSpinner({ label = 'Loading' }: { label?: string }) {
+export function LoadingSpinner({ label = "Loading" }: { label?: string }) {
   return (
     <div className="flex items-center gap-3 text-ink-muted">
       <span
@@ -7,6 +7,5 @@ export function LoadingSpinner({ label = 'Loading' }: { label?: string }) {
       />
       <span className="text-sm">{label}</span>
     </div>
-  )
+  );
 }
-

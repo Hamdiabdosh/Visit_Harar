@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
+import { createFileRoute } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
   AdminLayout,
   AdminCard,
@@ -12,121 +12,99 @@ import {
   Input,
   Textarea,
   SectionLabel,
-} from '@/components/AdminLayout'
-import { HeroSection } from '@/components/public/HeroSection'
-import {
-  defaultHeroInput,
-  type HeroDto,
-} from '@/lib/hero-map'
-import {
-  getHero,
-  publishHero,
-  uploadHeroImage,
-  upsertHero,
-} from '@/lib/hero-fns'
-import { heroInputSchema, type HeroInput } from '@/lib/validators/hero'
+} from "@/components/AdminLayout";
+import { HeroSection } from "@/components/public/HeroSection";
+import { defaultHeroInput, type HeroDto } from "@/lib/hero-map";
+import { getHero, publishHero, upsertHero } from "@/lib/hero-fns";
+import { ImageMediaField } from "@/components/admin/ImageMediaField";
+import { heroInputSchema, type HeroInput } from "@/lib/validators/hero";
 
-export const Route = createFileRoute('/admin/hero')({
+export const Route = createFileRoute("/admin/hero")({
   component: HeroManager,
-})
+});
 
 function heroDtoToForm(dto: HeroDto | null): HeroInput {
-  if (!dto) return { ...defaultHeroInput }
+  if (!dto) return { ...defaultHeroInput };
   return {
-    badge_text: dto.badge_text ?? '',
-    headline: dto.headline ?? '',
-    headline_italic: dto.headline_italic ?? '',
-    subheading: dto.subheading ?? '',
-    cta_primary_text: dto.cta_primary_text ?? '',
-    cta_primary_url: dto.cta_primary_url ?? '',
-    cta_ghost_text: dto.cta_ghost_text ?? '',
-    cta_ghost_url: dto.cta_ghost_url ?? '',
+    badge_text: dto.badge_text ?? "",
+    headline: dto.headline ?? "",
+    headline_italic: dto.headline_italic ?? "",
+    subheading: dto.subheading ?? "",
+    cta_primary_text: dto.cta_primary_text ?? "",
+    cta_primary_url: dto.cta_primary_url ?? "",
+    cta_ghost_text: dto.cta_ghost_text ?? "",
+    cta_ghost_url: dto.cta_ghost_url ?? "",
     background_image: dto.background_image ?? undefined,
-    stat_1_number: dto.stat_1_number ?? '',
-    stat_1_label: dto.stat_1_label ?? '',
-    stat_2_number: dto.stat_2_number ?? '',
-    stat_2_label: dto.stat_2_label ?? '',
-    stat_3_number: dto.stat_3_number ?? '',
-    stat_3_label: dto.stat_3_label ?? '',
+    stat_1_number: dto.stat_1_number ?? "",
+    stat_1_label: dto.stat_1_label ?? "",
+    stat_2_number: dto.stat_2_number ?? "",
+    stat_2_label: dto.stat_2_label ?? "",
+    stat_3_number: dto.stat_3_number ?? "",
+    stat_3_label: dto.stat_3_label ?? "",
     is_published: dto.is_published,
-  }
+  };
 }
 
 function HeroManager() {
-  const queryClient = useQueryClient()
-  const fileRef = useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState(false)
+  const queryClient = useQueryClient();
+  const [mediaAssetId, setMediaAssetId] = useState<string | null>(null);
 
-  const { data: hero, isLoading, isError, error } = useQuery({
-    queryKey: ['admin', 'hero'],
+  const {
+    data: hero,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["admin", "hero"],
     queryFn: () => getHero(),
     retry: false,
-  })
+  });
 
   const form = useForm<HeroInput>({
     resolver: zodResolver(heroInputSchema),
     defaultValues: defaultHeroInput,
     values: heroDtoToForm(hero ?? null),
-  })
+  });
 
-  const watchAll = form.watch()
+  const watchAll = form.watch();
 
   const saveMutation = useMutation({
     mutationFn: async (publish: boolean) => {
-      const values = form.getValues()
+      const values = form.getValues();
       const payload: HeroInput = {
         ...values,
         is_published: publish,
-      }
-      await upsertHero({ data: payload })
-      if (publish) await publishHero()
+      };
+      await upsertHero({ data: payload });
+      if (publish) await publishHero();
     },
     onSuccess: (_, publish) => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'hero'] })
-      queryClient.invalidateQueries({ queryKey: ['public', 'hero'] })
-      toast.success(publish ? 'Hero published' : 'Draft saved')
+      queryClient.invalidateQueries({ queryKey: ["admin", "hero"] });
+      queryClient.invalidateQueries({ queryKey: ["public", "hero"] });
+      toast.success(publish ? "Hero published" : "Draft saved");
     },
     onError: () => {
-      toast.error('Failed to save hero')
+      toast.error("Failed to save hero");
     },
-  })
+  });
 
   const publishMutation = useMutation({
     mutationFn: async () => {
-      const values = form.getValues()
-      await upsertHero({ data: { ...values, is_published: true } })
-      await publishHero()
+      const values = form.getValues();
+      await upsertHero({ data: { ...values, is_published: true } });
+      await publishHero();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'hero'] })
-      queryClient.invalidateQueries({ queryKey: ['public', 'hero'] })
-      toast.success('Hero published')
+      queryClient.invalidateQueries({ queryKey: ["admin", "hero"] });
+      queryClient.invalidateQueries({ queryKey: ["public", "hero"] });
+      toast.success("Hero published");
     },
-    onError: () => toast.error('Failed to publish'),
-  })
-
-  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setUploading(true)
-    try {
-      const base64 = await fileToBase64(file)
-      const { url } = await uploadHeroImage({
-        data: { filename: file.name, data: base64 },
-      })
-      form.setValue('background_image', url, { shouldDirty: true })
-      toast.success('Image uploaded')
-    } catch {
-      toast.error('Upload failed — check Cloudinary credentials in .env')
-    } finally {
-      setUploading(false)
-      if (fileRef.current) fileRef.current.value = ''
-    }
-  }
+    onError: () => toast.error("Failed to publish"),
+  });
 
   const updatedLabel = hero?.updated_at
-    ? `Last updated${hero.updated_by_name ? ` by ${hero.updated_by_name}` : ''} · ${formatRelative(hero.updated_at)}`
-    : 'Not saved yet'
+    ? `Last updated${hero.updated_by_name ? ` by ${hero.updated_by_name}` : ""} · ${formatRelative(hero.updated_at)}`
+    : "Not saved yet";
 
   return (
     <AdminLayout
@@ -152,9 +130,13 @@ function HeroManager() {
     >
       {isError ? (
         <AdminCard className="p-6 border-amber-200 bg-amber-50">
-          <h2 className="font-semibold text-amber-900">Database not available</h2>
+          <h2 className="font-semibold text-amber-900">
+            Database not available
+          </h2>
           <p className="text-sm text-amber-800 mt-2">
-            {error instanceof Error ? error.message : 'Could not load hero content.'}
+            {error instanceof Error
+              ? error.message
+              : "Could not load hero content."}
           </p>
           <p className="text-sm text-amber-800 mt-3 font-mono">
             docker compose up -d && bun run db:push && bun run db:seed
@@ -169,59 +151,44 @@ function HeroManager() {
               <SectionLabel>Hero Content</SectionLabel>
               <div className="space-y-4">
                 <Field label="Badge Text">
-                  <Input {...form.register('badge_text')} />
+                  <Input {...form.register("badge_text")} />
                 </Field>
                 <Field label="Headline">
-                  <Input {...form.register('headline')} />
+                  <Input {...form.register("headline")} />
                 </Field>
                 <Field label="Italic Accent (use line breaks)">
-                  <Textarea rows={2} {...form.register('headline_italic')} />
+                  <Textarea rows={2} {...form.register("headline_italic")} />
                 </Field>
                 <Field label="Subheading">
-                  <Textarea rows={3} {...form.register('subheading')} />
+                  <Textarea rows={3} {...form.register("subheading")} />
                 </Field>
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Primary CTA Text">
-                    <Input {...form.register('cta_primary_text')} />
+                    <Input {...form.register("cta_primary_text")} />
                   </Field>
                   <Field label="Primary CTA URL">
-                    <Input {...form.register('cta_primary_url')} />
+                    <Input {...form.register("cta_primary_url")} />
                   </Field>
                   <Field label="Ghost CTA Text">
-                    <Input {...form.register('cta_ghost_text')} />
+                    <Input {...form.register("cta_ghost_text")} />
                   </Field>
                   <Field label="Ghost CTA URL">
-                    <Input {...form.register('cta_ghost_url')} />
+                    <Input {...form.register("cta_ghost_url")} />
                   </Field>
                 </div>
-                <Field label="Background Image URL">
-                  <Input
-                    {...form.register('background_image')}
-                    placeholder="https://… or upload below"
+                <Field label="Background Image">
+                  <ImageMediaField
+                    label="Background image"
+                    module="hero"
+                    value={watchAll.background_image}
+                    onChange={(url) =>
+                      form.setValue("background_image", url, {
+                        shouldDirty: true,
+                      })
+                    }
+                    mediaAssetId={mediaAssetId}
+                    onMediaAssetIdChange={setMediaAssetId}
                   />
-                </Field>
-                <Field label="Upload Image">
-                  <input
-                    ref={fileRef}
-                    type="file"
-                    accept="image/*"
-                    className="text-sm"
-                    disabled={uploading}
-                    onChange={onFileChange}
-                  />
-                  {uploading ? (
-                    <span className="text-xs text-ink-muted">Uploading…</span>
-                  ) : null}
-                  {watchAll.background_image ? (
-                    <div
-                      className="mt-2 h-20 rounded bg-cover bg-center border border-border"
-                      style={{
-                        backgroundImage: `url(${watchAll.background_image})`,
-                      }}
-                    />
-                  ) : (
-                    <div className="mt-2 h-20 rounded bg-gradient-to-br from-brand-dark to-gold border border-border" />
-                  )}
                 </Field>
               </div>
             </div>
@@ -230,9 +197,9 @@ function HeroManager() {
               <SectionLabel>Stats</SectionLabel>
               {(
                 [
-                  ['stat_1_number', 'stat_1_label'],
-                  ['stat_2_number', 'stat_2_label'],
-                  ['stat_3_number', 'stat_3_label'],
+                  ["stat_1_number", "stat_1_label"],
+                  ["stat_2_number", "stat_2_label"],
+                  ["stat_3_number", "stat_3_label"],
                 ] as const
               ).map(([n, l]) => (
                 <div key={n} className="grid grid-cols-2 gap-2 mb-2">
@@ -246,9 +213,13 @@ function HeroManager() {
               <SectionLabel>Status</SectionLabel>
               <p className="text-sm">
                 {hero?.is_published ? (
-                  <span className="text-emerald-700 font-medium">Published on live site</span>
+                  <span className="text-emerald-700 font-medium">
+                    Published on live site
+                  </span>
                 ) : (
-                  <span className="text-amber-700 font-medium">Draft — not visible publicly</span>
+                  <span className="text-amber-700 font-medium">
+                    Draft — not visible publicly
+                  </span>
                 )}
               </p>
             </div>
@@ -275,37 +246,30 @@ function HeroManager() {
 
           <div>
             <div className="text-[11px] uppercase tracking-wider font-semibold text-ink-muted mb-2 inline-flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-gold/20 text-amber-900">Live Preview</span>
+              <span className="px-2 py-0.5 rounded bg-gold/20 text-amber-900">
+                Live Preview
+              </span>
             </div>
             <div className="border-2 border-dashed border-gold rounded-lg p-3 bg-white overflow-hidden">
               <HeroSection hero={watchAll} compact />
             </div>
             <p className="text-xs text-ink-muted mt-2 italic">
-              Preview updates as you edit. Public site only shows published hero.
+              Preview updates as you edit. Public site only shows published
+              hero.
             </p>
           </div>
         </div>
       )}
     </AdminLayout>
-  )
-}
-
-async function fileToBase64(file: File): Promise<string> {
-  const buffer = await file.arrayBuffer()
-  let binary = ''
-  const bytes = new Uint8Array(buffer)
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]!)
-  }
-  return btoa(binary)
+  );
 }
 
 function formatRelative(date: Date | string) {
-  const d = typeof date === 'string' ? new Date(date) : date
-  const diff = Date.now() - d.getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 60) return `${mins}m ago`
-  const hrs = Math.floor(mins / 60)
-  if (hrs < 48) return `${hrs}h ago`
-  return d.toLocaleDateString()
+  const d = typeof date === "string" ? new Date(date) : date;
+  const diff = Date.now() - d.getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 48) return `${hrs}h ago`;
+  return d.toLocaleDateString();
 }

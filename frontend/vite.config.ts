@@ -7,8 +7,17 @@
 import path from "node:path";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+const nitroPreset =
+  process.env.NITRO_PRESET ?? (process.env.VERCEL ? "vercel" : "node-server");
+
 export default defineConfig({
+  // Coolify/Docker: node-server. Vercel: set NITRO_PRESET=vercel or deploy on Vercel (auto-detected).
+  nitro: { preset: nitroPreset },
   vite: {
+    preview: {
+      // Prerender during Docker build binds to loopback inside the container.
+      host: "127.0.0.1",
+    },
     resolve: {
       alias: {
         "~": path.resolve(import.meta.dirname, "."),

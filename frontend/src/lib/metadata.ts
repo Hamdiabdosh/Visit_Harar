@@ -1,10 +1,16 @@
 import { getPublishedHero } from "@/lib/hero-fns";
 
-type MetaTag = { title: string } | { name: string; content: string } | { property: string; content: string };
+type MetaTag =
+  | { title: string }
+  | { name: string; content: string }
+  | { property: string; content: string };
 type LinkTag = { rel: string; href: string };
 
 export function stripHtml(html: string) {
-  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export function excerptFromHtml(html: string | null | undefined, max = 160) {
@@ -31,19 +37,27 @@ function publicAppOrigin() {
 }
 
 function absoluteUrl(pathOrUrl: string) {
-  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) return pathOrUrl;
+  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://"))
+    return pathOrUrl;
   const base = publicAppOrigin();
   const path = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
   return base ? `${base}${path}` : path;
 }
 
-export function buildHead(overrides?: BuildMetadataOverrides): { meta: MetaTag[]; links: LinkTag[] } {
-  const title = overrides?.title ? `${overrides.title} — Visit Harar` : DEFAULT_TITLE;
+export function buildHead(overrides?: BuildMetadataOverrides): {
+  meta: MetaTag[];
+  links: LinkTag[];
+} {
+  const title = overrides?.title
+    ? `${overrides.title} — Visit Harar`
+    : DEFAULT_TITLE;
   const description = overrides?.description ?? DEFAULT_DESCRIPTION;
 
   const ogImage = overrides?.ogImage ?? null;
 
-  const canonical = overrides?.canonicalPath ? absoluteUrl(overrides.canonicalPath) : undefined;
+  const canonical = overrides?.canonicalPath
+    ? absoluteUrl(overrides.canonicalPath)
+    : undefined;
 
   const meta: MetaTag[] = [
     { title },
@@ -54,7 +68,9 @@ export function buildHead(overrides?: BuildMetadataOverrides): { meta: MetaTag[]
   ];
 
   if (ogImage) meta.push({ property: "og:image", content: ogImage });
-  const links: LinkTag[] = canonical ? [{ rel: "canonical", href: canonical }] : [];
+  const links: LinkTag[] = canonical
+    ? [{ rel: "canonical", href: canonical }]
+    : [];
 
   return { meta, links };
 }
@@ -68,4 +84,3 @@ export async function buildHeadAsync(overrides?: BuildMetadataOverrides) {
   }
   return buildHead({ ...overrides, ogImage });
 }
-
