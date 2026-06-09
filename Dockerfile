@@ -3,25 +3,37 @@ FROM oven/bun:1-alpine AS builder
 
 WORKDIR /app
 
-# Coolify may inject NODE_ENV=production at build time — force dev deps for vite/nitro.
 ENV NODE_ENV=development
 
 COPY package.json bun.lock ./
-# Inline NODE_ENV so Coolify build-time NODE_ENV=production cannot skip devDependencies.
 RUN NODE_ENV=development bun install --frozen-lockfile
 
 COPY . .
 
-# Nitro preset + public URL are baked in at build time (VITE_*).
 ARG NITRO_PRESET=node-server
 ARG VITE_APP_URL
 ENV NITRO_PRESET=${NITRO_PRESET}
 ENV VITE_APP_URL=${VITE_APP_URL}
 ENV NODE_ENV=production
-# Low-RAM VPS: cap Node heap so the OOM killer is less likely during Nitro rollup.
 ENV NODE_OPTIONS=--max-old-space-size=2048
 
 RUN bun run build
+
+# Drop heavy build-only packages before copying to runner (keep drizzle-kit, tsx, etc.)
+RUN rm -rf \
+  node_modules/vite \
+  node_modules/@vitejs \
+  node_modules/nitro \
+  node_modules/rolldown \
+  node_modules/@rolldown \
+  node_modules/typescript \
+  node_modules/eslint \
+  node_modules/prettier \
+  node_modules/@eslint \
+  node_modules/@typescript-eslint \
+  node_modules/lightningcss \
+  node_modules/@tailwindcss \
+  2>/dev/null || true
 
 # --- Production stage ---
 FROM node:22-alpine AS runner
@@ -57,7 +69,7 @@ EXPOSE 3000
 
 VOLUME ["/data/uploads"]
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:' + (process.env.PORT || 3000) + '/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
 ENTRYPOINT ["./docker-entrypoint.sh"]

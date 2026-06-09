@@ -65,27 +65,34 @@ Coolify runs `docker compose up`, builds the app image, starts Postgres, then th
 
 ---
 
-## 2. Database setup
+## 2. Database setup (automatic via Coolify)
 
-On each app container start, the entrypoint automatically:
+No SSH or local `bun` commands needed. On each app container start, the entrypoint automatically:
 
 1. Runs `db:push` (schema sync)
-2. Applies `db/indexes.sql`
-3. Seeds **once** if the `user` table is empty (uses `SUPERADMIN_*` / `EDITOR_*` from Coolify env)
+2. Applies indexes
+3. Seeds **once** if the `user` table is empty
 
-No manual `bun` or `psql` commands inside the production container are needed.
-
-Ensure these are set in Coolify before the first deploy:
+Set these in **Coolify → Environment Variables** before the first deploy:
 
 ```env
 SUPERADMIN_EMAIL=admin@visitharar.gov.et
-SUPERADMIN_PASSWORD=your-password
+SUPERADMIN_PASSWORD=your-strong-password
 SUPERADMIN_NAME=Super Admin
+```
+
+First deploy may take a few extra minutes while the container runs migrations + seed. Watch **Logs** on the **app** service for:
+
+```text
+Applying database schema…
+✓ Indexes applied
+Seeding database…
+All seeds completed.
 ```
 
 To skip auto-setup (debug only): set `SKIP_DB_SETUP=1` on the app service.
 
-To force re-seed on an empty DB after wiping volumes: redeploy with users table empty, or set `RUN_DB_SEED=1` (default behaviour seeds when no users exist).
+To force re-seed after wiping the database volume: redeploy with an empty `user` table, or set `RUN_DB_SEED=1`.
 
 ---
 
@@ -127,6 +134,8 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 | `no available server` (503)  | App container unhealthy — check logs; run migrations; verify `POSTGRES_PASSWORD` matches. |
 | Build fails / NODE_ENV warning | Set `NODE_ENV` as **runtime only** in Coolify (not build-time).     |
 | Build SIGKILL / exit 139       | VPS ran out of RAM during Nitro build. Add **2GB swap**, redeploy.  |
+| Deploy takes 20+ minutes       | Old images copied full `node_modules`; current Dockerfile ships `dist/` only (~6 MB). |
+| App up but empty / login fails | Check app **Logs** for migration/seed errors; set `SUPERADMIN_*` in Coolify. |
 | Auth redirects wrong host      | Set domain in Coolify; rebuild with correct `VITE_APP_URL`.       |
 | Emails not sent                | Add real `RESEND_*` vars in Coolify (omit until ready — no errors). |
 | Upload fails                   | Confirm `uploads` volume is mounted at `/data/uploads`.           |
