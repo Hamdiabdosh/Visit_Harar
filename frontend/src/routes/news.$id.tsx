@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/PublicLayout";
 import { getAnnouncementBySlug } from "@/lib/announcements-fns";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/news/$id")({
@@ -25,7 +25,7 @@ function formatDate(input: Date | null) {
 
 function NewsDetailById() {
   const { item } = Route.useLoaderData();
-  const safeBody = DOMPurify.sanitize(item.body ?? "");
+  const safeBody = sanitizeRichHtml(item.body ?? "");
 
   return (
     <PublicLayout>

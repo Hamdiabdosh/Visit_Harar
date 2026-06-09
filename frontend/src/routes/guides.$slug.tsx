@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/PublicLayout";
 import { getGuideBySlug } from "@/lib/guides-fns";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import { ArrowLeft } from "lucide-react";
 import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/guides/$slug")({
 
 function GuideDetail() {
   const { item } = Route.useLoaderData();
-  const safeBio = DOMPurify.sanitize(item.bio ?? "");
+  const safeBio = sanitizeRichHtml(item.bio ?? "");
   const photoSrc = item.photo
     ? optimizeImage(item.photo, { width: 600 })
     : null;

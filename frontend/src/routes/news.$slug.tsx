@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/PublicLayout";
 import { getAnnouncementBySlug } from "@/lib/announcements-fns";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import { ArrowLeft } from "lucide-react";
 import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
@@ -35,7 +35,7 @@ function formatDate(input: Date | null) {
 
 function NewsDetail() {
   const { item } = Route.useLoaderData();
-  const safeBody = DOMPurify.sanitize(item.body ?? "");
+  const safeBody = sanitizeRichHtml(item.body ?? "");
   const coverSrc = item.cover_image
     ? optimizeImage(item.cover_image, { width: 1600 })
     : null;

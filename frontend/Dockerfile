@@ -18,6 +18,8 @@ ARG VITE_APP_URL
 ENV NITRO_PRESET=${NITRO_PRESET}
 ENV VITE_APP_URL=${VITE_APP_URL}
 ENV NODE_ENV=production
+# Low-RAM VPS: cap Node heap so the OOM killer is less likely during Nitro rollup.
+ENV NODE_OPTIONS=--max-old-space-size=2048
 
 RUN bun run build
 

@@ -127,6 +127,18 @@ Coolify builds the Docker image, runs `bun run build` inside the builder stage, 
 - [ ] Maintenance toggle in `/admin/settings` shows public maintenance page.
 - [ ] No database connection errors in Coolify logs.
 
+### VPS memory (recommended for small servers)
+
+The Docker build compiles the full app (Vite + Nitro). On a **1–2 GB RAM** VPS, add swap before the first deploy:
+
+```bash
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
 ---
 
 ## 6. Troubleshooting
@@ -134,6 +146,7 @@ Coolify builds the Docker image, runs `bun run build` inside the builder stage, 
 | Issue                          | Fix                                                                 |
 | ------------------------------ | ------------------------------------------------------------------- |
 | Build fails / NODE_ENV warning | Set `NODE_ENV` as **runtime only** in Coolify (not build-time).     |
+| Build SIGKILL / exit 139       | VPS ran out of RAM during Nitro build. Add **2GB swap** on the server (see below), then redeploy. |
 | Build hangs on `dockerfile:1`  | Remove `# syntax=docker/dockerfile:1` from Dockerfile (fixed in repo); retry deploy. |
 | Build hangs pulling images     | On the VPS run `docker pull oven/bun:1-alpine && docker pull node:22-alpine`, then redeploy. |
 | Build fails during prerender   | `vite.config.ts` sets `preview.host: 127.0.0.1` for Docker builds.  |

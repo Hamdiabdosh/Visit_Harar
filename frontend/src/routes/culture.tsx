@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/public/PageHero";
 import { getPublishedPage } from "@/lib/pages-fns";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
 import {
@@ -42,7 +42,7 @@ function CulturePage() {
       ? (page.content as typeof CULTURE_DEFAULT_CONTENT)
       : CULTURE_DEFAULT_CONTENT;
 
-  const intro = DOMPurify.sanitize(content.intro_text ?? "");
+  const intro = sanitizeRichHtml(content.intro_text ?? "");
   const sections = Array.isArray(content.sections) ? content.sections : [];
   const festivals = Array.isArray(content.festivals) ? content.festivals : [];
 
@@ -74,7 +74,7 @@ function CulturePage() {
             {s.body ? (
               <div
                 className="prose prose-stone max-w-none"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(s.body) }}
+                dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(s.body) }}
               />
             ) : null}
           </div>

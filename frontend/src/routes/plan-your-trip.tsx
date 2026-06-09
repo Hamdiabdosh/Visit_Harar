@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/public/PageHero";
 import { getPublishedPage } from "@/lib/pages-fns";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import { ComingSoon } from "@/components/public/ComingSoon";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
 
@@ -42,16 +42,16 @@ function PlanYourTrip() {
   }
 
   const c = page.content as Record<string, unknown>;
-  const gettingHere = DOMPurify.sanitize(
+  const gettingHere = sanitizeRichHtml(
     typeof c.getting_here === "string" ? c.getting_here : "",
   );
-  const bestTime = DOMPurify.sanitize(
+  const bestTime = sanitizeRichHtml(
     typeof c.best_time === "string" ? c.best_time : "",
   );
-  const visa = DOMPurify.sanitize(
+  const visa = sanitizeRichHtml(
     typeof c.visa_info === "string" ? c.visa_info : "",
   );
-  const accommodation = DOMPurify.sanitize(
+  const accommodation = sanitizeRichHtml(
     typeof c.accommodation === "string" ? c.accommodation : "",
   );
   const itineraries: { duration: string; title: string; days: string[] }[] =

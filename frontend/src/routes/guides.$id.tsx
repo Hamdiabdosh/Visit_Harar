@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/PublicLayout";
 import { getGuideBySlug } from "@/lib/guides-fns";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import { ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/guides/$id")({
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/guides/$id")({
 
 function GuideDetailById() {
   const { item } = Route.useLoaderData();
-  const safeBio = DOMPurify.sanitize(item.bio ?? "");
+  const safeBio = sanitizeRichHtml(item.bio ?? "");
 
   return (
     <PublicLayout>

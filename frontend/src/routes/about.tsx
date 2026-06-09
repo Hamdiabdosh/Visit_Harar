@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/public/PageHero";
 import { getPublishedPage } from "@/lib/pages-fns";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import { ComingSoon } from "@/components/public/ComingSoon";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
 
@@ -42,13 +42,13 @@ function AboutPage() {
   }
 
   const c = page.content as Record<string, unknown>;
-  const intro = DOMPurify.sanitize(
+  const intro = sanitizeRichHtml(
     typeof c.intro_text === "string" ? c.intro_text : "",
   );
-  const unesco = DOMPurify.sanitize(
+  const unesco = sanitizeRichHtml(
     typeof c.unesco_text === "string" ? c.unesco_text : "",
   );
-  const geo = DOMPurify.sanitize(
+  const geo = sanitizeRichHtml(
     typeof c.geography_text === "string" ? c.geography_text : "",
   );
   const facts: { label: string; value: string }[] = Array.isArray(c.quick_facts)

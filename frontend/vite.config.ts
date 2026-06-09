@@ -12,8 +12,15 @@ const nitroPreset =
 
 export default defineConfig({
   // Coolify/Docker: node-server. Vercel: set NITRO_PRESET=vercel or deploy on Vercel (auto-detected).
-  nitro: { preset: nitroPreset },
+  nitro: {
+    preset: nitroPreset,
+    // Smaller Nitro rollup — helps low-RAM VPS Docker builds avoid OOM SIGKILL.
+    sourceMap: false,
+  },
   vite: {
+    build: {
+      sourcemap: false,
+    },
     preview: {
       // Prerender during Docker build binds to loopback inside the container.
       host: "127.0.0.1",

@@ -7,7 +7,7 @@ import {
   categoryGradient,
   isAttractionCategory,
 } from "@/lib/attraction-styles";
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
@@ -40,7 +40,7 @@ function AttractionDetail() {
   const isHtml = Boolean(
     item.full_desc && /<\/?[a-z][\s\S]*>/i.test(item.full_desc),
   );
-  const safeHtml = isHtml ? DOMPurify.sanitize(item.full_desc ?? "") : null;
+  const safeHtml = isHtml ? sanitizeRichHtml(item.full_desc ?? "") : null;
   const heroBg = item.image ? optimizeImage(item.image, { width: 1600 }) : null;
 
   return (
