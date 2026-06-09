@@ -37,14 +37,13 @@ Tourism platform for Harar — a public site for visitors and an admin CMS for t
 
 ```
 Visit-Harar/
-├── frontend/          # TanStack Start application
-│   ├── src/           # Routes, components, server logic
-│   ├── drizzle/       # Database schema and migrations
-│   ├── scripts/       # Seed and utility scripts
-│   ├── Dockerfile     # Production Docker build
-│   ├── SETUP.md       # Local development guide
-│   └── DEPLOY.md      # Coolify / production deployment
-└── docs/              # Additional documentation
+├── src/               # Routes, components, server logic
+├── drizzle/           # Database schema and migrations
+├── scripts/           # Seed and utility scripts
+├── Dockerfile         # Production Docker build
+├── docker-compose.yml # Coolify production stack
+├── SETUP.md           # Local development guide
+└── DEPLOY.md          # Coolify / production deployment
 ```
 
 ## Quick start
@@ -52,10 +51,9 @@ Visit-Harar/
 Prerequisites: Node.js 20+ or Bun, Docker (for local Postgres).
 
 ```bash
-cd frontend
 bun install
 cp .env.example .env
-docker compose up -d
+docker compose -f docker-compose.dev.yml up -d
 bun run db:push
 psql "$DATABASE_URL" -f db/indexes.sql
 bun run db:seed
@@ -64,26 +62,24 @@ bun run dev
 
 Open the URL Vite prints (typically `http://localhost:8080`) and sign in at `/admin/login` with the credentials from `SUPERADMIN_*` in your `.env`.
 
-See [frontend/SETUP.md](./frontend/SETUP.md) for full local setup details.
+See [SETUP.md](./SETUP.md) for full local setup details.
 
 ## Deployment
 
-Production runs as a Docker container on Coolify with a PostgreSQL database and a persistent volume for uploaded media.
+Production runs as a Docker Compose stack on Coolify (app + Postgres) with a persistent volume for uploaded media.
 
-See [frontend/DEPLOY.md](./frontend/DEPLOY.md) for Coolify configuration, environment variables, and troubleshooting.
+See [DEPLOY.md](./DEPLOY.md) for Coolify configuration, environment variables, and troubleshooting.
 
 ## Scripts
 
-Run from the `frontend/` directory:
-
-| Command            | Description                    |
-| ------------------ | ------------------------------ |
-| `bun run dev`      | Start development server       |
-| `bun run build`    | Production build               |
-| `bun run start`    | Run production server          |
-| `bun run db:seed`  | Seed database                  |
-| `bun run db:studio`| Open Drizzle Studio            |
-| `bun run lint`     | Run ESLint                     |
+| Command             | Description              |
+| ------------------- | ------------------------ |
+| `bun run dev`       | Start development server |
+| `bun run build`     | Production build         |
+| `bun run start`     | Run production server    |
+| `bun run db:seed`   | Seed database            |
+| `bun run db:studio` | Open Drizzle Studio      |
+| `bun run lint`      | Run ESLint               |
 
 ## License
 

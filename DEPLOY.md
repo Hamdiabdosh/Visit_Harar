@@ -21,8 +21,8 @@ Copy-paste template: [`coolify.env.example`](./coolify.env.example)
 
 1. Coolify → **Projects** → your project → **Add Resource** → **Application**.
 2. Connect your Git repository.
-3. **Base Directory**: `frontend`
-4. **Build Pack**: **Docker Compose** (uses `frontend/docker-compose.yml`).
+3. **Base Directory**: `/` (repo root — leave empty in Coolify)
+4. **Build Pack**: **Docker Compose** (uses `docker-compose.yml`).
 5. **Domain**: add `visitharar.raafat.site` on the **app** service (enable SSL).
 6. No separate Postgres resource needed — compose includes a `postgres` service and wires `DATABASE_URL` automatically.
 
@@ -70,7 +70,6 @@ Coolify runs `docker compose up`, builds the app image, starts Postgres, then th
 After the first successful deploy, run migrations from your machine or a Coolify exec shell on the **app** container:
 
 ```bash
-cd frontend
 # Use the same POSTGRES_PASSWORD as in Coolify (default: visit-harar)
 export DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@postgres:5432/visit_harar"
 
@@ -131,7 +130,6 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 ## Local production smoke test
 
 ```bash
-cd frontend
 docker compose up --build
 ```
 

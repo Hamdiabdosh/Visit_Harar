@@ -14,7 +14,6 @@ The spec describes custom `users` / `sessions` tables. This project uses **Bette
 1. **Install dependencies**
 
    ```bash
-   cd frontend
    bun install
    ```
 
@@ -29,7 +28,6 @@ The spec describes custom `users` / `sessions` tables. This project uses **Bette
 3. **Start PostgreSQL (recommended)**
 
    ```bash
-   cd frontend
    docker compose -f docker-compose.dev.yml up -d
    bun run db:check
    ```

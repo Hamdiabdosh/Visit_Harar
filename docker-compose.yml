@@ -1,5 +1,5 @@
 # Production stack for Coolify (Docker Compose build pack).
-# Base Directory in Coolify: frontend
+# Base Directory in Coolify: / (repo root)
 #
 # Postgres + DATABASE_URL are wired here — do not set DATABASE_URL in Coolify.
 # Optional vars (Resend, etc.) can be omitted; placeholders are ignored at runtime.
