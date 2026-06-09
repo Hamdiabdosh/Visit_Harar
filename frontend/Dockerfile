@@ -1,12 +1,14 @@
-# syntax=docker/dockerfile:1
-
 # --- Build stage ---
 FROM oven/bun:1-alpine AS builder
 
 WORKDIR /app
 
+# Coolify may inject NODE_ENV=production at build time — force dev deps for vite/nitro.
+ENV NODE_ENV=development
+
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+# Inline NODE_ENV so Coolify build-time NODE_ENV=production cannot skip devDependencies.
+RUN NODE_ENV=development bun install --frozen-lockfile
 
 COPY . .
 

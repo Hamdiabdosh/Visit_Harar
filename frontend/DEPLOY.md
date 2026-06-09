@@ -75,6 +75,9 @@ Set these under **Build Variables** (they are embedded in the client bundle):
 
 `NITRO_PRESET` defaults to `node-server` in the Dockerfile — do not change unless you know why.
 
+**Only `VITE_APP_URL` should be marked “Available at Buildtime”.**  
+Uncheck build-time for `NODE_ENV`, `DATABASE_URL`, secrets, and all other vars. If `NODE_ENV=production` is injected during the Docker build, package managers skip devDependencies (vite, typescript, etc.) and the build fails.
+
 ### Runtime environment variables
 
 | Variable                | Notes                                                    |
@@ -130,6 +133,9 @@ Coolify builds the Docker image, runs `bun run build` inside the builder stage, 
 
 | Issue                          | Fix                                                                 |
 | ------------------------------ | ------------------------------------------------------------------- |
+| Build fails / NODE_ENV warning | Set `NODE_ENV` as **runtime only** in Coolify (not build-time).     |
+| Build hangs on `dockerfile:1`  | Remove `# syntax=docker/dockerfile:1` from Dockerfile (fixed in repo); retry deploy. |
+| Build hangs pulling images     | On the VPS run `docker pull oven/bun:1-alpine && docker pull node:22-alpine`, then redeploy. |
 | Build fails during prerender   | `vite.config.ts` sets `preview.host: 127.0.0.1` for Docker builds.  |
 | `DATABASE_URL is not set`      | Add runtime env var in Coolify; redeploy.                           |
 | Auth redirects wrong host      | Align `BETTER_AUTH_URL`, `APP_URL`, and `VITE_APP_URL` (rebuild).   |
