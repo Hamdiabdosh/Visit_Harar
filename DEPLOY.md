@@ -65,21 +65,27 @@ Coolify runs `docker compose up`, builds the app image, starts Postgres, then th
 
 ---
 
-## 2. Database setup (run once)
+## 2. Database setup
 
-After the first successful deploy, run migrations from your machine or a Coolify exec shell on the **app** container:
+On each app container start, the entrypoint automatically:
 
-```bash
-# Use the same POSTGRES_PASSWORD as in Coolify (default: visit-harar)
-export DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@postgres:5432/visit_harar"
+1. Runs `db:push` (schema sync)
+2. Applies `db/indexes.sql`
+3. Seeds **once** if the `user` table is empty (uses `SUPERADMIN_*` / `EDITOR_*` from Coolify env)
 
-bun install
-bun run db:migrate
-psql "$DATABASE_URL" -f db/indexes.sql
-bun run db:seed   # first deploy only; uses SUPERADMIN_* from env if set
+No manual `bun` or `psql` commands inside the production container are needed.
+
+Ensure these are set in Coolify before the first deploy:
+
+```env
+SUPERADMIN_EMAIL=admin@visitharar.gov.et
+SUPERADMIN_PASSWORD=your-password
+SUPERADMIN_NAME=Super Admin
 ```
 
-From Coolify → **app** container → **Terminal**, `postgres` hostname resolves on the compose network.
+To skip auto-setup (debug only): set `SKIP_DB_SETUP=1` on the app service.
+
+To force re-seed on an empty DB after wiping volumes: redeploy with users table empty, or set `RUN_DB_SEED=1` (default behaviour seeds when no users exist).
 
 ---
 

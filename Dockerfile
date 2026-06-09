@@ -33,10 +33,23 @@ ENV HOST=0.0.0.0
 ENV PORT=3000
 ENV UPLOAD_DIR=/data/uploads
 
+RUN apk add --no-cache libstdc++ libgcc
 RUN addgroup -S app && adduser -S app -G app
 RUN mkdir -p /data/uploads && chown app:app /data/uploads
 
+COPY --from=oven/bun:1-alpine /usr/local/bin/bun /usr/local/bin/bun
 COPY --from=builder --chown=app:app /app/dist ./dist
+COPY --from=builder --chown=app:app /app/node_modules ./node_modules
+COPY --from=builder --chown=app:app /app/package.json ./package.json
+COPY --from=builder --chown=app:app /app/bun.lock ./bun.lock
+COPY --from=builder --chown=app:app /app/drizzle.config.ts ./drizzle.config.ts
+COPY --from=builder --chown=app:app /app/drizzle ./drizzle
+COPY --from=builder --chown=app:app /app/db ./db
+COPY --from=builder --chown=app:app /app/scripts ./scripts
+COPY --from=builder --chown=app:app /app/src ./src
+COPY --from=builder --chown=app:app /app/tsconfig.json ./tsconfig.json
+COPY --chown=app:app scripts/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x docker-entrypoint.sh
 
 USER app
 
@@ -44,7 +57,7 @@ EXPOSE 3000
 
 VOLUME ["/data/uploads"]
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:' + (process.env.PORT || 3000) + '/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
 
-CMD ["node", "dist/server/index.mjs"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
