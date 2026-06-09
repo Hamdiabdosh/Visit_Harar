@@ -75,4 +75,4 @@ export function isDbUnavailableError(err: unknown): boolean {
 }
 
 export const DB_SETUP_HINT =
-  "Database unavailable. Start Postgres: `docker compose up -d` in frontend/, then `bun run db:push` and `bun run db:seed`. Ensure DATABASE_URL matches (default port 5434). If you see 'too many clients', restart Postgres (`docker restart visit-harar-pg`) and restart the dev server.";
+  "Database unavailable. Start Postgres: `docker compose -f docker-compose.dev.yml up -d` in frontend/, then `bun run db:push` and `bun run db:seed`. Ensure DATABASE_URL matches (default port 5434). If you see 'too many clients', restart Postgres (`docker restart visit-harar-pg`) and restart the dev server.";

@@ -2,130 +2,103 @@
 
 ## Overview
 
-| Service        | Role                                              |
-| -------------- | ------------------------------------------------- |
-| **Coolify**    | Hosts the TanStack Start app (Docker + Nitro)     |
-| **PostgreSQL** | Coolify managed DB, or external (Supabase, etc.)  |
-| **Local disk** | Uploaded images and video (`UPLOAD_DIR` volume)   |
-| **Resend**     | Auth reset and booking emails                     |
+| Service     | Role                                                    |
+| ----------- | ------------------------------------------------------- |
+| **Coolify** | Runs `docker-compose.yml` (app + bundled Postgres)      |
+| **Resend**  | Auth reset and booking emails (optional until configured) |
 
-The app builds with Nitro’s **`node-server`** preset for Docker. Vercel deploys use `NITRO_PRESET=vercel` (see [Vercel section](#vercel-alternative) below).
+The compose stack builds the app with Nitro’s **`node-server`** preset. Vercel deploys use `NITRO_PRESET=vercel` (see [Vercel section](#vercel-alternative) below).
 
-**Production domain:** `https://visitharar.raafat.site`  
-Use `https://` if Coolify SSL is enabled (default). All three URL variables must match exactly.
+**Production domain:** `https://visitharar.raafat.site`
 
 Copy-paste template: [`coolify.env.example`](./coolify.env.example)
 
 ---
 
-## 1. PostgreSQL
-
-### Option A — Coolify managed Postgres (recommended)
-
-1. In Coolify → **Resources → Databases → Add** → PostgreSQL 16.
-2. Note the internal connection URL (hostname is usually the service name, e.g. `postgres` or a Coolify-generated host).
-3. Use the **direct** connection string (not a pooler) — the Node server keeps a small connection pool.
-
-```text
-postgresql://postgres:PASSWORD@HOST:5432/visit_harar
-```
-
-### Option B — External Postgres (Supabase, etc.)
-
-Use the **direct** URI (`:5432`), not the transaction pooler. Pooler URLs are for serverless (Vercel); this app runs as a long-lived Node process.
-
----
-
-## 2. Database setup (run once)
-
-From your machine (or a one-off Coolify “Execute Command” container with network access to the DB):
-
-```bash
-cd frontend
-cp .env.example .env
-# Set DATABASE_URL to your production Postgres URI
-
-bun install
-bun run db:migrate
-psql "$DATABASE_URL" -f db/indexes.sql
-bun run db:seed   # first deploy only; uses SUPERADMIN_* from env
-```
-
----
-
-## 3. Coolify application
+## 1. Coolify application (Docker Compose)
 
 ### Create the service
 
 1. Coolify → **Projects** → your project → **Add Resource** → **Application**.
 2. Connect your Git repository.
 3. **Base Directory**: `frontend`
-4. **Build Pack**: Dockerfile (auto-detected from `frontend/Dockerfile`).
-5. **Port**: `3000` (must match `EXPOSE` in the Dockerfile).
-6. **Domain**: `visitharar.raafat.site` (enable SSL in Coolify).
-7. **Persistent storage**: mount a volume at `/data/uploads` so media survives redeploys.
+4. **Build Pack**: **Docker Compose** (uses `frontend/docker-compose.yml`).
+5. **Domain**: add `visitharar.raafat.site` on the **app** service (enable SSL).
+6. No separate Postgres resource needed — compose includes a `postgres` service and wires `DATABASE_URL` automatically.
 
-### Build-time variables
+### What compose handles for you
 
-Set these under **Build Variables** (they are embedded in the client bundle):
+| Concern        | Handled by `docker-compose.yml`                          |
+| -------------- | -------------------------------------------------------- |
+| Postgres       | `postgres` service on the internal network               |
+| `DATABASE_URL` | Built as `postgresql://postgres:…@postgres:5432/visit_harar` |
+| App port       | `3000` via `SERVICE_FQDN_APP_3000` (Coolify magic var)   |
+| Uploads        | Named volume `uploads` at `/data/uploads`                |
+| Health check   | `GET /health` (no database required)                     |
 
-| Variable       | Value                                  |
-| -------------- | -------------------------------------- |
-| `VITE_APP_URL` | `https://visitharar.raafat.site`       |
+Do **not** set `DATABASE_URL` in Coolify — it would be redundant and easy to get wrong.
 
-`NITRO_PRESET` defaults to `node-server` in the Dockerfile — do not change unless you know why.
+### Environment variables in Coolify
+
+Only set what you need. Optional vars can be omitted entirely; template placeholders like `re_your-api-key` are ignored at runtime.
+
+| Variable             | Required | Build-time? | Notes                                              |
+| -------------------- | -------- | ----------- | -------------------------------------------------- |
+| `POSTGRES_PASSWORD`  | Recommended | No       | Shared by postgres + app; change from default      |
+| `BETTER_AUTH_SECRET` | Yes      | No          | `openssl rand -base64 32`                          |
+| `VITE_APP_URL`       | Recommended | **Yes**  | `https://visitharar.raafat.site` — embedded in client bundle |
+| `RESEND_API_KEY`     | No       | No          | Omit until Resend is ready                         |
+| `RESEND_FROM_EMAIL`  | No       | No          | Omit until Resend is ready                         |
+| `APP_URL`            | No       | No          | Coolify sets via `SERVICE_URL_APP` when domain is configured |
+| `BETTER_AUTH_URL`    | No       | No          | Defaults to `SERVICE_URL_APP`                      |
 
 **Only `VITE_APP_URL` should be marked “Available at Buildtime”.**  
-Uncheck build-time for `NODE_ENV`, `DATABASE_URL`, secrets, and all other vars. If `NODE_ENV=production` is injected during the Docker build, package managers skip devDependencies (vite, typescript, etc.) and the build fails.
+Do **not** mark `NODE_ENV`, `POSTGRES_PASSWORD`, or secrets as build-time — that skips devDependencies and breaks the Docker build.
 
-### Runtime environment variables
-
-| Variable                | Notes                                                    |
-| ----------------------- | -------------------------------------------------------- |
-| `DATABASE_URL`          | Direct Postgres URI                                      |
-| `BETTER_AUTH_SECRET`    | `openssl rand -base64 32` — unique for production        |
-| `BETTER_AUTH_URL`       | `https://visitharar.raafat.site`                         |
-| `APP_URL`               | `https://visitharar.raafat.site`                         |
-| `NODE_ENV`              | `production`                                             |
-| `HOST`                  | `0.0.0.0` (set in Dockerfile; override only if needed) |
-| `PORT`                  | `3000` (Coolify may inject this automatically)           |
-| `UPLOAD_DIR`            | `/data/uploads` — must match the mounted volume path     |
-| `RESEND_API_KEY`        |                                                          |
-| `RESEND_FROM_EMAIL`     | Verified domain (e.g. `noreply@visitharar.gov.et`)       |
-| `SUPERADMIN_EMAIL`      | Used only when running `db:seed`                         |
-| `SUPERADMIN_PASSWORD`   | Strong password; rotate from dev defaults                |
-| `SUPERADMIN_NAME`       | Optional                                                 |
-
-Do **not** commit `.env`. Rotate any secrets used in development.
+Remove any previously set `DATABASE_URL` from Coolify env vars.
 
 ### Deploy
 
 Push to the connected branch, or click **Deploy** in Coolify.
 
-Coolify builds the Docker image, runs `bun run build` inside the builder stage, and starts `node dist/server/index.mjs`.
+Coolify runs `docker compose up`, builds the app image, starts Postgres, then the app.
 
 ---
 
-## 4. Custom domain
+## 2. Database setup (run once)
 
-1. Add the domain in Coolify and configure DNS (A/AAAA or CNAME per Coolify instructions).
-2. Set `BETTER_AUTH_URL`, `APP_URL`, and **rebuild** with `VITE_APP_URL` = `https://visitharar.raafat.site`.
-3. Redeploy so the client bundle picks up the public URL.
+After the first successful deploy, run migrations from your machine or a Coolify exec shell on the **app** container:
+
+```bash
+cd frontend
+# Use the same POSTGRES_PASSWORD as in Coolify (default: visit-harar)
+export DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@postgres:5432/visit_harar"
+
+bun install
+bun run db:migrate
+psql "$DATABASE_URL" -f db/indexes.sql
+bun run db:seed   # first deploy only; uses SUPERADMIN_* from env if set
+```
+
+From Coolify → **app** container → **Terminal**, `postgres` hostname resolves on the compose network.
 
 ---
 
-## 5. Post-deploy checks
+## 3. Custom domain
 
-- [ ] Homepage loads: hero, featured attractions, news, guides, gallery.
-- [ ] `/admin/login` with seeded superadmin.
-- [ ] `/admin/media` — upload an image; copy URL works.
-- [ ] Edit an attraction; entry appears in `/admin/audit`.
-- [ ] Create an editor in `/admin/users`; welcome email arrives (Resend).
-- [ ] Forgot password email (Resend).
-- [ ] Submit a test booking; bureau email arrives.
-- [ ] Contact inquiry form sends bureau email.
-- [ ] Maintenance toggle in `/admin/settings` shows public maintenance page.
-- [ ] No database connection errors in Coolify logs.
+1. Add the domain in Coolify on the **app** service and configure DNS.
+2. Optionally set `VITE_APP_URL` and **rebuild** so the client bundle matches.
+3. `APP_URL` / `BETTER_AUTH_URL` are filled from Coolify’s `SERVICE_URL_APP` unless you override them.
+
+---
+
+## 4. Post-deploy checks
+
+- [ ] `https://visitharar.raafat.site/health` returns `ok`
+- [ ] Homepage loads after migrations + seed
+- [ ] `/admin/login` with seeded superadmin
+- [ ] `/admin/media` — upload an image; copy URL works
+- [ ] No database connection errors in Coolify logs
 
 ### VPS memory (recommended for small servers)
 
@@ -141,20 +114,17 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 
 ---
 
-## 6. Troubleshooting
+## 5. Troubleshooting
 
 | Issue                          | Fix                                                                 |
 | ------------------------------ | ------------------------------------------------------------------- |
+| `404 page not found` (plain text) | Traefik has no healthy backend — check app logs, domain on **app** service, port `3000`. |
+| `no available server` (503)  | App container unhealthy — check logs; run migrations; verify `POSTGRES_PASSWORD` matches. |
 | Build fails / NODE_ENV warning | Set `NODE_ENV` as **runtime only** in Coolify (not build-time).     |
-| Build SIGKILL / exit 139       | VPS ran out of RAM during Nitro build. Add **2GB swap** on the server (see below), then redeploy. |
-| Build hangs on `dockerfile:1`  | Remove `# syntax=docker/dockerfile:1` from Dockerfile (fixed in repo); retry deploy. |
-| Build hangs pulling images     | On the VPS run `docker pull oven/bun:1-alpine && docker pull node:22-alpine`, then redeploy. |
-| Build fails during prerender   | `vite.config.ts` sets `preview.host: 127.0.0.1` for Docker builds.  |
-| `DATABASE_URL is not set`      | Add runtime env var in Coolify; redeploy.                           |
-| Auth redirects wrong host      | Align `BETTER_AUTH_URL`, `APP_URL`, and `VITE_APP_URL` (rebuild).   |
-| Emails not sent                | Verify Resend domain; check container logs.                         |
-| Upload fails                   | Check `UPLOAD_DIR` is writable; confirm volume is mounted at `/data/uploads`. |
-| Container unhealthy            | Ensure port `3000` is exposed; check logs for startup errors.       |
+| Build SIGKILL / exit 139       | VPS ran out of RAM during Nitro build. Add **2GB swap**, redeploy.  |
+| Auth redirects wrong host      | Set domain in Coolify; rebuild with correct `VITE_APP_URL`.       |
+| Emails not sent                | Add real `RESEND_*` vars in Coolify (omit until ready — no errors). |
+| Upload fails                   | Confirm `uploads` volume is mounted at `/data/uploads`.           |
 
 ---
 
@@ -162,10 +132,16 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 
 ```bash
 cd frontend
-docker compose -f docker-compose.prod.yml up --build
+docker compose up --build
 ```
 
-Requires a `.env` with `POSTGRES_PASSWORD`, `VITE_APP_URL`, `APP_URL`, `BETTER_AUTH_URL`, and `BETTER_AUTH_SECRET`.
+Requires only `BETTER_AUTH_SECRET` in `.env` (or export it). Postgres and `DATABASE_URL` are wired by compose.
+
+Local dev Postgres (port 5434 only):
+
+```bash
+docker compose -f docker-compose.dev.yml up -d
+```
 
 ---
 
@@ -177,12 +153,12 @@ For Vercel + Supabase serverless deploy, set `NITRO_PRESET=vercel` in the Vercel
 
 ## Local dev vs production
 
-|              | Local                    | Coolify                         |
-| ------------ | ------------------------ | ------------------------------- |
-| Postgres     | Docker `5434`            | Coolify DB or external direct   |
-| App URL      | `http://localhost:8080`  | `https://visitharar.raafat.site` |
-| Nitro preset   | `node-server` (default)  | `node-server` (Dockerfile)      |
-| Media storage  | `./uploads` (local)      | `/data/uploads` (volume)        |
-| Start          | `bun run dev`            | `node dist/server/index.mjs`    |
+|              | Local dev                         | Coolify (compose)                    |
+| ------------ | --------------------------------- | ------------------------------------ |
+| Postgres     | `docker-compose.dev.yml` → `:5434` | Bundled `postgres` service           |
+| App URL      | `http://localhost:8080`           | `https://visitharar.raafat.site`     |
+| Deploy file  | —                                 | `docker-compose.yml`                 |
+| Media storage| `./uploads`                       | `/data/uploads` (named volume)       |
+| Start        | `bun run dev`                     | `node dist/server/index.mjs`         |
 
 See [SETUP.md](./SETUP.md) for local development.

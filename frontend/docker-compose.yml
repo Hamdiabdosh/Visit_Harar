@@ -1,21 +1,65 @@
+# Production stack for Coolify (Docker Compose build pack).
+# Base Directory in Coolify: frontend
+#
+# Postgres + DATABASE_URL are wired here — do not set DATABASE_URL in Coolify.
+# Optional vars (Resend, etc.) can be omitted; placeholders are ignored at runtime.
+
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: visit-harar-pg
     restart: unless-stopped
-    ports:
-      - "5434:5432"
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-visit-harar}
       POSTGRES_DB: visit_harar
     volumes:
-      - visit_harar_pg_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d visit_harar"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_APP_URL: ${VITE_APP_URL:-https://visitharar.raafat.site}
+    restart: unless-stopped
+    expose:
+      - "3000"
+    environment:
+      # Coolify: proxy this service on port 3000 and inject SERVICE_URL_APP
+      SERVICE_FQDN_APP_3000: ""
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-visit-harar}@postgres:5432/visit_harar
+      UPLOAD_DIR: /data/uploads
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-change-me-before-production}
+      APP_URL: ${APP_URL:-$SERVICE_URL_APP}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-$SERVICE_URL_APP}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - uploads:/data/uploads
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:' + (process.env.PORT || 3000) + '/health').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+
 volumes:
-  visit_harar_pg_data:
+  postgres_data:
+  uploads:

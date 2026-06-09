@@ -1,5 +1,6 @@
 import { db } from "../../db/index";
 import { contactInfo } from "../../drizzle/schema/index";
+import { getResendConfig } from "@/lib/env.server";
 import type { BookingStatus, TourDuration } from "@/lib/types";
 
 export type BookingEmailData = {
@@ -73,9 +74,8 @@ async function sendEmail(
   subject: string,
   html: string,
 ): Promise<boolean> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
-  if (!apiKey || !from) {
+  const resend = getResendConfig();
+  if (!resend) {
     if (process.env.NODE_ENV === "development") {
       console.log(`[dev email] To: ${to} | Subject: ${subject}`);
     }
@@ -85,18 +85,27 @@ async function sendEmail(
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${resend.apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ from, to, subject, html }),
+      body: JSON.stringify({
+        from: resend.from,
+        to,
+        subject,
+        html,
+      }),
     });
     if (!res.ok) {
-      console.error("[Resend]", await res.text());
+      if (process.env.NODE_ENV === "development") {
+        console.error("[Resend]", await res.text());
+      }
       return false;
     }
     return true;
   } catch (err) {
-    console.error("[Resend]", err);
+    if (process.env.NODE_ENV === "development") {
+      console.error("[Resend]", err);
+    }
     return false;
   }
 }

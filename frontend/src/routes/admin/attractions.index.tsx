@@ -138,7 +138,7 @@ function AttractionsAdmin() {
           <p className="text-sm text-amber-800">
             Could not load attractions. Run{" "}
             <code className="font-mono">
-              docker compose up -d && bun run db:push && bun run db:seed
+              docker compose -f docker-compose.dev.yml up -d && bun run db:push && bun run db:seed
             </code>
           </p>
         </AdminCard>

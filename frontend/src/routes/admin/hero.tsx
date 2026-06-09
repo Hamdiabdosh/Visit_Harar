@@ -139,7 +139,7 @@ function HeroManager() {
               : "Could not load hero content."}
           </p>
           <p className="text-sm text-amber-800 mt-3 font-mono">
-            docker compose up -d && bun run db:push && bun run db:seed
+            docker compose -f docker-compose.dev.yml up -d && bun run db:push && bun run db:seed
           </p>
         </AdminCard>
       ) : isLoading ? (

@@ -30,11 +30,11 @@ The spec describes custom `users` / `sessions` tables. This project uses **Bette
 
    ```bash
    cd frontend
-   docker compose up -d
+   docker compose -f docker-compose.dev.yml up -d
    bun run db:check
    ```
 
-   This runs Postgres on **localhost:5434** (see `docker-compose.yml`).  
+   This runs Postgres on **localhost:5434** (see `docker-compose.dev.yml`).  
    Your `.env` must use:
 
    `DATABASE_URL=postgresql://postgres:postgres@localhost:5434/visit_harar`

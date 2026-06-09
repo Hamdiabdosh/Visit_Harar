@@ -3,6 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError } from "better-auth/api";
 import { db } from "../../db/index";
 import * as schema from "../../drizzle/schema/index";
+import { getResendConfig } from "@/lib/env.server";
 
 const baseURL =
   process.env.BETTER_AUTH_URL ?? process.env.APP_URL ?? "http://localhost:3000";
@@ -23,21 +24,22 @@ export const auth = betterAuth({
     enabled: true,
     disableSignUp: true,
     sendResetPassword: async ({ user, url }) => {
-      if (process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL) {
+      const resend = getResendConfig();
+      if (resend) {
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+            Authorization: `Bearer ${resend.apiKey}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: process.env.RESEND_FROM_EMAIL,
+            from: resend.from,
             to: user.email,
             subject: "Reset your Visit Harar CMS password",
             html: `<p>Reset your password: <a href="${url}">${url}</a></p><p>This link expires in 1 hour.</p>`,
           }),
         });
-        if (!res.ok) {
+        if (!res.ok && process.env.NODE_ENV === "development") {
           console.error("Resend failed:", await res.text());
         }
       } else if (process.env.NODE_ENV === "development") {

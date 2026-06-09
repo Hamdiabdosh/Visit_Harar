@@ -115,9 +115,8 @@ export const getSystemHealth = createServerFn({ method: "GET" }).handler(
         dbOk = false;
       }
       const storageOk = (await import("@/lib/storage.server")).isStorageWritable();
-      const emailOk = Boolean(
-        process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL,
-      );
+      const { getResendConfig } = await import("@/lib/env.server");
+      const emailOk = getResendConfig() !== null;
       const { getMaintenanceMode } = await import("@/lib/settings");
       const maintenanceMode = await getMaintenanceMode();
       return {

@@ -29,7 +29,7 @@ try {
 } catch (err) {
   console.error("Database connection failed.");
   console.error(err instanceof Error ? err.message : err);
-  console.error("\nStart Postgres: docker compose up -d  (in frontend/)");
+  console.error("\nStart Postgres: docker compose -f docker-compose.dev.yml up -d  (in frontend/)");
   console.error("Then: bun run db:push && bun run db:seed");
   process.exit(1);
 } finally {
