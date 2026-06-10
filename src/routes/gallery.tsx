@@ -1,16 +1,23 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/public/PageHero";
 import { GalleryThumb } from "@/components/public/GalleryThumb";
-import { GalleryLightbox } from "@/components/public/GalleryLightbox";
+import { GalleryPageSkeleton } from "@/components/public/GallerySkeletons";
 import {
   getPublishedAlbums,
   getPublishedGalleryItems,
+  type PublishedGalleryItemDto,
 } from "@/lib/gallery-fns";
 import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync } from "@/lib/metadata";
 import { Images, LayoutGrid } from "lucide-react";
+
+const GalleryLightbox = lazy(() =>
+  import("@/components/public/GalleryLightbox").then((m) => ({
+    default: m.GalleryLightbox,
+  })),
+);
 
 type GalleryView = "photos" | "albums";
 
@@ -18,13 +25,16 @@ export const Route = createFileRoute("/gallery")({
   validateSearch: (search: Record<string, unknown>) => ({
     view: search.view === "albums" ? ("albums" as const) : ("photos" as const),
   }),
-  loader: async () => {
-    const [albums, photos] = await Promise.all([
-      getPublishedAlbums(),
-      getPublishedGalleryItems(),
-    ]);
+  loaderDeps: ({ search }) => ({ view: search.view }),
+  loader: async ({ deps }) => {
+    const albums = await getPublishedAlbums();
+    if (deps.view === "albums") {
+      return { albums, photos: [] as PublishedGalleryItemDto[] };
+    }
+    const photos = await getPublishedGalleryItems();
     return { albums, photos };
   },
+  pendingComponent: GalleryPageSkeleton,
   head: async () =>
     buildHeadAsync({
       title: "Photo Gallery",
@@ -100,7 +110,11 @@ function GalleryPage() {
     void navigate({ search: { view: next }, replace: true });
   }
 
-  const isEmpty = albums.length === 0 && photos.length === 0;
+  const photoCount =
+    photos.length > 0
+      ? photos.length
+      : albums.reduce((sum, album) => sum + album.item_count, 0);
+  const isEmpty = albums.length === 0 && photoCount === 0;
 
   return (
     <PublicLayout>
@@ -127,7 +141,7 @@ function GalleryPage() {
             <div className="flex justify-center mb-8">
               <GalleryTabs
                 view={view}
-                photoCount={photos.length}
+                photoCount={photoCount}
                 albumCount={albums.length}
                 onChange={setView}
               />
@@ -207,11 +221,13 @@ function GalleryPage() {
                           {a.cover_image ? (
                             <img
                               src={
-                                optimizeImage(a.cover_image, { width: 800 }) ??
+                                optimizeImage(a.cover_image, { width: 400 }) ??
                                 a.cover_image
                               }
                               alt=""
                               aria-hidden
+                              loading="lazy"
+                              decoding="async"
                               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           ) : (
@@ -241,11 +257,15 @@ function GalleryPage() {
         )}
       </section>
 
-      <GalleryLightbox
-        items={photos}
-        index={lightboxIndex}
-        onClose={() => setLightboxIndex(-1)}
-      />
+      {lightboxIndex >= 0 && (
+        <Suspense fallback={null}>
+          <GalleryLightbox
+            items={photos}
+            index={lightboxIndex}
+            onClose={() => setLightboxIndex(-1)}
+          />
+        </Suspense>
+      )}
     </PublicLayout>
   );
 }

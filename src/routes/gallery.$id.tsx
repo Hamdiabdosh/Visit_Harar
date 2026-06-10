@@ -1,12 +1,18 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { getPublishedAlbumItems } from "@/lib/gallery-fns";
 import { ArrowLeft, Download, Expand } from "lucide-react";
 import { GalleryThumb } from "@/components/public/GalleryThumb";
-import { GalleryLightbox } from "@/components/public/GalleryLightbox";
+import { GalleryAlbumSkeleton } from "@/components/public/GallerySkeletons";
 import { triggerGalleryDownload } from "@/lib/gallery-lightbox";
 import { buildHeadAsync } from "@/lib/metadata";
+
+const GalleryLightbox = lazy(() =>
+  import("@/components/public/GalleryLightbox").then((m) => ({
+    default: m.GalleryLightbox,
+  })),
+);
 
 export const Route = createFileRoute("/gallery/$id")({
   loader: async ({ params }) => {
@@ -14,6 +20,7 @@ export const Route = createFileRoute("/gallery/$id")({
     if (!data) throw notFound();
     return data;
   },
+  pendingComponent: GalleryAlbumSkeleton,
   head: async ({ loaderData }) => {
     const album = loaderData?.album;
     return buildHeadAsync({
@@ -104,11 +111,15 @@ function AlbumDetail() {
         )}
       </div>
 
-      <GalleryLightbox
-        items={items}
-        index={index}
-        onClose={() => setIndex(-1)}
-      />
+      {index >= 0 && (
+        <Suspense fallback={null}>
+          <GalleryLightbox
+            items={items}
+            index={index}
+            onClose={() => setIndex(-1)}
+          />
+        </Suspense>
+      )}
     </PublicLayout>
   );
 }

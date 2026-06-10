@@ -88,7 +88,7 @@ function PageEditorShell() {
       breadcrumb={`Pages › ${fresh.title}`}
       action={
         <Link
-          to="/admin/pages"
+          to="/admin/pages/"
           className="text-sm text-ink-muted inline-flex items-center gap-1 hover:text-brand"
         >
           <ArrowLeft className="w-4 h-4" /> Back

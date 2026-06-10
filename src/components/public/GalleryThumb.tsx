@@ -38,7 +38,9 @@ function ThumbMedia({
   albumTitle,
 }: GalleryThumbData) {
   const src =
-    optimizeImage(thumbnail_url ?? url, { width: 800 }) ?? thumbnail_url ?? url;
+    optimizeImage(thumbnail_url ?? url, { width: 400 }) ??
+    thumbnail_url ??
+    url;
   const imgAlt = thumbLabel({ alt, caption, type, albumTitle });
 
   return (
@@ -48,6 +50,8 @@ function ThumbMedia({
           <img
             src={src}
             alt={imgAlt}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/20" />
@@ -59,6 +63,8 @@ function ThumbMedia({
         <img
           src={src}
           alt={imgAlt}
+          loading="lazy"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}

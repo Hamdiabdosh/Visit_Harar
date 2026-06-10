@@ -48,6 +48,7 @@ import { Route as AdminBookingsRouteImport } from './routes/admin/bookings'
 import { Route as AdminAuditRouteImport } from './routes/admin/audit'
 import { Route as AdminAttractionsRouteImport } from './routes/admin/attractions'
 import { Route as AdminAnnouncementsRouteImport } from './routes/admin/announcements'
+import { Route as AdminPagesIndexRouteImport } from './routes/admin/pages.index'
 import { Route as AdminGuidesIndexRouteImport } from './routes/admin/guides.index'
 import { Route as AdminGalleryIndexRouteImport } from './routes/admin/gallery.index'
 import { Route as AdminBookingsIndexRouteImport } from './routes/admin/bookings.index'
@@ -255,6 +256,11 @@ const AdminAnnouncementsRoute = AdminAnnouncementsRouteImport.update({
   path: '/announcements',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminPagesIndexRoute = AdminPagesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminPagesRoute,
+} as any)
 const AdminGuidesIndexRoute = AdminGuidesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -362,6 +368,7 @@ export interface FileRoutesByFullPath {
   '/admin/bookings/': typeof AdminBookingsIndexRoute
   '/admin/gallery/': typeof AdminGalleryIndexRoute
   '/admin/guides/': typeof AdminGuidesIndexRoute
+  '/admin/pages/': typeof AdminPagesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -385,7 +392,6 @@ export interface FileRoutesByTo {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
-  '/admin/pages': typeof AdminPagesRouteWithChildren
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/users': typeof AdminUsersRoute
@@ -409,6 +415,7 @@ export interface FileRoutesByTo {
   '/admin/bookings': typeof AdminBookingsIndexRoute
   '/admin/gallery': typeof AdminGalleryIndexRoute
   '/admin/guides': typeof AdminGuidesIndexRoute
+  '/admin/pages': typeof AdminPagesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -462,6 +469,7 @@ export interface FileRoutesById {
   '/admin/bookings/': typeof AdminBookingsIndexRoute
   '/admin/gallery/': typeof AdminGalleryIndexRoute
   '/admin/guides/': typeof AdminGuidesIndexRoute
+  '/admin/pages/': typeof AdminPagesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -516,6 +524,7 @@ export interface FileRouteTypes {
     | '/admin/bookings/'
     | '/admin/gallery/'
     | '/admin/guides/'
+    | '/admin/pages/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -539,7 +548,6 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/login'
     | '/admin/media'
-    | '/admin/pages'
     | '/admin/reset-password'
     | '/admin/settings'
     | '/admin/users'
@@ -563,6 +571,7 @@ export interface FileRouteTypes {
     | '/admin/bookings'
     | '/admin/gallery'
     | '/admin/guides'
+    | '/admin/pages'
   id:
     | '__root__'
     | '/'
@@ -615,6 +624,7 @@ export interface FileRouteTypes {
     | '/admin/bookings/'
     | '/admin/gallery/'
     | '/admin/guides/'
+    | '/admin/pages/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -912,6 +922,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAnnouncementsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/pages/': {
+      id: '/admin/pages/'
+      path: '/'
+      fullPath: '/admin/pages/'
+      preLoaderRoute: typeof AdminPagesIndexRouteImport
+      parentRoute: typeof AdminPagesRoute
+    }
     '/admin/guides/': {
       id: '/admin/guides/'
       path: '/'
@@ -1060,10 +1077,12 @@ const AdminGuidesRouteWithChildren = AdminGuidesRoute._addFileChildren(
 
 interface AdminPagesRouteChildren {
   AdminPagesPageKeyRoute: typeof AdminPagesPageKeyRoute
+  AdminPagesIndexRoute: typeof AdminPagesIndexRoute
 }
 
 const AdminPagesRouteChildren: AdminPagesRouteChildren = {
   AdminPagesPageKeyRoute: AdminPagesPageKeyRoute,
+  AdminPagesIndexRoute: AdminPagesIndexRoute,
 }
 
 const AdminPagesRouteWithChildren = AdminPagesRoute._addFileChildren(

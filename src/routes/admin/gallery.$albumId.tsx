@@ -17,6 +17,7 @@ import {
   Toggle,
   SectionLabel,
 } from "@/components/AdminLayout";
+import { AdminAlbumEditorSkeleton } from "@/components/public/GallerySkeletons";
 import {
   bulkPublish,
   deleteMediaItem,
@@ -27,6 +28,7 @@ import {
   updateMediaItem,
   uploadMediaItem,
 } from "@/lib/gallery-fns";
+import { optimizeImage } from "@/lib/media-url";
 import {
   DndContext,
   PointerSensor,
@@ -58,8 +60,38 @@ export const Route = createFileRoute("/admin/gallery/$albumId")({
     if (!data) throw notFound();
     return data;
   },
+  pendingComponent: AlbumManagerPending,
   component: AlbumManager,
 });
+
+function applyAlbumData(
+  data: NonNullable<Awaited<ReturnType<typeof getAlbumById>>>,
+  setters: {
+    setAlbumTitle: (v: string) => void;
+    setAlbumDesc: (v: string) => void;
+    setAlbumPublished: (v: boolean) => void;
+    setCover: (v: string | null) => void;
+    setItems: (v: Awaited<ReturnType<typeof getAlbumById>>["items"]) => void;
+    setOrderedIds: (v: string[]) => void;
+    setSelected: (v: Set<string>) => void;
+  },
+) {
+  setters.setAlbumTitle(data.album.title);
+  setters.setAlbumDesc(data.album.description ?? "");
+  setters.setAlbumPublished(data.album.is_published);
+  setters.setCover(data.album.cover_image ?? null);
+  setters.setItems(data.items);
+  setters.setOrderedIds(data.items.map((i) => i.id));
+  setters.setSelected(new Set());
+}
+
+function AlbumManagerPending() {
+  return (
+    <AdminLayout title="Gallery" breadcrumb="Gallery">
+      <AdminAlbumEditorSkeleton />
+    </AdminLayout>
+  );
+}
 
 type UploadProgress = {
   id: string;
@@ -73,52 +105,66 @@ const UPLOAD_ERROR_REMOVE_MS = 4000;
 
 function AlbumManager() {
   const { albumId } = Route.useParams();
+  const loaderData = Route.useLoaderData();
   const navigate = useNavigate();
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
   );
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const [loading, setLoading] = useState(true);
-  const [albumTitle, setAlbumTitle] = useState("");
-  const [albumDesc, setAlbumDesc] = useState("");
-  const [albumPublished, setAlbumPublished] = useState(false);
-  const [cover, setCover] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [albumTitle, setAlbumTitle] = useState(loaderData.album.title);
+  const [albumDesc, setAlbumDesc] = useState(
+    loaderData.album.description ?? "",
+  );
+  const [albumPublished, setAlbumPublished] = useState(
+    loaderData.album.is_published,
+  );
+  const [cover, setCover] = useState<string | null>(
+    loaderData.album.cover_image ?? null,
+  );
 
-  const [items, setItems] = useState<
-    Awaited<ReturnType<typeof getAlbumById>>["items"]
-  >([]);
-  const [orderedIds, setOrderedIds] = useState<string[]>([]);
+  const [items, setItems] = useState(loaderData.items);
+  const [orderedIds, setOrderedIds] = useState(
+    loaderData.items.map((i) => i.id),
+  );
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [uploads, setUploads] = useState<UploadProgress[]>([]);
   const [savingAlbum, setSavingAlbum] = useState(false);
 
+  useEffect(() => {
+    applyAlbumData(loaderData, {
+      setAlbumTitle,
+      setAlbumDesc,
+      setAlbumPublished,
+      setCover,
+      setItems,
+      setOrderedIds,
+      setSelected,
+    });
+  }, [loaderData]);
+
   async function refresh() {
-    setLoading(true);
+    setRefreshing(true);
     try {
       const data = await getAlbumById({ data: albumId });
       if (!data) {
         void navigate({ to: "/admin/gallery" });
         return;
       }
-      setAlbumTitle(data.album.title);
-      setAlbumDesc(data.album.description ?? "");
-      setAlbumPublished(data.album.is_published);
-      setCover(data.album.cover_image ?? null);
-      setItems(data.items);
-      setOrderedIds(data.items.map((i) => i.id));
-      setSelected(new Set());
+      applyAlbumData(data, {
+        setAlbumTitle,
+        setAlbumDesc,
+        setAlbumPublished,
+        setCover,
+        setItems,
+        setOrderedIds,
+        setSelected,
+      });
     } finally {
-      setLoading(false);
+      setRefreshing(false);
     }
   }
-
-  useEffect(() => {
-    refresh().catch((e) =>
-      toast.error(e instanceof Error ? e.message : "Failed to load album"),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [albumId]);
 
   const itemsById = useMemo(
     () => new Map(items.map((i) => [i.id, i])),
@@ -285,10 +331,21 @@ function AlbumManager() {
     await refresh();
   }
 
-  if (loading) {
+  if (refreshing) {
     return (
-      <AdminLayout title="Gallery" breadcrumb="Gallery">
-        <p className="text-sm text-ink-muted">Loading…</p>
+      <AdminLayout
+        title={albumTitle || "Album"}
+        breadcrumb={`Gallery › ${albumTitle || "Album"}`}
+        action={
+          <Link
+            to="/admin/gallery"
+            className="text-sm text-ink-muted inline-flex items-center gap-1 hover:text-brand"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back
+          </Link>
+        }
+      >
+        <AdminAlbumEditorSkeleton />
       </AdminLayout>
     );
   }
@@ -575,8 +632,14 @@ function SortableMediaCard({
             </div>
           ) : (
             <img
-              src={item.url}
+              src={
+                optimizeImage(item.thumbnail_url ?? item.url, { width: 400 }) ??
+                item.thumbnail_url ??
+                item.url
+              }
               alt=""
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 w-full h-full object-cover"
             />
           )}

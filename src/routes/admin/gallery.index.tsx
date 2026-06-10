@@ -33,7 +33,7 @@ import {
   reorderAlbums,
   updateAlbum,
 } from "@/lib/gallery-fns";
-import { Trash2, Plus, GripVertical } from "lucide-react";
+import { AdminGalleryListSkeleton } from "@/components/public/GallerySkeletons";
 
 export const Route = createFileRoute("/admin/gallery/")({
   component: GalleryAdmin,
@@ -195,7 +195,7 @@ function GalleryAdmin() {
           <p className="text-sm text-amber-800">{error}</p>
         </AdminCard>
       ) : loading ? (
-        <p className="text-sm text-ink-muted">Loading…</p>
+        <AdminGalleryListSkeleton />
       ) : items.length === 0 ? (
         <AdminCard className="p-10 text-center">
           <p className="text-sm text-ink-muted">No albums yet.</p>
