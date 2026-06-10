@@ -99,6 +99,18 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
           </span>
         </div>
       </div>
+
+      <div className="max-w-7xl mx-auto px-5 lg:px-8 border-t border-border/30 py-4 text-center text-xs text-muted-foreground">
+        Built with care by{" "}
+        <a
+          href="https://raafat.site"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-foreground/70 hover:text-foreground transition-colors underline-offset-4 hover:underline"
+        >
+          RAAFAT-DIGITAL
+        </a>
+      </div>
     </footer>
   );
 }

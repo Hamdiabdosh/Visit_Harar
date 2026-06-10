@@ -248,6 +248,51 @@ function SidebarContent({
           </button>
         )}
       </div>
+
+      <div
+        className={cn(
+          "border-t border-border/40 px-4 py-3",
+          collapsed && "flex justify-center px-0",
+        )}
+      >
+        {collapsed ? (
+          <a
+            href="https://raafat.site"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-7 w-7 items-center justify-center rounded-md text-[10px] font-bold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            title="Built by RAAFAT-DIGITAL"
+          >
+            R
+          </a>
+        ) : (
+          <a
+            href="https://raafat.site"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-1.5 text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <span>Built by</span>
+            <span className="font-semibold text-foreground/80 transition-colors group-hover:text-foreground">
+              RAAFAT-DIGITAL
+            </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-3 w-3 opacity-50 transition-opacity group-hover:opacity-100"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+          </a>
+        )}
+      </div>
     </div>
   );
 }
