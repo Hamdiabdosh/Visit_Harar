@@ -1,6 +1,18 @@
 import { db } from "../../db/index";
 import { auditLogs, user } from "../../drizzle/schema/index";
 import { eq } from "drizzle-orm";
+import { invalidateChatKnowledgeCache } from "@/lib/chat/knowledge-cache";
+
+const KNOWLEDGE_MODULES = new Set([
+  "attractions",
+  "guides",
+  "pages",
+  "announcements",
+  "contact",
+  "hero",
+  "gallery",
+  "settings",
+]);
 
 export type AuditParams = {
   userId?: string | null;
@@ -17,6 +29,9 @@ export function auditSnap<T extends object>(obj: T): Record<string, unknown> {
 }
 
 export function fireAudit(params: AuditParams): void {
+  if (KNOWLEDGE_MODULES.has(params.module)) {
+    invalidateChatKnowledgeCache();
+  }
   void logAction(params).catch(() => undefined);
 }
 

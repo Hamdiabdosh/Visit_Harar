@@ -59,6 +59,10 @@ export type GalleryItemDto = {
   created_at: Date;
 };
 
+export type PublishedGalleryItemDto = GalleryItemDto & {
+  album_title: string;
+};
+
 function albumRowToDto(
   row: typeof galleryAlbums.$inferSelect,
   itemCount: number,
@@ -697,6 +701,43 @@ export const getPublishedAlbumItems = createServerFn({ method: "GET" })
       }
     },
   );
+
+export const getPublishedGalleryItems = createServerFn({ method: "GET" }).handler(
+  async (): Promise<PublishedGalleryItemDto[]> => {
+    try {
+      const rows = await db
+        .select({
+          item: galleryItems,
+          albumTitle: galleryAlbums.title,
+        })
+        .from(galleryItems)
+        .innerJoin(
+          galleryAlbums,
+          and(
+            eq(galleryItems.albumId, galleryAlbums.id),
+            eq(galleryAlbums.isPublished, true),
+          ),
+        )
+        .where(eq(galleryItems.isPublished, true))
+        .orderBy(desc(galleryItems.createdAt));
+
+      return rows.map((r) => ({
+        ...itemRowToDto(r.item),
+        album_title: r.albumTitle,
+      }));
+    } catch (err) {
+      if (isDbUnavailableError(err)) {
+        console.error("[getPublishedGalleryItems]", DB_SETUP_HINT);
+        return [];
+      }
+      if (isAppError(err)) throw err;
+      throw createError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "Failed to load gallery items",
+      );
+    }
+  },
+);
 
 export const getLatestGalleryItems = createServerFn({ method: "GET" })
   .inputValidator((n: unknown) => z.number().int().min(1).max(30).parse(n))

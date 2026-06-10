@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index";
 import { siteSettings } from "../../drizzle/schema/index";
+import { invalidateChatKnowledgeCache } from "@/lib/chat/knowledge-cache";
 
 const CACHE_TTL_MS = 60_000;
 
@@ -38,6 +39,7 @@ export async function getBookingEnabled(): Promise<boolean> {
 
 export function invalidateSettingsCache() {
   cached = null;
+  invalidateChatKnowledgeCache();
 }
 
 export async function upsertSettingsCacheAfterUpdate() {

@@ -9,8 +9,25 @@ export type GalleryThumbData = {
   alt?: string | null;
   type: MediaType;
   albumId?: string;
+  albumTitle?: string | null;
   onClick?: () => void;
 };
+
+function thumbLabel({
+  alt,
+  caption,
+  type,
+  albumTitle,
+}: Pick<GalleryThumbData, "alt" | "caption" | "type" | "albumTitle">) {
+  const text =
+    alt?.trim() ||
+    caption?.trim() ||
+    (type === "video" ? "Video" : "Gallery photo");
+  if (albumTitle?.trim()) {
+    return `${text} — ${albumTitle.trim()}`;
+  }
+  return text;
+}
 
 function ThumbMedia({
   url,
@@ -18,13 +35,11 @@ function ThumbMedia({
   caption,
   alt,
   type,
+  albumTitle,
 }: GalleryThumbData) {
   const src =
     optimizeImage(thumbnail_url ?? url, { width: 800 }) ?? thumbnail_url ?? url;
-  const imgAlt =
-    alt?.trim() ||
-    caption?.trim() ||
-    (type === "video" ? "Video" : "Gallery photo");
+  const imgAlt = thumbLabel({ alt, caption, type, albumTitle });
 
   return (
     <div className="group relative overflow-hidden rounded-lg bg-surface border border-border">
@@ -53,19 +68,25 @@ function ThumbMedia({
           <div className="text-white text-xs line-clamp-2">{caption}</div>
         </div>
       ) : null}
-      <div className="absolute inset-0 ring-0 group-hover:ring-2 group-hover:ring-gold transition-all" />
+      <div className="absolute inset-0 ring-0 group-hover:ring-2 group-hover:ring-gold group-focus-within:ring-2 group-focus-within:ring-gold transition-all pointer-events-none" />
     </div>
   );
 }
 
 export function GalleryThumb(props: GalleryThumbData) {
   const { albumId, onClick } = props;
+  const label = thumbLabel(props);
+  const actionLabel =
+    onClick || !albumId
+      ? `View full size: ${label}`
+      : `Open album: ${props.albumTitle?.trim() || label}`;
 
   if (onClick) {
     return (
       <button
         type="button"
         onClick={onClick}
+        aria-label={actionLabel}
         className="block w-full text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-lg"
       >
         <ThumbMedia {...props} />
@@ -78,7 +99,8 @@ export function GalleryThumb(props: GalleryThumbData) {
       <Link
         to="/gallery/$id"
         params={{ id: albumId }}
-        className="block hover:opacity-95 transition-opacity"
+        aria-label={actionLabel}
+        className="block hover:opacity-95 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-lg"
       >
         <ThumbMedia {...props} />
       </Link>

@@ -1,5 +1,6 @@
 import { PublicNavbar } from "@/components/public/PublicNavbar";
 import { PublicFooter } from "@/components/public/PublicFooter";
+import { ChatWidget } from "@/components/public/ChatWidget";
 import { usePublicContact } from "@/components/public/contact-context";
 
 export function PublicLayout({
@@ -18,6 +19,7 @@ export function PublicLayout({
       <main className="flex-1">{children}</main>
 
       <PublicFooter contact={contact} />
+      <ChatWidget />
     </div>
   );
 }

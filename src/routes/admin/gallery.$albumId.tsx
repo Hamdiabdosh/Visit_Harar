@@ -441,13 +441,14 @@ function AlbumManager() {
                       .then(refresh)
                       .catch(() => toast.error("Failed to set cover"))
                   }
-                  onUpdate={(data) =>
-                    void updateMediaItem({ data: { id: it.id, data } })
-                      .then(refresh)
-                      .catch((e) =>
-                        toast.error(e instanceof Error ? e.message : "Failed"),
-                      )
-                  }
+                  onSave={async (data) => {
+                    const updated = await updateMediaItem({
+                      data: { id: it.id, data },
+                    });
+                    setItems((prev) =>
+                      prev.map((row) => (row.id === it.id ? updated : row)),
+                    );
+                  }}
                 />
               ))}
             </div>
@@ -466,7 +467,7 @@ function SortableMediaCard({
   onSelect,
   onDelete,
   onSetCover,
-  onUpdate,
+  onSave,
 }: {
   id: string;
   item: {
@@ -481,11 +482,11 @@ function SortableMediaCard({
   onSelect: () => void;
   onDelete: () => void;
   onSetCover: () => void;
-  onUpdate: (data: {
+  onSave: (data: {
     caption?: string | null;
     alt_text?: string | null;
     is_published?: boolean;
-  }) => void;
+  }) => Promise<void>;
 }) {
   const {
     attributes,
@@ -500,6 +501,32 @@ function SortableMediaCard({
     transition,
     opacity: isDragging ? 0.75 : 1,
   };
+
+  const [caption, setCaption] = useState(item.caption ?? "");
+  const [altText, setAltText] = useState(item.alt_text ?? "");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setCaption(item.caption ?? "");
+    setAltText(item.alt_text ?? "");
+  }, [item.caption, item.alt_text, id]);
+
+  async function saveFields(fields: {
+    caption?: string | null;
+    alt_text?: string | null;
+    is_published?: boolean;
+  }) {
+    setSaving(true);
+    try {
+      await onSave(fields);
+    } catch (e) {
+      setCaption(item.caption ?? "");
+      setAltText(item.alt_text ?? "");
+      toast.error(e instanceof Error ? e.message : "Failed to save");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div
@@ -534,20 +561,37 @@ function SortableMediaCard({
       <div className="p-3 space-y-2">
         <input
           className="w-full rounded border border-border px-2 py-1 text-xs"
-          value={item.caption ?? ""}
+          value={caption}
           placeholder="Caption"
-          onChange={(e) => onUpdate({ caption: e.target.value })}
+          disabled={saving}
+          onChange={(e) => setCaption(e.target.value)}
+          onBlur={() => {
+            if (caption === (item.caption ?? "")) return;
+            void saveFields({ caption: caption || null });
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.currentTarget.blur();
+          }}
         />
         <input
           className="w-full rounded border border-border px-2 py-1 text-xs"
-          value={item.alt_text ?? ""}
+          value={altText}
           placeholder="Alt text (required to publish)"
-          onChange={(e) => onUpdate({ alt_text: e.target.value })}
+          disabled={saving}
+          onChange={(e) => setAltText(e.target.value)}
+          onBlur={() => {
+            if (altText === (item.alt_text ?? "")) return;
+            void saveFields({ alt_text: altText || null });
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.currentTarget.blur();
+          }}
         />
         <div className="flex items-center justify-between text-xs">
           <Toggle
             checked={item.is_published}
-            onChange={(v) => onUpdate({ is_published: v })}
+            disabled={saving}
+            onChange={(v) => void saveFields({ is_published: v })}
           />
           <div className="flex items-center gap-1.5">
             <button
