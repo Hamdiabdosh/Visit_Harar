@@ -62,10 +62,14 @@ export const Route = createFileRoute("/admin/gallery/$albumId")({
 });
 
 type UploadProgress = {
+  id: string;
   filename: string;
   progress: number;
   status: "reading" | "uploading" | "done" | "error";
 };
+
+const UPLOAD_DONE_REMOVE_MS = 1200;
+const UPLOAD_ERROR_REMOVE_MS = 4000;
 
 function AlbumManager() {
   const { albumId } = Route.useParams();
@@ -219,19 +223,26 @@ function AlbumManager() {
     });
   }
 
+  function removeUploadLater(id: string, delayMs: number) {
+    window.setTimeout(() => {
+      setUploads((prev) => prev.filter((u) => u.id !== id));
+    }, delayMs);
+  }
+
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
     const list = Array.from(files);
     for (const f of list) {
+      const uploadId = crypto.randomUUID();
       setUploads((prev) => [
         ...prev,
-        { filename: f.name, progress: 0, status: "reading" },
+        { id: uploadId, filename: f.name, progress: 0, status: "reading" },
       ]);
       try {
         const base64 = await fileToBase64WithProgress(f, (p) => {
           setUploads((prev) =>
             prev.map((u) =>
-              u.filename === f.name
+              u.id === uploadId
                 ? { ...u, progress: p, status: "reading" }
                 : u,
             ),
@@ -239,7 +250,7 @@ function AlbumManager() {
         });
         setUploads((prev) =>
           prev.map((u) =>
-            u.filename === f.name
+            u.id === uploadId
               ? { ...u, progress: 100, status: "uploading" }
               : u,
           ),
@@ -254,15 +265,20 @@ function AlbumManager() {
         });
         setUploads((prev) =>
           prev.map((u) =>
-            u.filename === f.name ? { ...u, status: "done" } : u,
+            u.id === uploadId
+              ? { ...u, progress: 100, status: "done" }
+              : u,
           ),
         );
+        removeUploadLater(uploadId, UPLOAD_DONE_REMOVE_MS);
       } catch {
         setUploads((prev) =>
           prev.map((u) =>
-            u.filename === f.name ? { ...u, status: "error" } : u,
+            u.id === uploadId ? { ...u, status: "error" } : u,
           ),
         );
+        toast.error(`Failed to upload ${f.name}`);
+        removeUploadLater(uploadId, UPLOAD_ERROR_REMOVE_MS);
       }
     }
     if (fileRef.current) fileRef.current.value = "";
@@ -326,19 +342,35 @@ function AlbumManager() {
           </div>
 
           {uploads.length > 0 && (
-            <div className="mt-5 space-y-2">
-              {uploads.slice(-6).map((u) => (
-                <div key={u.filename} className="flex items-center gap-3">
+            <div className="mt-5 space-y-2" aria-live="polite">
+              {uploads.map((u) => (
+                <div key={u.id} className="flex items-center gap-3">
                   <div className="flex-1">
-                    <div className="text-xs font-medium">{u.filename}</div>
+                    <div className="text-xs font-medium truncate">{u.filename}</div>
                     <div className="h-2 bg-surface rounded mt-1 overflow-hidden">
                       <div
-                        className={`h-full ${u.status === "error" ? "bg-red-500" : "bg-brand"} transition-all`}
-                        style={{ width: `${u.progress}%` }}
+                        className={`h-full transition-all ${
+                          u.status === "error"
+                            ? "bg-red-500"
+                            : u.status === "done"
+                              ? "bg-emerald-500"
+                              : "bg-brand"
+                        }`}
+                        style={{
+                          width: `${
+                            u.status === "uploading" || u.status === "done"
+                              ? 100
+                              : u.progress
+                          }%`,
+                        }}
                       />
                     </div>
                   </div>
-                  <div className="text-xs text-ink-muted w-20 text-right">
+                  <div
+                    className={`text-xs w-20 text-right shrink-0 ${
+                      u.status === "error" ? "text-red-600" : "text-ink-muted"
+                    }`}
+                  >
                     {u.status === "reading"
                       ? "Reading…"
                       : u.status === "uploading"
