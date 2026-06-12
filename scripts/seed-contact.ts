@@ -4,8 +4,8 @@ import { contactInfo } from "../drizzle/schema/index";
 
 const CONTACT_SEED = {
   officeName: "Harari Tourism Commission",
-  addressLine1: "Harar Jugol, Near Shoa Gate",
-  addressLine2: "Harari Regional State",
+  addressLine1: "844X+93",
+  addressLine2: "Harar",
   country: "Ethiopia",
   phonePrimary: "+251 25 666 1234",
   phoneSecondary: "+251 91 234 5678",
@@ -16,8 +16,8 @@ const CONTACT_SEED = {
     { day: "Saturday", hours: "9:00 AM – 1:00 PM" },
     { day: "Sunday", hours: "Closed" },
   ],
-  mapLat: "9.3133",
-  mapLng: "42.1261",
+  mapLat: "9.3059",
+  mapLng: "42.1477",
   facebookUrl: "https://facebook.com/visitharar",
   twitterUrl: "https://twitter.com/visitharar",
   instagramUrl: "https://instagram.com/visitharar",

@@ -117,13 +117,13 @@ function ContactAdmin() {
         <Field label="Address Line 1">
           <Input
             {...form.register("address_line1")}
-            placeholder="Harar Jugol"
+            placeholder="844X+93"
           />
         </Field>
         <Field label="Address Line 2">
           <Input
             {...form.register("address_line2")}
-            placeholder="Harari Regional State"
+            placeholder="Harar"
           />
         </Field>
         <Field label="Country">
