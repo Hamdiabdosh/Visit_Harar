@@ -1,0 +1,175 @@
+Logs
+Server: localhost
+Lines:
+100
+Find in logs
+
+
+
+
+
+
+
+
+
+✓ Pages seeded (about, culture, plan)
+✓ Contact info seeded
+✓ Site settings seeded
+Seed failed: DrizzleQueryError: Failed query: insert into "hero_content" ("id", "badge_text", "headline", "headline_italic", "subheading", "cta_primary_text", "cta_primary_url", "cta_ghost_text", "cta_ghost_url", "background_image", "stat_1_number", "stat_1_label", "stat_2_number", "stat_2_label", "stat_3_number", "stat_3_label", "is_published", "updated_by", "updated_at") values (default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+params: UNESCO World Heritage Site · Inscribed 2006,Discover,Harar,
+City of Saints,Africa's fourth holiest city in Islam — a living medieval walled city of ancient mosques, vibrant markets and the legendary hyena men, nestled in the highlands of eastern Ethiopia.,Plan Your Visit,/plan-your-trip,Watch the City,#,,82,Mosques,102,Shrines,1,000+,Years of History,true,seed,2026-06-11T20:40:17.783Z
+    at PostgresJsPreparedQuery.queryWithCache (/app/node_modules/src/pg-core/session.ts:73:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async seedHero (/app/scripts/seed-hero.ts:28:3)
+    at async main (/app/scripts/run-all-seeds.ts:20:3) {
+  query: 'insert into "hero_content" ("id", "badge_text", "headline", "headline_italic", "subheading", "cta_primary_text", "cta_primary_url", "cta_ghost_text", "cta_ghost_url", "background_image", "stat_1_number", "stat_1_label", "stat_2_number", "stat_2_label", "stat_3_number", "stat_3_label", "is_published", "updated_by", "updated_at") values (default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)',
+  params: [
+    'UNESCO World Heritage Site · Inscribed 2006',
+    'Discover',
+    'Harar,\nCity of Saints',
+    "Africa's fourth holiest city in Islam — a living medieval walled city of ancient mosques, vibrant markets and the legendary hyena men, nestled in the highlands of eastern Ethiopia.",
+    'Plan Your Visit',
+    '/plan-your-trip',
+    'Watch the City',
+    '#',
+    null,
+    '82',
+Applying database schema…
+No config path provided, using default 'drizzle.config.ts'
+Reading config file '/app/drizzle.config.ts'
+Using 'postgres' driver for database querying
+[⣷] Pulling schema from database...
+KG[⣯] Pulling schema from database...
+KG[⣟] Pulling schema from database...
+KG[⡿] Pulling schema from database...
+KG[⢿] Pulling schema from database...
+KG[⣻] Pulling schema from database...
+KG[⣽] Pulling schema from database...
+KG[⣷] Pulling schema from database...
+KG[⣯] Pulling schema from database...
+KG[⣟] Pulling schema from database...
+KG[⡿] Pulling schema from database...
+KG[⢿] Pulling schema from database...
+KG[⣻] Pulling schema from database...
+KG[⣽] Pulling schema from database...
+KG[⣷] Pulling schema from database...
+KG[⣯] Pulling schema from database...
+KG[✓] Pulling schema from database...
+[✓] Changes applied
+✓ Indexes applied
+Skipping seed (database already has users)
+➜ Listening on: http://localhost:3000/ (all interfaces)
+    'Mosques',
+    '102',
+    'Shrines',
+    '1,000+',
+    'Years of History',
+    true,
+    'seed',
+    '2026-06-11T20:40:17.783Z'
+  ],
+  cause: PostgresError: insert or update on table "hero_content" violates foreign key constraint "hero_content_updated_by_user_id_fk"
+      at ErrorResponse (file:///app/node_modules/postgres/src/connection.js:815:30)
+      at handle (file:///app/node_modules/postgres/src/connection.js:489:6)
+      at Socket.data (file:///app/node_modules/postgres/src/connection.js:324:9)
+      at Socket.emit (node:events:519:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '23503',
+    detail: 'Key (updated_by)=(seed) is not present in table "user".',
+    schema_name: 'public',
+    table_name: 'hero_content',
+    constraint_name: 'hero_content_updated_by_user_id_fk',
+    file: 'ri_triggers.c',
+    line: '2608',
+    routine: 'ri_ReportViolation'
+  }
+}
+error: script "db:seed" exited with code 1
+31 |   execSync("bun run db:push", { stdio: "inherit" });
+32 |   execSync("bun run db:indexes", { stdio: "inherit" });
+33 | 
+34 |   if (await shouldSeed()) {
+35 |     console.log("Seeding database…");
+36 |     execSync("bun run db:seed", { stdio: "inherit" });
+         ^
+error: Command failed: bun run db:seed
+ signal: null,
+ status: 1,
+ output: [ null, null, null ],
+    pid: 84,
+ stdout: null,
+ stderr: null,
+      at genericNodeError (node:child_process:998:13)
+      at checkExecSyncError (node:child_process:458:27)
+      at execSync (node:child_process:278:31)
+      at main (/app/scripts/apply-db-setup.ts:36:5)
+$ drizzle-kit push
+$ tsx scripts/apply-indexes.ts
+Lines:
+100
+Find in logs
+
+
+
+
+
+
+
+
+
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+Data page checksums are disabled.
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+Success. You can now start the database server using:
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+waiting for server to start....2026-06-11 20:39:47.997 UTC [40] LOG:  starting PostgreSQL 16.14 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-06-11 20:39:48.021 UTC [40] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-06-11 20:39:48.048 UTC [43] LOG:  database system was shut down at 2026-06-11 20:39:47 UTC
+2026-06-11 20:39:48.086 UTC [40] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+waiting for server to shut down...2026-06-11 20:39:48.413 UTC [40] LOG:  received fast shutdown request
+.2026-06-11 20:39:48.420 UTC [40] LOG:  aborting any active transactions
+2026-06-11 20:39:48.444 UTC [40] LOG:  background worker "logical replication launcher" (PID 46) exited with exit code 1
+2026-06-11 20:39:48.445 UTC [41] LOG:  shutting down
+2026-06-11 20:39:48.453 UTC [41] LOG:  checkpoint starting: shutdown immediate
+2026-06-11 20:39:48.666 UTC [41] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.113 s, sync=0.086 s, total=0.222 s; sync files=301, longest=0.018 s, average=0.001 s; distance=4272 kB, estimate=4272 kB; lsn=0/191E938, redo lsn=0/191E938
+2026-06-11 20:39:48.690 UTC [40] LOG:  database system is shut down
+ done
+server stopped
+PostgreSQL init process complete; ready for start up.
+sh: locale: not found
+2026-06-11 20:39:45.936 UTC [34] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-06-11 20:39:49.018 UTC [1] LOG:  starting PostgreSQL 16.14 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-06-11 20:39:49.019 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-06-11 20:39:49.019 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-06-11 20:39:49.027 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-06-11 20:39:49.038 UTC [56] LOG:  database system was shut down at 2026-06-11 20:39:48 UTC
+2026-06-11 20:39:49.055 UTC [1] LOG:  database system is ready to accept connections
+2026-06-11 20:40:17.786 UTC [83] ERROR:  insert or update on table "hero_content" violates foreign key constraint "hero_content_updated_by_user_id_fk"
+2026-06-11 20:40:17.786 UTC [83] DETAIL:  Key (updated_by)=(seed) is not present in table "user".
+2026-06-11 20:40:17.786 UTC [83] STATEMENT:  insert into "hero_content" ("id", "badge_text", "headline", "headline_italic", "subheading", "cta_primary_text", "cta_primary_url", "cta_ghost_text", "cta_ghost_url", "background_image", "stat_1_number", "stat_1_label", "stat_2_number", "stat_2_label", "stat_3_number", "stat_3_label", "is_published", "updated_by", "updated_at") values (default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+2026-06-11 20:44:49.122 UTC [54] LOG:  checkpoint starting: time
+2026-06-11 20:45:09.241 UTC [54] LOG:  checkpoint complete: wrote 189 buffers (1.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=19.745 s, sync=0.278 s, total=20.119 s; sync files=184, longest=0.050 s, average=0.002 s; distance=1048 kB, estimate=1048 kB; lsn=0/1A24990, redo lsn=0/1A24958

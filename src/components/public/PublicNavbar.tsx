@@ -6,6 +6,7 @@ import { useEffect, useId, useRef, useState } from "react";
 const navLinks = [
   { to: "/", label: "Home", exact: true },
   { to: "/attractions", label: "Attractions" },
+  { to: "/map", label: "Map" },
   { to: "/guides", label: "Guides" },
   { to: "/gallery", label: "Gallery" },
   { to: "/culture", label: "Culture" },

@@ -48,7 +48,7 @@ function ForgotPassword() {
       <div className="w-full max-w-[400px] bg-white rounded-lg p-8 shadow-xl">
         <h1 className="font-serif text-xl font-bold">Reset password</h1>
         <p className="text-sm text-ink-muted mt-2">
-          Enter your bureau email. We will send a reset link valid for 1 hour.
+          Enter your commission email. We will send a reset link valid for 1 hour.
         </p>
 
         {sent ? (

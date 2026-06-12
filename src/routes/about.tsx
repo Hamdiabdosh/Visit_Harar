@@ -34,7 +34,7 @@ function AboutPage() {
       <PublicLayout>
         <PageHero
           title="About Harar"
-          subtitle="Official information from the Harari Regional Tourism Bureau."
+          subtitle="Official information from the Harari Tourism Commission."
         />
         <ComingSoon backTo="/" />
       </PublicLayout>

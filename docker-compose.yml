@@ -47,7 +47,7 @@ services:
       SUPERADMIN_NAME: ${SUPERADMIN_NAME:-Super Admin}
       EDITOR_EMAIL: ${EDITOR_EMAIL:-}
       EDITOR_PASSWORD: ${EDITOR_PASSWORD:-}
-      EDITOR_NAME: ${EDITOR_NAME:-Bureau Editor}
+      EDITOR_NAME: ${EDITOR_NAME:-Commission Editor}
     depends_on:
       postgres:
         condition: service_healthy

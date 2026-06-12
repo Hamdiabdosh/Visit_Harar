@@ -1,4 +1,5 @@
 import { getPublishedHero } from "@/lib/hero-fns";
+import { ORG_NAME } from "@/lib/org";
 
 type MetaTag =
   | { title: string }
@@ -29,7 +30,7 @@ export type BuildMetadataOverrides = {
 
 const DEFAULT_TITLE = "Visit Harar — Official Tourism Website";
 const DEFAULT_DESCRIPTION =
-  "Discover Harar, Ethiopia's UNESCO World Heritage City of Saints. Plan your visit with the official Harari Tourism Bureau.";
+  `Discover Harar, Ethiopia's UNESCO World Heritage City of Saints. Plan your visit with the official ${ORG_NAME}.`;
 
 /** Public site origin for canonical/OG URLs (safe in route `head` on server + client). */
 function publicAppOrigin() {

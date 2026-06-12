@@ -14,6 +14,7 @@ import { getPublishedContactInfo } from "@/lib/contact-fns";
 import { PublicContactProvider } from "@/components/public/contact-context";
 import { getAnalyticsIdFn, getMaintenanceModeFn } from "@/lib/settings-fns";
 import { MaintenancePage } from "@/components/public/MaintenancePage";
+import { ORG_NAME } from "@/lib/org";
 
 function isMaintenanceBypass(pathname: string) {
   return (
@@ -116,7 +117,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         meta: [
           { charSet: "utf-8" },
           { name: "viewport", content: "width=device-width, initial-scale=1" },
-          { name: "author", content: "Harari Regional Tourism Bureau" },
+          { name: "author", content: ORG_NAME },
           { name: "twitter:card", content: "summary_large_image" },
         ],
         links: [

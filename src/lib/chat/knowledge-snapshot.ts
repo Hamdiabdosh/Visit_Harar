@@ -26,7 +26,7 @@ const SITE_ROUTES = [
   { path: "/culture", label: "Culture and festivals" },
   { path: "/news", label: "News and announcements" },
   { path: "/gallery", label: "Photo gallery" },
-  { path: "/contact", label: "Contact the bureau" },
+  { path: "/contact", label: "Contact the commission" },
 ];
 
 function section(title: string, body: string): string {

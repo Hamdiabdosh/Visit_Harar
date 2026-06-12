@@ -68,7 +68,7 @@ function Login() {
             <h1 className="font-serif text-2xl font-bold mt-3">Visit Harar</h1>
             <div className="text-ink-muted text-sm">CMS Login</div>
             <p className="text-[11px] text-ink-muted mt-2">
-              Official Bureau Staff Access Only
+              Official Commission Staff Access Only
             </p>
           </div>
 

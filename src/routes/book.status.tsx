@@ -125,7 +125,7 @@ function BookingStatusPage() {
             {result.status_note && (
               <div className="p-3 rounded bg-surface border border-border text-sm">
                 <span className="text-[10px] uppercase tracking-wider text-ink-muted font-semibold">
-                  Message from the bureau
+                  Message from the commission
                 </span>
                 <p className="mt-1">{result.status_note}</p>
               </div>

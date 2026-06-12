@@ -14,7 +14,9 @@ import {
   Instagram,
 } from "lucide-react";
 import { ComingSoon } from "@/components/public/ComingSoon";
+import { ContactMapEmbed } from "@/components/map/ContactMapEmbed";
 import { buildHeadAsync } from "@/lib/metadata";
+import { ORG_NAME } from "@/lib/org";
 import { submitInquiry } from "@/lib/inquiry-fns";
 
 export const Route = createFileRoute("/contact")({
@@ -22,7 +24,7 @@ export const Route = createFileRoute("/contact")({
     buildHeadAsync({
       title: "Contact",
       description:
-        "Contact the Harari Regional Tourism Bureau for visit information, bookings, and bureau inquiries.",
+        `Contact the ${ORG_NAME} for visit information, bookings, and commission inquiries.`,
       canonicalPath: "/contact",
     }),
   component: ContactPage,
@@ -41,7 +43,7 @@ function ContactPage() {
     mutationFn: () => submitInquiry({ data: form }),
     onSuccess: () => {
       toast.success("Inquiry sent", {
-        description: "The bureau will respond to your email soon.",
+        description: "The commission will respond to your email soon.",
       });
       setForm({ name: "", email: "", subject: "", message: "" });
     },
@@ -56,11 +58,11 @@ function ContactPage() {
     return (
       <PublicLayout>
         <PageHero
-          title="Contact the Bureau"
+          title="Contact the Commission"
           subtitle="We're here to help with any question about visiting Harar."
         />
         <ComingSoon
-          message="Contact information will be published by the bureau soon."
+          message="Contact information will be published by the commission soon."
           backTo="/"
         />
       </PublicLayout>
@@ -70,13 +72,13 @@ function ContactPage() {
   return (
     <PublicLayout>
       <PageHero
-        title="Contact the Bureau"
+        title="Contact the Commission"
         subtitle="We're here to help with any question about visiting Harar."
       />
       <section className="max-w-7xl mx-auto px-5 lg:px-8 py-12 grid md:grid-cols-2 gap-8">
         <div className="bg-white rounded-lg border border-border p-8">
           <h2 className="font-serif text-2xl font-bold mb-4">
-            {info.office_name ?? "Harari Regional Tourism Bureau"}
+            {info.office_name ?? ORG_NAME}
           </h2>
           <ul className="space-y-4 text-sm">
             <li className="flex gap-3">
@@ -133,13 +135,18 @@ function ContactPage() {
               </tbody>
             </table>
           </div>
-          <div className="mt-6 h-48 rounded-lg bg-gradient-to-br from-stone-300 to-stone-400 grid place-items-center text-stone-700 relative overflow-hidden">
-            <MapPin className="w-8 h-8" />
+          <div className="mt-6">
             {info.map_lat != null && info.map_lng != null ? (
-              <span className="absolute bottom-2 left-2 text-[11px] bg-white/90 px-2 py-1 rounded">
-                {info.map_lat}, {info.map_lng}
-              </span>
-            ) : null}
+              <ContactMapEmbed
+                lat={info.map_lat}
+                lng={info.map_lng}
+                title={info.office_name ?? "Tourism Commission"}
+              />
+            ) : (
+              <div className="h-48 rounded-lg bg-gradient-to-br from-stone-300 to-stone-400 grid place-items-center text-stone-700">
+                <MapPin className="w-8 h-8" />
+              </div>
+            )}
           </div>
           <div className="flex gap-2 mt-4">
             {[

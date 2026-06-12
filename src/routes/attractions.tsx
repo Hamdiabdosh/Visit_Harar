@@ -71,7 +71,7 @@ function AttractionsPage() {
         </div>
         {source.length === 0 ? (
           <p className="text-center text-ink-muted py-12">
-            Attractions will be published here soon. Check back after the bureau
+            Attractions will be published here soon. Check back after the commission
             updates the CMS.
           </p>
         ) : filtered.length === 0 ? (

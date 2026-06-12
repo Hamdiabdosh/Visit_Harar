@@ -3,7 +3,7 @@ import { db } from "../db/index";
 import { contactInfo } from "../drizzle/schema/index";
 
 const CONTACT_SEED = {
-  officeName: "Harari Regional Tourism Bureau",
+  officeName: "Harari Tourism Commission",
   addressLine1: "Harar Jugol, Near Shoa Gate",
   addressLine2: "Harari Regional State",
   country: "Ethiopia",

@@ -13,10 +13,10 @@ export const ABOUT_SEED_CONTENT = {
 };
 
 export const PLAN_SEED_CONTENT = {
-  getting_here: `<p><strong>By air:</strong> Fly to Dire Dawa (DIR), then take a taxi or bureau-arranged transfer to Harar (about 1 hour).</p><p><strong>By rail:</strong> The Addis Ababa–Djibouti railway stops at Dire Dawa; onward road transfer is required.</p><p><strong>By road:</strong> From Addis Ababa, the journey takes roughly 8–10 hours by private car or bus.</p>`,
+  getting_here: `<p><strong>By air:</strong> Fly to Dire Dawa (DIR), then take a taxi or commission-arranged transfer to Harar (about 1 hour).</p><p><strong>By rail:</strong> The Addis Ababa–Djibouti railway stops at Dire Dawa; onward road transfer is required.</p><p><strong>By road:</strong> From Addis Ababa, the journey takes roughly 8–10 hours by private car or bus.</p>`,
   best_time: `<p>October through March offers the most comfortable temperatures for walking the old city. Festival seasons — including Eid celebrations and the Harar Coffee Festival in July — are vibrant but busier.</p><p>Evenings are cool year-round; bring a light layer for hyena-feeding visits after dusk.</p>`,
-  visa_info: `<p>Most international visitors require an Ethiopian tourist visa. Check current requirements with your embassy or apply online before travel. Keep passport copies and bureau contact details handy for tour bookings.</p>`,
-  accommodation: `<p>Guesthouses and small hotels cluster inside and just outside Jugol's walls. The bureau can recommend licensed properties; book early during festival weekends and peak season (December–January).</p>`,
+  visa_info: `<p>Most international visitors require an Ethiopian tourist visa. Check current requirements with your embassy or apply online before travel. Keep passport copies and commission contact details handy for tour bookings.</p>`,
+  accommodation: `<p>Guesthouses and small hotels cluster inside and just outside Jugol's walls. The commission can recommend licensed properties; book early during festival weekends and peak season (December–January).</p>`,
   itineraries: [
     {
       duration: "1 Day",
@@ -41,7 +41,7 @@ export const PLAN_SEED_CONTENT = {
       days: [
         "Day 1: Old city orientation with a licensed guide",
         "Day 2: Surrounding landscapes and craft workshops",
-        "Day 3: Free exploration, bureau-facilitated guide booking",
+        "Day 3: Free exploration, commission-facilitated guide booking",
       ],
     },
   ],

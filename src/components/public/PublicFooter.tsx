@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Twitter } from "lucide-react";
 import { SiteLogo } from "@/components/SiteLogo";
 import type { ContactDto } from "@/lib/contact-fns";
+import { ORG_NAME } from "@/lib/org";
 
 export function PublicFooter({ contact }: { contact: ContactDto | null }) {
   const year = new Date().getFullYear();
@@ -20,7 +21,7 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
             </span>
           </div>
           <p className="text-sm leading-relaxed max-w-sm">
-            Official tourism website of the Harari Regional Tourism Bureau —
+            Official tourism website of the {ORG_NAME} —
             Africa&apos;s fourth holiest Islamic city and a UNESCO World
             Heritage Site.
           </p>
@@ -70,7 +71,7 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
         <FooterCol
           title="Connect"
           links={[
-            { to: "/contact", label: "Contact Bureau" },
+            { to: "/contact", label: "Contact Commission" },
             { to: "/news", label: "Announcements" },
           ]}
         />
@@ -79,7 +80,7 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
       <div className="max-w-7xl mx-auto px-5 lg:px-8 mt-10 pt-6 border-t border-white/10 text-xs flex flex-col md:flex-row justify-between gap-3">
         <div className="text-white/60">
           {[
-            contact?.office_name ?? "Harari Regional Tourism Bureau",
+            contact?.office_name ?? ORG_NAME,
             contact?.address_line1,
             contact?.address_line2,
             contact?.country,
@@ -92,7 +93,7 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
 
         <div className="flex items-center gap-3">
           <span className="text-white/60">
-            © {year} Harari Regional Tourism Bureau
+            © {year} {ORG_NAME}
           </span>
           <span className="inline-flex items-center px-2 py-1 rounded bg-gold/20 text-gold border border-gold/30 text-[10px] uppercase tracking-wider">
             Language: EN (v2)

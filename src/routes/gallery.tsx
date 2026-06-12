@@ -127,7 +127,7 @@ function GalleryPage() {
           <div className="bg-white rounded-lg border border-border p-10 text-center max-w-lg mx-auto">
             <h2 className="font-serif text-xl font-bold">No albums yet</h2>
             <p className="text-ink-muted mt-2 text-sm">
-              Photo albums will appear here once the bureau publishes them.
+              Photo albums will appear here once the commission publishes them.
             </p>
             <Link
               to="/"

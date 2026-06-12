@@ -1,6 +1,6 @@
 # Visit Harar
 
-Tourism platform for Harar — a public site for visitors and an admin CMS for the bureau to manage content, bookings, and media.
+Tourism platform for Harar — a public site for visitors and an admin CMS for the Harari Tourism Commission to manage content, bookings, and media.
 
 **Production:** [visitharar.raafat.site](https://visitharar.raafat.site)
 

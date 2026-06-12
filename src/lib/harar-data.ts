@@ -212,7 +212,7 @@ export const announcements: Announcement[] = [
     title: "New Licensed Guides Program Launched",
     date: "May 22, 2026",
     excerpt:
-      "The Bureau has certified 12 new local guides specialising in heritage, wildlife, and cultural tours.",
+      "The Commission has certified 12 new local guides specialising in heritage, wildlife, and cultural tours.",
     pinned: false,
     cover: "from-emerald-700 to-emerald-500",
   },
@@ -579,7 +579,7 @@ export const auditEntries = [
     user: "Super Admin",
     module: "settings",
     action: "updated",
-    record: "Bureau email",
+    record: "Commission email",
   },
   {
     time: "May 25, 14:48",

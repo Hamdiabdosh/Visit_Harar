@@ -14,6 +14,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as PlanYourTripRouteImport } from './routes/plan-your-trip'
 import { Route as PlanTripRouteImport } from './routes/plan-trip'
 import { Route as NewsRouteImport } from './routes/news'
+import { Route as MapRouteImport } from './routes/map'
 import { Route as HealthRouteImport } from './routes/health'
 import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as GalleryRouteImport } from './routes/gallery'
@@ -38,6 +39,7 @@ import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminPagesRouteImport } from './routes/admin/pages'
 import { Route as AdminMediaRouteImport } from './routes/admin/media'
+import { Route as AdminMapPlacesRouteImport } from './routes/admin/map-places'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminHeroRouteImport } from './routes/admin/hero'
 import { Route as AdminGuidesRouteImport } from './routes/admin/guides'
@@ -49,12 +51,14 @@ import { Route as AdminAuditRouteImport } from './routes/admin/audit'
 import { Route as AdminAttractionsRouteImport } from './routes/admin/attractions'
 import { Route as AdminAnnouncementsRouteImport } from './routes/admin/announcements'
 import { Route as AdminPagesIndexRouteImport } from './routes/admin/pages.index'
+import { Route as AdminMapPlacesIndexRouteImport } from './routes/admin/map-places.index'
 import { Route as AdminGuidesIndexRouteImport } from './routes/admin/guides.index'
 import { Route as AdminGalleryIndexRouteImport } from './routes/admin/gallery.index'
 import { Route as AdminBookingsIndexRouteImport } from './routes/admin/bookings.index'
 import { Route as AdminAttractionsIndexRouteImport } from './routes/admin/attractions.index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AdminPagesPageKeyRouteImport } from './routes/admin/pages.$pageKey'
+import { Route as AdminMapPlacesIdRouteImport } from './routes/admin/map-places.$id'
 import { Route as AdminGuidesIdRouteImport } from './routes/admin/guides.$id'
 import { Route as AdminGalleryAlbumIdRouteImport } from './routes/admin/gallery.$albumId'
 import { Route as AdminBookingsRefRouteImport } from './routes/admin/bookings.$ref'
@@ -84,6 +88,11 @@ const PlanTripRoute = PlanTripRouteImport.update({
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
   path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HealthRoute = HealthRouteImport.update({
@@ -206,6 +215,11 @@ const AdminMediaRoute = AdminMediaRouteImport.update({
   path: '/media',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminMapPlacesRoute = AdminMapPlacesRouteImport.update({
+  id: '/map-places',
+  path: '/map-places',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -261,6 +275,11 @@ const AdminPagesIndexRoute = AdminPagesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminPagesRoute,
 } as any)
+const AdminMapPlacesIndexRoute = AdminMapPlacesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminMapPlacesRoute,
+} as any)
 const AdminGuidesIndexRoute = AdminGuidesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -290,6 +309,11 @@ const AdminPagesPageKeyRoute = AdminPagesPageKeyRouteImport.update({
   id: '/$pageKey',
   path: '/$pageKey',
   getParentRoute: () => AdminPagesRoute,
+} as any)
+const AdminMapPlacesIdRoute = AdminMapPlacesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminMapPlacesRoute,
 } as any)
 const AdminGuidesIdRoute = AdminGuidesIdRouteImport.update({
   id: '/$id',
@@ -328,6 +352,7 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/health': typeof HealthRoute
+  '/map': typeof MapRoute
   '/news': typeof NewsRouteWithChildren
   '/plan-trip': typeof PlanTripRoute
   '/plan-your-trip': typeof PlanYourTripRoute
@@ -343,6 +368,7 @@ export interface FileRoutesByFullPath {
   '/admin/guides': typeof AdminGuidesRouteWithChildren
   '/admin/hero': typeof AdminHeroRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/map-places': typeof AdminMapPlacesRouteWithChildren
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRouteWithChildren
   '/admin/reset-password': typeof AdminResetPasswordRoute
@@ -362,12 +388,14 @@ export interface FileRoutesByFullPath {
   '/admin/bookings/$ref': typeof AdminBookingsRefRoute
   '/admin/gallery/$albumId': typeof AdminGalleryAlbumIdRoute
   '/admin/guides/$id': typeof AdminGuidesIdRoute
+  '/admin/map-places/$id': typeof AdminMapPlacesIdRoute
   '/admin/pages/$pageKey': typeof AdminPagesPageKeyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/attractions/': typeof AdminAttractionsIndexRoute
   '/admin/bookings/': typeof AdminBookingsIndexRoute
   '/admin/gallery/': typeof AdminGalleryIndexRoute
   '/admin/guides/': typeof AdminGuidesIndexRoute
+  '/admin/map-places/': typeof AdminMapPlacesIndexRoute
   '/admin/pages/': typeof AdminPagesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -380,6 +408,7 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/health': typeof HealthRoute
+  '/map': typeof MapRoute
   '/news': typeof NewsRouteWithChildren
   '/plan-trip': typeof PlanTripRoute
   '/plan-your-trip': typeof PlanYourTripRoute
@@ -409,12 +438,14 @@ export interface FileRoutesByTo {
   '/admin/bookings/$ref': typeof AdminBookingsRefRoute
   '/admin/gallery/$albumId': typeof AdminGalleryAlbumIdRoute
   '/admin/guides/$id': typeof AdminGuidesIdRoute
+  '/admin/map-places/$id': typeof AdminMapPlacesIdRoute
   '/admin/pages/$pageKey': typeof AdminPagesPageKeyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/attractions': typeof AdminAttractionsIndexRoute
   '/admin/bookings': typeof AdminBookingsIndexRoute
   '/admin/gallery': typeof AdminGalleryIndexRoute
   '/admin/guides': typeof AdminGuidesIndexRoute
+  '/admin/map-places': typeof AdminMapPlacesIndexRoute
   '/admin/pages': typeof AdminPagesIndexRoute
 }
 export interface FileRoutesById {
@@ -429,6 +460,7 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/health': typeof HealthRoute
+  '/map': typeof MapRoute
   '/news': typeof NewsRouteWithChildren
   '/plan-trip': typeof PlanTripRoute
   '/plan-your-trip': typeof PlanYourTripRoute
@@ -444,6 +476,7 @@ export interface FileRoutesById {
   '/admin/guides': typeof AdminGuidesRouteWithChildren
   '/admin/hero': typeof AdminHeroRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/map-places': typeof AdminMapPlacesRouteWithChildren
   '/admin/media': typeof AdminMediaRoute
   '/admin/pages': typeof AdminPagesRouteWithChildren
   '/admin/reset-password': typeof AdminResetPasswordRoute
@@ -463,12 +496,14 @@ export interface FileRoutesById {
   '/admin/bookings/$ref': typeof AdminBookingsRefRoute
   '/admin/gallery/$albumId': typeof AdminGalleryAlbumIdRoute
   '/admin/guides/$id': typeof AdminGuidesIdRoute
+  '/admin/map-places/$id': typeof AdminMapPlacesIdRoute
   '/admin/pages/$pageKey': typeof AdminPagesPageKeyRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/attractions/': typeof AdminAttractionsIndexRoute
   '/admin/bookings/': typeof AdminBookingsIndexRoute
   '/admin/gallery/': typeof AdminGalleryIndexRoute
   '/admin/guides/': typeof AdminGuidesIndexRoute
+  '/admin/map-places/': typeof AdminMapPlacesIndexRoute
   '/admin/pages/': typeof AdminPagesIndexRoute
 }
 export interface FileRouteTypes {
@@ -484,6 +519,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/guides'
     | '/health'
+    | '/map'
     | '/news'
     | '/plan-trip'
     | '/plan-your-trip'
@@ -499,6 +535,7 @@ export interface FileRouteTypes {
     | '/admin/guides'
     | '/admin/hero'
     | '/admin/login'
+    | '/admin/map-places'
     | '/admin/media'
     | '/admin/pages'
     | '/admin/reset-password'
@@ -518,12 +555,14 @@ export interface FileRouteTypes {
     | '/admin/bookings/$ref'
     | '/admin/gallery/$albumId'
     | '/admin/guides/$id'
+    | '/admin/map-places/$id'
     | '/admin/pages/$pageKey'
     | '/api/auth/$'
     | '/admin/attractions/'
     | '/admin/bookings/'
     | '/admin/gallery/'
     | '/admin/guides/'
+    | '/admin/map-places/'
     | '/admin/pages/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -536,6 +575,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/guides'
     | '/health'
+    | '/map'
     | '/news'
     | '/plan-trip'
     | '/plan-your-trip'
@@ -565,12 +605,14 @@ export interface FileRouteTypes {
     | '/admin/bookings/$ref'
     | '/admin/gallery/$albumId'
     | '/admin/guides/$id'
+    | '/admin/map-places/$id'
     | '/admin/pages/$pageKey'
     | '/api/auth/$'
     | '/admin/attractions'
     | '/admin/bookings'
     | '/admin/gallery'
     | '/admin/guides'
+    | '/admin/map-places'
     | '/admin/pages'
   id:
     | '__root__'
@@ -584,6 +626,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/guides'
     | '/health'
+    | '/map'
     | '/news'
     | '/plan-trip'
     | '/plan-your-trip'
@@ -599,6 +642,7 @@ export interface FileRouteTypes {
     | '/admin/guides'
     | '/admin/hero'
     | '/admin/login'
+    | '/admin/map-places'
     | '/admin/media'
     | '/admin/pages'
     | '/admin/reset-password'
@@ -618,12 +662,14 @@ export interface FileRouteTypes {
     | '/admin/bookings/$ref'
     | '/admin/gallery/$albumId'
     | '/admin/guides/$id'
+    | '/admin/map-places/$id'
     | '/admin/pages/$pageKey'
     | '/api/auth/$'
     | '/admin/attractions/'
     | '/admin/bookings/'
     | '/admin/gallery/'
     | '/admin/guides/'
+    | '/admin/map-places/'
     | '/admin/pages/'
   fileRoutesById: FileRoutesById
 }
@@ -638,6 +684,7 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRouteWithChildren
   GuidesRoute: typeof GuidesRouteWithChildren
   HealthRoute: typeof HealthRoute
+  MapRoute: typeof MapRoute
   NewsRoute: typeof NewsRouteWithChildren
   PlanTripRoute: typeof PlanTripRoute
   PlanYourTripRoute: typeof PlanYourTripRoute
@@ -682,6 +729,13 @@ declare module '@tanstack/react-router' {
       path: '/news'
       fullPath: '/news'
       preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/health': {
@@ -852,6 +906,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminMediaRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/map-places': {
+      id: '/admin/map-places'
+      path: '/map-places'
+      fullPath: '/admin/map-places'
+      preLoaderRoute: typeof AdminMapPlacesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
@@ -929,6 +990,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPagesIndexRouteImport
       parentRoute: typeof AdminPagesRoute
     }
+    '/admin/map-places/': {
+      id: '/admin/map-places/'
+      path: '/'
+      fullPath: '/admin/map-places/'
+      preLoaderRoute: typeof AdminMapPlacesIndexRouteImport
+      parentRoute: typeof AdminMapPlacesRoute
+    }
     '/admin/guides/': {
       id: '/admin/guides/'
       path: '/'
@@ -970,6 +1038,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/pages/$pageKey'
       preLoaderRoute: typeof AdminPagesPageKeyRouteImport
       parentRoute: typeof AdminPagesRoute
+    }
+    '/admin/map-places/$id': {
+      id: '/admin/map-places/$id'
+      path: '/$id'
+      fullPath: '/admin/map-places/$id'
+      preLoaderRoute: typeof AdminMapPlacesIdRouteImport
+      parentRoute: typeof AdminMapPlacesRoute
     }
     '/admin/guides/$id': {
       id: '/admin/guides/$id'
@@ -1075,6 +1150,20 @@ const AdminGuidesRouteWithChildren = AdminGuidesRoute._addFileChildren(
   AdminGuidesRouteChildren,
 )
 
+interface AdminMapPlacesRouteChildren {
+  AdminMapPlacesIdRoute: typeof AdminMapPlacesIdRoute
+  AdminMapPlacesIndexRoute: typeof AdminMapPlacesIndexRoute
+}
+
+const AdminMapPlacesRouteChildren: AdminMapPlacesRouteChildren = {
+  AdminMapPlacesIdRoute: AdminMapPlacesIdRoute,
+  AdminMapPlacesIndexRoute: AdminMapPlacesIndexRoute,
+}
+
+const AdminMapPlacesRouteWithChildren = AdminMapPlacesRoute._addFileChildren(
+  AdminMapPlacesRouteChildren,
+)
+
 interface AdminPagesRouteChildren {
   AdminPagesPageKeyRoute: typeof AdminPagesPageKeyRoute
   AdminPagesIndexRoute: typeof AdminPagesIndexRoute
@@ -1100,6 +1189,7 @@ interface AdminRouteRouteChildren {
   AdminGuidesRoute: typeof AdminGuidesRouteWithChildren
   AdminHeroRoute: typeof AdminHeroRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMapPlacesRoute: typeof AdminMapPlacesRouteWithChildren
   AdminMediaRoute: typeof AdminMediaRoute
   AdminPagesRoute: typeof AdminPagesRouteWithChildren
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
@@ -1119,6 +1209,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminGuidesRoute: AdminGuidesRouteWithChildren,
   AdminHeroRoute: AdminHeroRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminMapPlacesRoute: AdminMapPlacesRouteWithChildren,
   AdminMediaRoute: AdminMediaRoute,
   AdminPagesRoute: AdminPagesRouteWithChildren,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
@@ -1200,6 +1291,7 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRouteWithChildren,
   GuidesRoute: GuidesRouteWithChildren,
   HealthRoute: HealthRoute,
+  MapRoute: MapRoute,
   NewsRoute: NewsRouteWithChildren,
   PlanTripRoute: PlanTripRoute,
   PlanYourTripRoute: PlanYourTripRoute,

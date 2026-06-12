@@ -15,7 +15,7 @@ export const Route = createFileRoute("/guides")({
     buildHeadAsync({
       title: "Licensed Guides",
       description:
-        "Book bureau-certified local guides who grew up inside the walls of Harar Jugol.",
+        "Book commission-certified local guides who grew up inside the walls of Harar Jugol.",
       canonicalPath: "/guides",
     }),
   component: GuidesPage,
@@ -45,12 +45,12 @@ function GuidesPage() {
     <PublicLayout>
       <PageHero
         title="Licensed Local Guides"
-        subtitle="Bureau-certified guides ready to share their city."
+        subtitle="Commission-certified guides ready to share their city."
       />
       <section className="max-w-7xl mx-auto px-5 lg:px-8 py-12">
         {items.length === 0 ? (
           <p className="text-center text-ink-muted py-12">
-            Licensed guides will appear here once published by the bureau.
+            Licensed guides will appear here once published by the commission.
           </p>
         ) : (
           <>

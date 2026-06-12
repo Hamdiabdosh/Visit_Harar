@@ -17,7 +17,7 @@ export const Route = createFileRoute("/news")({
     buildHeadAsync({
       title: "News & Announcements",
       description:
-        "Stay updated on events, notices, and stories from the Harari Regional Tourism Bureau.",
+        "Stay updated on events, notices, and stories from the Harari Tourism Commission.",
       canonicalPath: "/news",
     }),
   component: NewsPage,
@@ -45,7 +45,7 @@ function NewsPage() {
     <PublicLayout>
       <PageHero
         title="News & Announcements"
-        subtitle="Stay updated on events, notices and stories from the Bureau."
+        subtitle="Stay updated on events, notices and stories from the Commission."
       />
       <section className="max-w-5xl mx-auto px-5 lg:px-8 py-12">
         <div className="flex flex-wrap gap-2 mb-8">

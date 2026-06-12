@@ -181,7 +181,7 @@ function FeaturedGuides({ items }: { items: GuideDto[] }) {
       <SectionHeader
         eyebrow="Trusted Locals"
         title="Licensed Guides"
-        subtitle="Bureau-certified guides who grew up inside the walls of Harar."
+        subtitle="Commission-certified guides who grew up inside the walls of Harar."
       />
       <div className="grid md:grid-cols-3 gap-6">
         {items.map((g) => (

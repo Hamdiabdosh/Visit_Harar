@@ -71,7 +71,7 @@ export async function seedSuperadmin() {
 export async function seedEditor() {
   const email = process.env.EDITOR_EMAIL;
   const password = process.env.EDITOR_PASSWORD;
-  const name = process.env.EDITOR_NAME ?? "Bureau Editor";
+  const name = process.env.EDITOR_NAME ?? "Commission Editor";
   if (!email || !password) return;
 
   const existing = await db.query.user.findFirst({

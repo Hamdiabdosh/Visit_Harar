@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { ORG_NAME } from "@/lib/org";
 
 export function MaintenancePage() {
   return (
@@ -8,11 +9,11 @@ export function MaintenancePage() {
           We&apos;ll be back soon
         </h1>
         <p className="mt-3 text-ink-muted leading-relaxed">
-          Visit Harar is undergoing scheduled maintenance. The Harari Regional
-          Tourism Bureau will restore public access shortly.
+          Visit Harar is undergoing scheduled maintenance. The {ORG_NAME} will
+          restore public access shortly.
         </p>
         <p className="mt-6 text-sm text-ink-muted">
-          Bureau staff?{" "}
+          Commission staff?{" "}
           <Link
             to="/admin/login"
             className="text-brand font-semibold hover:underline"

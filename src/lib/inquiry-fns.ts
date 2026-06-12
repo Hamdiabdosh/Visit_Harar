@@ -26,7 +26,7 @@ export const submitInquiry = createServerFn({ method: "POST" })
       if (!to) {
         throw createError(
           "INTERNAL",
-          "No bureau email configured to receive inquiries.",
+          "No commission email configured to receive inquiries.",
         );
       }
 

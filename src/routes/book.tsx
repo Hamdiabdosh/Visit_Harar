@@ -35,7 +35,7 @@ export const Route = createFileRoute("/book")({
     buildHeadAsync({
       title: "Book a Guide",
       description:
-        "Request a licensed local guide for your visit to Harar. The bureau will confirm your booking request.",
+        "Request a licensed local guide for your visit to Harar. The commission will confirm your booking request.",
       canonicalPath: "/book",
     }),
   component: BookPage,
@@ -113,14 +113,14 @@ function BookPage() {
         />
         <section className="max-w-xl mx-auto px-5 py-16 text-center">
           <p className="text-ink-muted mb-6">
-            The bureau is not accepting new tour requests at this time. Please
+            The commission is not accepting new tour requests at this time. Please
             check back later or contact us directly.
           </p>
           <Link
             to="/contact"
             className="inline-flex px-6 py-3 rounded-md bg-brand text-white font-semibold hover:bg-brand-dark"
           >
-            Contact the Bureau
+            Contact the Commission
           </Link>
         </section>
       </PublicLayout>
@@ -136,7 +136,7 @@ function BookPage() {
         />
         <section className="max-w-xl mx-auto px-5 py-16 text-center text-ink-muted">
           <p className="mb-6">
-            Please browse our guides page or contact the bureau for assistance.
+            Please browse our guides page or contact the commission for assistance.
           </p>
           <Link
             to="/guides"
@@ -170,12 +170,12 @@ function BookPage() {
       <noscript>
         <p className="bg-amber-50 text-amber-900 text-sm text-center py-2 px-4">
           JavaScript is required for the multi-step booking form. Please contact
-          the bureau to book a guide.
+          the commission to book a guide.
         </p>
       </noscript>
       <PageHero
         title="Book a Guide"
-        subtitle="Four quick steps. The bureau will confirm within two business days."
+        subtitle="Four quick steps. The commission will confirm within two business days."
       />
       <section className="max-w-3xl mx-auto px-5 lg:px-8 py-12">
         <ol className="flex gap-2 mb-10">
@@ -348,7 +348,7 @@ function BookPage() {
               </dl>
               <p className="text-xs text-ink-muted">
                 By submitting, you agree this is a request, not a guaranteed
-                booking. The bureau will confirm within two business days.
+                booking. The commission will confirm within two business days.
               </p>
               {submitError && (
                 <p className="text-sm text-red-600">{submitError}</p>
@@ -494,7 +494,7 @@ function Success({ bookingRef, email }: { bookingRef: string; email: string }) {
             {bookingRef}
           </div>
           <p className="mt-4 text-sm text-ink-muted">
-            You will receive updates at {email}. The bureau will respond within
+            You will receive updates at {email}. The commission will respond within
             two business days.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">

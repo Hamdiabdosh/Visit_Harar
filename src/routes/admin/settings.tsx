@@ -150,7 +150,7 @@ function SettingsAdmin() {
             </div>
           </div>
 
-          <Field label="Bureau Email">
+          <Field label="Commission Email">
             <Input
               value={form.bureau_email}
               onChange={(e) =>

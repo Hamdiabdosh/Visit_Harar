@@ -27,6 +27,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const staticRoutes = [
           "/",
           "/attractions",
+          "/map",
           "/guides",
           "/gallery",
           "/about",

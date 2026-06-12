@@ -1,6 +1,7 @@
 import { db } from "../../db/index";
 import { contactInfo } from "../../drizzle/schema/index";
 import { getResendConfig } from "@/lib/env.server";
+import { ORG_NAME } from "@/lib/org";
 import type { BookingStatus, TourDuration } from "@/lib/types";
 
 export type BookingEmailData = {
@@ -36,7 +37,7 @@ async function getBureauContact(): Promise<BureauContact> {
     email_general: row?.emailGeneral ?? null,
     email_bookings: row?.emailBookings ?? null,
     phone_primary: row?.phonePrimary ?? null,
-    office_name: row?.officeName ?? "Harari Regional Tourism Bureau",
+    office_name: row?.officeName ?? ORG_NAME,
   };
 }
 
@@ -62,7 +63,7 @@ function emailLayout(
   </div>
   ${bodyHtml}
   <hr style="border: none; border-top: 1px solid #ddd; margin: 32px 0 16px;" />
-  <p style="font-size: 12px; color: #666;">Harari Regional Tourism Bureau</p>
+  <p style="font-size: 12px; color: #666;">${ORG_NAME}</p>
   ${footerPhone}
   ${footerEmail}
 </body>
@@ -164,7 +165,7 @@ export async function sendDeclineEmail(
   try {
     const bureau = await getBureauContact();
     const noteBlock = statusNote
-      ? `<p><strong>Message from the bureau:</strong> ${statusNote}</p>`
+      ? `<p><strong>Message from the commission:</strong> ${statusNote}</p>`
       : "";
     const html = emailLayout(
       "Tour Request Update",

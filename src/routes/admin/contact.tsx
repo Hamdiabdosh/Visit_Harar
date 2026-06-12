@@ -111,7 +111,7 @@ function ContactAdmin() {
         <Field label="Office Name">
           <Input
             {...form.register("office_name")}
-            placeholder="Harari Regional Tourism Bureau"
+            placeholder="Harari Tourism Commission"
           />
         </Field>
         <Field label="Address Line 1">
