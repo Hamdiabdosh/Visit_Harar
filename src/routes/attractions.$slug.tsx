@@ -1,6 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/PublicLayout";
-import { getAttractionBySlug } from "@/lib/attractions-fns";
+import {
+  getAttractionBySlug,
+  getNearbyAttractions,
+} from "@/lib/attractions-fns";
 import { fullDescParagraphs } from "@/lib/attraction-map";
 import {
   categoryColor,
@@ -8,15 +11,27 @@ import {
   isAttractionCategory,
 } from "@/lib/attraction-styles";
 import { sanitizeRichHtml } from "@/lib/sanitize-html";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink, MapPin } from "lucide-react";
 import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
+import {
+  formatCoordinates,
+  googleMapsDirectionsUrl,
+  hasCoordinates,
+} from "@/lib/geo";
+import { ClientOnly } from "@/components/admin/ClientOnly";
+import { MapSkeleton } from "@/components/map/MapSkeleton";
+import { MapSuspense, LazySingleLocationMap } from "@/components/map/lazy-maps";
+import { NearbyWithRoutes } from "@/components/map/NearbyWithRoutes";
 
 export const Route = createFileRoute("/attractions/$slug")({
   loader: async ({ params }) => {
     const item = await getAttractionBySlug({ data: params.slug });
     if (!item) throw notFound();
-    return { item };
+    const nearby = hasCoordinates(item)
+      ? await getNearbyAttractions({ data: { slug: params.slug, limit: 3 } })
+      : [];
+    return { item, nearby };
   },
   head: async ({ loaderData }) => {
     const item = loaderData?.item;
@@ -34,7 +49,7 @@ export const Route = createFileRoute("/attractions/$slug")({
 });
 
 function AttractionDetail() {
-  const { item } = Route.useLoaderData();
+  const { item, nearby } = Route.useLoaderData();
   const cat = isAttractionCategory(item.category) ? item.category : "Heritage";
   const paragraphs = fullDescParagraphs(item.full_desc);
   const isHtml = Boolean(
@@ -42,6 +57,7 @@ function AttractionDetail() {
   );
   const safeHtml = isHtml ? sanitizeRichHtml(item.full_desc ?? "") : null;
   const heroBg = item.image ? optimizeImage(item.image, { width: 1600 }) : null;
+  const showLocation = hasCoordinates(item);
 
   return (
     <PublicLayout>
@@ -85,6 +101,51 @@ function AttractionDetail() {
               <p>Description coming soon.</p>
             </div>
           )}
+
+          {showLocation ? (
+            <section className="mt-10 pt-8 border-t border-border">
+              <h2 className="font-serif text-2xl font-bold flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-brand" aria-hidden />
+                Location
+              </h2>
+              <p className="text-sm text-ink-muted mt-2 font-mono">
+                {formatCoordinates(item.latitude!, item.longitude!)}
+              </p>
+              <div className="mt-4">
+                <ClientOnly fallback={<MapSkeleton className="h-[280px]" />}>
+                  <MapSuspense className="h-[280px]">
+                    <LazySingleLocationMap
+                      lat={item.latitude!}
+                      lng={item.longitude!}
+                      label={`Map showing ${item.title}`}
+                      className="h-[280px]"
+                    />
+                  </MapSuspense>
+                </ClientOnly>
+              </div>
+              <a
+                href={googleMapsDirectionsUrl(item.latitude!, item.longitude!)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand hover:underline"
+              >
+                <ExternalLink className="w-4 h-4" aria-hidden />
+                Open in Google Maps
+              </a>
+            </section>
+          ) : null}
+
+          {nearby.length > 0 && showLocation ? (
+            <NearbyWithRoutes
+              origin={{
+                lat: item.latitude!,
+                lng: item.longitude!,
+                title: item.title,
+              }}
+              nearby={nearby}
+            />
+          ) : null}
+
           <Link
             to="/book"
             className="mt-10 inline-flex items-center gap-2 px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark hover:text-white transition-colors"

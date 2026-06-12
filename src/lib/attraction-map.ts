@@ -13,6 +13,8 @@ export type AttractionDto = {
   is_featured: boolean;
   is_published: boolean;
   sort_order: number;
+  latitude: number | null;
+  longitude: number | null;
   created_by: string | null;
   updated_by: string | null;
   created_at: Date;
@@ -35,6 +37,8 @@ export function rowToAttractionDto(
     is_featured: row.isFeatured,
     is_published: row.isPublished,
     sort_order: row.sortOrder,
+    latitude: row.latitude ? Number(row.latitude) : null,
+    longitude: row.longitude ? Number(row.longitude) : null,
     created_by: row.createdBy,
     updated_by: row.updatedBy,
     created_at: row.createdAt,
@@ -58,6 +62,8 @@ export function inputToRowValues(
     isFeatured: input.is_featured ?? false,
     isPublished: input.is_published ?? false,
     sortOrder: input.sort_order ?? 0,
+    latitude: input.latitude != null ? String(input.latitude) : null,
+    longitude: input.longitude != null ? String(input.longitude) : null,
     updatedBy: userId,
     updatedAt: new Date(),
   };

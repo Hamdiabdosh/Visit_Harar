@@ -16,6 +16,7 @@ import { htmlToText } from "./html-to-text";
 const SITE_ROUTES = [
   { path: "/", label: "Homepage" },
   { path: "/attractions", label: "Attractions listing" },
+  { path: "/map", label: "Interactive tourism map" },
   { path: "/guides", label: "Licensed guides" },
   { path: "/book", label: "Tour booking" },
   {
@@ -237,6 +238,9 @@ export async function buildSiteKnowledgeSnapshot(): Promise<string> {
         `Category: ${a.category}`,
         a.shortDesc ? `Summary: ${a.shortDesc}` : null,
         a.fullDesc ? `Description: ${htmlToText(a.fullDesc)}` : null,
+        a.latitude && a.longitude
+          ? `Coordinates: ${a.latitude}, ${a.longitude}`
+          : null,
         a.isFeatured ? "Featured: yes" : null,
       ].filter(Boolean);
       return lines.join("\n");

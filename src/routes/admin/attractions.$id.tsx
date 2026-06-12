@@ -29,6 +29,7 @@ import {
   updateAttraction,
 } from "@/lib/attractions-fns";
 import { ImageMediaField } from "@/components/admin/ImageMediaField";
+import { LocationPickerFields } from "@/components/admin/LocationPickerFields";
 import {
   attractionInputSchema,
   type AttractionInput,
@@ -49,6 +50,8 @@ const defaultValues: AttractionInput = {
   is_featured: false,
   is_published: false,
   sort_order: 0,
+  latitude: undefined,
+  longitude: undefined,
 };
 
 function AttractionEditor() {
@@ -80,6 +83,8 @@ function AttractionEditor() {
           is_featured: existing.is_featured,
           is_published: existing.is_published,
           sort_order: existing.sort_order,
+          latitude: existing.latitude ?? undefined,
+          longitude: existing.longitude ?? undefined,
         }
       : undefined,
   });
@@ -91,6 +96,8 @@ function AttractionEditor() {
   const image = form.watch("image");
   const featured = form.watch("is_featured");
   const published = form.watch("is_published");
+  const latitude = form.watch("latitude");
+  const longitude = form.watch("longitude");
 
   useEffect(() => {
     if (!slugTouched && title && isNew) {
@@ -120,7 +127,8 @@ function AttractionEditor() {
         });
       }
     },
-    onError: () => toast.error("Failed to save"),
+    onError: (err: Error) =>
+      toast.error("Failed to save", { description: err.message }),
   });
 
   if (!isNew && isLoading) {
@@ -253,6 +261,22 @@ function AttractionEditor() {
           </AdminCard>
 
           <AdminCard className="p-5">
+            <SectionLabel>Location</SectionLabel>
+            <LocationPickerFields
+              latitude={latitude}
+              longitude={longitude}
+              addressQuery={[title, form.watch("short_desc")].filter(Boolean).join(", ")}
+              hint="Required when publishing. Search an address or click the map."
+              latError={form.formState.errors.latitude?.message}
+              lngError={form.formState.errors.longitude?.message}
+              onPick={(lat, lng) => {
+                form.setValue("latitude", lat, { shouldDirty: true });
+                form.setValue("longitude", lng, { shouldDirty: true });
+              }}
+            />
+          </AdminCard>
+
+          <AdminCard className="p-5">
             <SectionLabel>SEO Preview</SectionLabel>
             <div className="rounded border border-border overflow-hidden">
               <div className="h-6 bg-surface border-b border-border flex items-center gap-1.5 px-2">
@@ -287,13 +311,13 @@ function AttractionEditor() {
           <Button
             variant="outline"
             disabled={saveMutation.isPending}
-            onClick={() => saveMutation.mutate(false)}
+            onClick={form.handleSubmit(() => saveMutation.mutate(false))}
           >
             Save Draft
           </Button>
           <Button
             disabled={saveMutation.isPending}
-            onClick={() => saveMutation.mutate(true)}
+            onClick={form.handleSubmit(() => saveMutation.mutate(true))}
           >
             Publish
           </Button>

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { and, asc, desc, eq, max, ne } from "drizzle-orm";
+import { and, asc, desc, eq, isNotNull, max, ne } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../../db/index";
 import { attractions, user } from "../../drizzle/schema/index";
@@ -21,12 +21,14 @@ import {
 } from "@/lib/storage.server";
 import type { UserRole } from "@/lib/types";
 import { auditSnap, fireAudit } from "@/lib/audit";
+import { nearestPoints } from "@/lib/geo";
 
 const filtersSchema = z
   .object({
     published: z.boolean().optional(),
     featured: z.boolean().optional(),
     category: z.string().optional(),
+    withCoordinates: z.boolean().optional(),
     limit: z.number().int().min(1).max(100).optional(),
   })
   .optional();
@@ -90,6 +92,10 @@ export const getAttractions = createServerFn({ method: "GET" })
       }
       if (filters?.category) {
         conditions.push(eq(attractions.category, filters.category));
+      }
+      if (filters?.withCoordinates === true) {
+        conditions.push(isNotNull(attractions.latitude));
+        conditions.push(isNotNull(attractions.longitude));
       }
 
       let query = db.select().from(attractions);
@@ -254,6 +260,18 @@ export const updateAttraction = createServerFn({ method: "POST" })
         isFeatured: data.is_featured ?? existing.isFeatured,
         isPublished: data.is_published ?? existing.isPublished,
         sortOrder: data.sort_order ?? existing.sortOrder,
+        latitude:
+          data.latitude !== undefined
+            ? data.latitude != null
+              ? String(data.latitude)
+              : null
+            : existing.latitude,
+        longitude:
+          data.longitude !== undefined
+            ? data.longitude != null
+              ? String(data.longitude)
+              : null
+            : existing.longitude,
         updatedBy: editor.id,
         updatedAt: new Date(),
       };
@@ -451,3 +469,66 @@ export const toggleAttractionFeatured = createServerFn({ method: "POST" })
       );
     }
   });
+
+export const getNearbyAttractions = createServerFn({ method: "GET" })
+  .inputValidator((raw: unknown) =>
+    z
+      .object({
+        slug: z.string().min(1),
+        limit: z.number().int().min(1).max(10).optional(),
+      })
+      .parse(raw),
+  )
+  .handler(
+    async ({
+      data: { slug, limit = 3 },
+    }): Promise<Array<AttractionDto & { distance_km: number }>> => {
+      try {
+        const current = await db.query.attractions.findFirst({
+          where: and(
+            eq(attractions.slug, slug),
+            eq(attractions.isPublished, true),
+          ),
+        });
+        if (
+          !current?.latitude ||
+          !current.longitude
+        ) {
+          return [];
+        }
+
+        const lat = Number(current.latitude);
+        const lng = Number(current.longitude);
+
+        const rows = await db
+          .select()
+          .from(attractions)
+          .where(
+            and(
+              eq(attractions.isPublished, true),
+              isNotNull(attractions.latitude),
+              isNotNull(attractions.longitude),
+              ne(attractions.id, current.id),
+            ),
+          );
+
+        const dtos = await Promise.all(rows.map(mapRowWithName));
+        return nearestPoints(
+          { latitude: lat, longitude: lng },
+          dtos.map((d) => ({
+            ...d,
+            latitude: d.latitude!,
+            longitude: d.longitude!,
+          })),
+          { limit },
+        );
+      } catch (err) {
+        if (isDbUnavailableError(err)) return [];
+        if (isAppError(err)) throw err;
+        throw createError(
+          "INTERNAL",
+          err instanceof Error ? err.message : "Failed to load nearby attractions",
+        );
+      }
+    },
+  );

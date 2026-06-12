@@ -1,6 +1,7 @@
 import {
   boolean,
   integer,
+  numeric,
   pgTable,
   text,
   timestamp,
@@ -19,6 +20,8 @@ export const attractions = pgTable("attractions", {
   isFeatured: boolean("is_featured").default(false).notNull(),
   isPublished: boolean("is_published").default(false).notNull(),
   sortOrder: integer("sort_order").default(0).notNull(),
+  latitude: numeric("latitude"),
+  longitude: numeric("longitude"),
   createdBy: text("created_by").references(() => user.id),
   updatedBy: text("updated_by").references(() => user.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),

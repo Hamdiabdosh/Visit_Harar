@@ -49,6 +49,7 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
           title="Explore"
           links={[
             { to: "/attractions", label: "Attractions" },
+            { to: "/map", label: "Map" },
             { to: "/gallery", label: "Gallery" },
             { to: "/culture", label: "Culture" },
             { to: "/news", label: "News" },

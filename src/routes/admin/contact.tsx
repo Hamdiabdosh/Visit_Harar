@@ -17,7 +17,8 @@ import {
   type ContactInput,
 } from "@/lib/validators/contact";
 import { getContactInfo, upsertContactInfo } from "@/lib/contact-fns";
-import { MapPin, Plus, Trash2 } from "lucide-react";
+import { LocationPickerFields } from "@/components/admin/LocationPickerFields";
+import { Plus, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/contact")({
   component: ContactAdmin,
@@ -79,6 +80,8 @@ function ContactAdmin() {
   const hours = form.watch("working_hours") ?? [];
   const lat = form.watch("map_lat");
   const lng = form.watch("map_lng");
+  const addressLine1 = form.watch("address_line1");
+  const addressLine2 = form.watch("address_line2");
   const published = form.watch("is_published") ?? false;
 
   const save = useMutation({
@@ -207,33 +210,18 @@ function ContactAdmin() {
 
         <div>
           <SectionLabel>Map Coordinates</SectionLabel>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Latitude">
-              <Input
-                type="number"
-                step="any"
-                {...form.register("map_lat", { valueAsNumber: true })}
-              />
-            </Field>
-            <Field label="Longitude">
-              <Input
-                type="number"
-                step="any"
-                {...form.register("map_lng", { valueAsNumber: true })}
-              />
-            </Field>
-          </div>
-          <div className="mt-3 h-[200px] rounded-lg bg-gradient-to-br from-stone-300 to-stone-400 grid place-items-center text-stone-700 relative overflow-hidden">
-            <MapPin className="w-8 h-8" />
-            {lat != null && lng != null ? (
-              <span className="absolute bottom-2 left-2 text-[11px] bg-white/90 px-2 py-1 rounded">
-                {lat}, {lng}
-              </span>
-            ) : null}
-          </div>
-          <p className="text-[11px] text-ink-muted mt-2">
-            📍 Pin will appear at these coordinates on the public site.
-          </p>
+          <LocationPickerFields
+            latitude={lat}
+            longitude={lng}
+            addressQuery={[addressLine1, addressLine2, "Harar", "Ethiopia"]
+              .filter(Boolean)
+              .join(", ")}
+            hint="Search the office address or click the map. Shown on /map and /contact."
+            onPick={(pickLat, pickLng) => {
+              form.setValue("map_lat", pickLat, { shouldDirty: true });
+              form.setValue("map_lng", pickLng, { shouldDirty: true });
+            }}
+          />
         </div>
 
         <div>

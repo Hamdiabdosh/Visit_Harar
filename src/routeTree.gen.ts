@@ -14,6 +14,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as PlanYourTripRouteImport } from './routes/plan-your-trip'
 import { Route as PlanTripRouteImport } from './routes/plan-trip'
 import { Route as NewsRouteImport } from './routes/news'
+import { Route as MapRouteImport } from './routes/map'
 import { Route as HealthRouteImport } from './routes/health'
 import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as GalleryRouteImport } from './routes/gallery'
@@ -84,6 +85,11 @@ const PlanTripRoute = PlanTripRouteImport.update({
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
   path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HealthRoute = HealthRouteImport.update({
@@ -328,6 +334,7 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/health': typeof HealthRoute
+  '/map': typeof MapRoute
   '/news': typeof NewsRouteWithChildren
   '/plan-trip': typeof PlanTripRoute
   '/plan-your-trip': typeof PlanYourTripRoute
@@ -380,6 +387,7 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/health': typeof HealthRoute
+  '/map': typeof MapRoute
   '/news': typeof NewsRouteWithChildren
   '/plan-trip': typeof PlanTripRoute
   '/plan-your-trip': typeof PlanYourTripRoute
@@ -429,6 +437,7 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRouteWithChildren
   '/guides': typeof GuidesRouteWithChildren
   '/health': typeof HealthRoute
+  '/map': typeof MapRoute
   '/news': typeof NewsRouteWithChildren
   '/plan-trip': typeof PlanTripRoute
   '/plan-your-trip': typeof PlanYourTripRoute
@@ -484,6 +493,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/guides'
     | '/health'
+    | '/map'
     | '/news'
     | '/plan-trip'
     | '/plan-your-trip'
@@ -536,6 +546,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/guides'
     | '/health'
+    | '/map'
     | '/news'
     | '/plan-trip'
     | '/plan-your-trip'
@@ -584,6 +595,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/guides'
     | '/health'
+    | '/map'
     | '/news'
     | '/plan-trip'
     | '/plan-your-trip'
@@ -638,6 +650,7 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRouteWithChildren
   GuidesRoute: typeof GuidesRouteWithChildren
   HealthRoute: typeof HealthRoute
+  MapRoute: typeof MapRoute
   NewsRoute: typeof NewsRouteWithChildren
   PlanTripRoute: typeof PlanTripRoute
   PlanYourTripRoute: typeof PlanYourTripRoute
@@ -682,6 +695,13 @@ declare module '@tanstack/react-router' {
       path: '/news'
       fullPath: '/news'
       preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/health': {
@@ -1200,6 +1220,7 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRouteWithChildren,
   GuidesRoute: GuidesRouteWithChildren,
   HealthRoute: HealthRoute,
+  MapRoute: MapRoute,
   NewsRoute: NewsRouteWithChildren,
   PlanTripRoute: PlanTripRoute,
   PlanYourTripRoute: PlanYourTripRoute,
