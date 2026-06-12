@@ -8,7 +8,6 @@ import { seedHero } from "./seed-hero";
 import { seedGuides } from "./seed-guides";
 import { seedAnnouncements } from "./seed-announcements";
 import { seedGallery } from "./seed-gallery";
-import { seedMapPlaces } from "./seed-map-places";
 import { seedMediaImages } from "./seed-media-images";
 
 async function main() {
@@ -20,7 +19,6 @@ async function main() {
   await seedSettings();
   await seedHero();
   await seedAttractions();
-  await seedMapPlaces();
   await seedGuides();
   await seedAnnouncements();
   await seedGallery();

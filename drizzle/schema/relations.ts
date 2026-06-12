@@ -9,7 +9,6 @@ import { galleryAlbums, galleryItems } from "./gallery";
 import { guides } from "./guides";
 import { heroContent } from "./hero";
 import { mediaAssets } from "./media";
-import { mapPlaces } from "./map-places";
 import { pages } from "./pages";
 import { siteSettings } from "./settings";
 
@@ -28,8 +27,6 @@ export const userRelations = relations(user, ({ many }) => ({
   mediaAssets: many(mediaAssets),
   auditLogs: many(auditLogs),
   heroUpdates: many(heroContent),
-  mapPlacesCreated: many(mapPlaces, { relationName: "createdBy" }),
-  mapPlacesUpdated: many(mapPlaces, { relationName: "updatedBy" }),
   pagesUpdates: many(pages),
   contactUpdates: many(contactInfo),
   settingsUpdates: many(siteSettings),
@@ -82,23 +79,6 @@ export const galleryItemsRelations = relations(galleryItems, ({ one }) => ({
   uploadedByUser: one(user, {
     fields: [galleryItems.uploadedBy],
     references: [user.id],
-  }),
-}));
-
-export const mapPlacesRelations = relations(mapPlaces, ({ one }) => ({
-  linkedAttraction: one(attractions, {
-    fields: [mapPlaces.linkedAttractionId],
-    references: [attractions.id],
-  }),
-  createdByUser: one(user, {
-    fields: [mapPlaces.createdBy],
-    references: [user.id],
-    relationName: "createdBy",
-  }),
-  updatedByUser: one(user, {
-    fields: [mapPlaces.updatedBy],
-    references: [user.id],
-    relationName: "updatedBy",
   }),
 }));
 

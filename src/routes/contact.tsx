@@ -14,7 +14,6 @@ import {
   Instagram,
 } from "lucide-react";
 import { ComingSoon } from "@/components/public/ComingSoon";
-import { ContactMapEmbed } from "@/components/map/ContactMapEmbed";
 import { buildHeadAsync } from "@/lib/metadata";
 import { ORG_NAME } from "@/lib/org";
 import { submitInquiry } from "@/lib/inquiry-fns";
@@ -135,19 +134,19 @@ function ContactPage() {
               </tbody>
             </table>
           </div>
-          <div className="mt-6">
-            {info.map_lat != null && info.map_lng != null ? (
-              <ContactMapEmbed
-                lat={info.map_lat}
-                lng={info.map_lng}
-                title={info.office_name ?? "Tourism Commission"}
-              />
-            ) : (
-              <div className="h-48 rounded-lg bg-gradient-to-br from-stone-300 to-stone-400 grid place-items-center text-stone-700">
+          {info.map_lat != null && info.map_lng != null ? (
+            <div className="mt-6">
+              <a
+                href={`https://www.google.com/maps?q=${info.map_lat},${info.map_lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-48 rounded-lg bg-gradient-to-br from-stone-300 to-stone-400 items-center justify-center gap-2 text-stone-700 hover:from-stone-400 hover:to-stone-500 transition-colors"
+              >
                 <MapPin className="w-8 h-8" />
-              </div>
-            )}
-          </div>
+                <span className="text-sm font-semibold">Open in Google Maps</span>
+              </a>
+            </div>
+          ) : null}
           <div className="flex gap-2 mt-4">
             {[
               { Icon: Facebook, href: info.facebook_url },

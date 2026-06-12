@@ -6,7 +6,6 @@ export * from "./pages";
 export * from "./announcements";
 export * from "./guides";
 export * from "./contact";
-export * from "./map-places";
 export * from "./bookings";
 export * from "./media";
 export * from "./audit";

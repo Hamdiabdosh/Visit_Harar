@@ -25,7 +25,6 @@ const EDITOR_ALLOWED_PREFIXES = [
   "/admin",
   "/admin/hero",
   "/admin/attractions",
-  "/admin/map-places",
   "/admin/gallery",
   "/admin/pages",
   "/admin/announcements",
