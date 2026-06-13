@@ -434,6 +434,63 @@ export const deleteAnnouncement = createServerFn({ method: "POST" })
     }
   });
 
+export const bulkSetPublished = createServerFn({ method: "POST" })
+  .inputValidator((raw: unknown) => {
+    const schema = z.object({
+      ids: z.array(z.string().uuid()).min(1).max(50),
+      publish: z.boolean(),
+    });
+    return schema.parse(raw);
+  })
+  .handler(async ({ data }): Promise<{ updated: number }> => {
+    try {
+      const editor = await requireEditorSession();
+      const now = new Date();
+      const rows = await db
+        .select()
+        .from(announcements)
+        .where(inArray(announcements.id, data.ids));
+
+      if (!rows.length) return { updated: 0 };
+
+      let updated = 0;
+      await db.transaction(async (tx) => {
+        for (const row of rows) {
+          if (row.isPublished === data.publish) continue;
+          const publishedAt =
+            !row.isPublished && data.publish ? now : row.publishedAt;
+          await tx
+            .update(announcements)
+            .set({
+              isPublished: data.publish,
+              publishedAt,
+              updatedBy: editor.id,
+              updatedAt: now,
+            })
+            .where(eq(announcements.id, row.id));
+          fireAudit({
+            userId: editor.id,
+            module: "announcements",
+            action: data.publish ? "publish" : "unpublish",
+            recordId: row.id,
+            recordTitle: row.title,
+            before: { is_published: row.isPublished },
+            after: { is_published: data.publish },
+          });
+          updated += 1;
+        }
+      });
+
+      return { updated };
+    } catch (err) {
+      if (isAppError(err)) throw err;
+      throw createError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "Failed to bulk update",
+      );
+    }
+  });
+
 export const togglePublished = createServerFn({ method: "POST" })
   .inputValidator((id: unknown) => z.string().uuid().parse(id))
   .handler(async ({ data: id }): Promise<{ is_published: boolean }> => {

@@ -1,10 +1,12 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Facebook, Instagram, Twitter } from "lucide-react";
 import { SiteLogo } from "@/components/SiteLogo";
 import type { ContactDto } from "@/lib/contact-fns";
+import { useLocale } from "@/lib/contexts/LocaleContext";
 import { ORG_NAME } from "@/lib/org";
 
 export function PublicFooter({ contact }: { contact: ContactDto | null }) {
+  const { t, locale, setLocale } = useLocale();
   const year = new Date().getFullYear();
 
   const phone = contact?.phone_primary ?? contact?.phone_secondary ?? null;
@@ -17,14 +19,10 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
           <div className="flex items-center gap-3 mb-4">
             <SiteLogo />
             <span className="font-serif text-white text-xl font-bold">
-              Visit Harar
+              {t("brand")}
             </span>
           </div>
-          <p className="text-sm leading-relaxed max-w-sm">
-            Official tourism website of the {ORG_NAME} —
-            Africa&apos;s fourth holiest Islamic city and a UNESCO World
-            Heritage Site.
-          </p>
+          <p className="text-sm leading-relaxed max-w-sm">{t("footer.tagline")}</p>
 
           <div className="flex items-center gap-3 mt-5">
             <SocialLink
@@ -46,34 +44,36 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
         </div>
 
         <FooterCol
-          title="Explore"
+          title={t("footer.explore")}
           links={[
-            { to: "/attractions", label: "Attractions" },
-            { to: "/map", label: "Map" },
-            { to: "/gallery", label: "Gallery" },
-            { to: "/culture", label: "Culture" },
-            { to: "/news", label: "News" },
+            { to: "/attractions", label: t("nav.attractions") },
+            { to: "/map", label: t("nav.map") },
+            { to: "/gallery", label: t("nav.gallery") },
+            { to: "/culture", label: t("nav.culture") },
+            { to: "/news", label: t("nav.news") },
           ]}
         />
         <FooterCol
-          title="Plan"
+          title={t("footer.plan")}
           links={[
-            { to: "/plan-your-trip", label: "Plan Your Trip" },
-            { to: "/book", label: "Book a Guide" },
+            { to: "/plan-your-trip", label: t("nav.plan") },
+            { to: "/itineraries", label: "Itineraries" },
+            { to: "/services", label: "Local Services" },
+            { to: "/book", label: t("nav.bookGuide") },
           ]}
         />
         <FooterCol
-          title="Learn"
+          title={t("footer.learn")}
           links={[
-            { to: "/about", label: "About Harar" },
-            { to: "/contact", label: "Contact" },
+            { to: "/about", label: t("footer.aboutHarar") },
+            { to: "/contact", label: t("nav.contact") },
           ]}
         />
         <FooterCol
-          title="Connect"
+          title={t("footer.connect")}
           links={[
-            { to: "/contact", label: "Contact Commission" },
-            { to: "/news", label: "Announcements" },
+            { to: "/contact", label: t("footer.contactCommission") },
+            { to: "/news", label: t("footer.announcements") },
           ]}
         />
       </div>
@@ -92,18 +92,31 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
             .join(" · ")}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <span className="text-white/60">
             © {year} {ORG_NAME}
           </span>
-          <span className="inline-flex items-center px-2 py-1 rounded bg-gold/20 text-gold border border-gold/30 text-[10px] uppercase tracking-wider">
-            Language: EN (v2)
-          </span>
+          <div className="inline-flex rounded border border-white/20 overflow-hidden">
+            {(["en", "am"] as const).map((code) => (
+              <button
+                key={code}
+                type="button"
+                onClick={() => setLocale(code)}
+                className={`px-2 py-1 text-[10px] font-semibold uppercase tracking-wider transition-colors ${
+                  locale === code
+                    ? "bg-gold text-ink"
+                    : "text-white/70 hover:bg-white/10"
+                }`}
+              >
+                {code === "en" ? "EN" : "አማ"}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-5 lg:px-8 border-t border-border/30 py-4 text-center text-xs text-muted-foreground">
-        Built with care by{" "}
+        {t("footer.builtBy")}{" "}
         <a
           href="https://raafat.site"
           target="_blank"

@@ -11,7 +11,7 @@ import {
   isAttractionCategory,
 } from "@/lib/attraction-styles";
 import { sanitizeRichHtml } from "@/lib/sanitize-html";
-import { ArrowLeft, ArrowRight, ExternalLink, MapPin } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, ExternalLink, Lightbulb, MapPin, Volume2 } from "lucide-react";
 import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
 import {
@@ -100,6 +100,49 @@ function AttractionDetail() {
             <div className="mt-8 text-ink-muted leading-relaxed">
               <p>Description coming soon.</p>
             </div>
+          )}
+
+          {(item.opening_hours ||
+            item.best_time_to_visit ||
+            item.visitor_tips ||
+            item.audio_url) && (
+            <section className="mt-10 pt-8 border-t border-border space-y-4">
+              <h2 className="font-serif text-2xl font-bold">Plan your visit</h2>
+              {item.opening_hours ? (
+                <p className="flex items-start gap-2 text-sm text-ink-muted">
+                  <Clock className="w-4 h-4 shrink-0 mt-0.5 text-brand" />
+                  <span>
+                    <strong className="text-ink">Hours:</strong>{" "}
+                    {item.opening_hours}
+                  </span>
+                </p>
+              ) : null}
+              {item.best_time_to_visit ? (
+                <p className="flex items-start gap-2 text-sm text-ink-muted">
+                  <Clock className="w-4 h-4 shrink-0 mt-0.5 text-gold" />
+                  <span>
+                    <strong className="text-ink">Best time:</strong>{" "}
+                    {item.best_time_to_visit}
+                  </span>
+                </p>
+              ) : null}
+              {item.visitor_tips ? (
+                <p className="flex items-start gap-2 text-sm text-ink-muted">
+                  <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
+                  <span>{item.visitor_tips}</span>
+                </p>
+              ) : null}
+              {item.audio_url ? (
+                <div className="mt-2">
+                  <p className="text-sm font-medium flex items-center gap-2 mb-2">
+                    <Volume2 className="w-4 h-4 text-brand" /> Audio guide
+                  </p>
+                  <audio controls className="w-full max-w-md" src={item.audio_url}>
+                    Your browser does not support audio playback.
+                  </audio>
+                </div>
+              ) : null}
+            </section>
           )}
 
           {showLocation ? (

@@ -42,6 +42,7 @@ function SettingsAdmin() {
     booking_enabled: settings?.booking_enabled ?? true,
     bureau_email: settings?.bureau_email ?? "",
     analytics_id: settings?.analytics_id ?? "",
+    chat_knowledge_extra: settings?.chat_knowledge_extra ?? "",
   });
   const [lastSaved, setLastSaved] = useState<SiteSettingsDto | null>(settings);
   const [ogMediaId, setOgMediaId] = useState<string | null>(null);
@@ -56,6 +57,7 @@ function SettingsAdmin() {
         booking_enabled: settings.booking_enabled,
         bureau_email: settings.bureau_email ?? "",
         analytics_id: settings.analytics_id ?? "",
+        chat_knowledge_extra: settings.chat_knowledge_extra ?? "",
       });
       setLastSaved(settings);
     }
@@ -72,6 +74,7 @@ function SettingsAdmin() {
           booking_enabled: form.booking_enabled,
           bureau_email: form.bureau_email || null,
           analytics_id: form.analytics_id || null,
+          chat_knowledge_extra: form.chat_knowledge_extra || null,
         },
       }),
     onSuccess: (data) => {
@@ -168,6 +171,28 @@ function SettingsAdmin() {
               placeholder="G-XXXXXXXXXX"
             />
           </Field>
+        </AdminCard>
+
+        <AdminCard className="p-6 space-y-4">
+          <SectionLabel>AI Chat</SectionLabel>
+          <Field label="Extra knowledge (plain text)">
+            <textarea
+              value={form.chat_knowledge_extra}
+              onChange={(e) =>
+                setForm((f) => ({
+                  ...f,
+                  chat_knowledge_extra: e.target.value,
+                }))
+              }
+              rows={8}
+              className="w-full rounded-md border border-border px-3 py-2 text-sm font-mono"
+              placeholder="Additional facts for the chat assistant — festivals, seasonal tips, commission policies…"
+            />
+          </Field>
+          <p className="text-xs text-ink-muted">
+            Appended to the auto-generated site knowledge snapshot. No HTML —
+            plain text only.
+          </p>
         </AdminCard>
 
         <div className="flex justify-between items-center">

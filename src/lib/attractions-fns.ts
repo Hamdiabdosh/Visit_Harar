@@ -272,6 +272,22 @@ export const updateAttraction = createServerFn({ method: "POST" })
               ? String(data.longitude)
               : null
             : existing.longitude,
+        openingHours:
+          data.opening_hours !== undefined
+            ? (data.opening_hours ?? null)
+            : existing.openingHours,
+        bestTimeToVisit:
+          data.best_time_to_visit !== undefined
+            ? (data.best_time_to_visit ?? null)
+            : existing.bestTimeToVisit,
+        visitorTips:
+          data.visitor_tips !== undefined
+            ? (data.visitor_tips ?? null)
+            : existing.visitorTips,
+        audioUrl:
+          data.audio_url !== undefined
+            ? data.audio_url || null
+            : existing.audioUrl,
         updatedBy: editor.id,
         updatedAt: new Date(),
       };

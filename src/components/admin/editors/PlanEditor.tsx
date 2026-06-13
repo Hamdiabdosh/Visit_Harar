@@ -31,6 +31,15 @@ export function PlanEditor({
   const [accommodation, setAccommodation] = useState<string>(
     (content.accommodation as string) ?? "",
   );
+  const [packing, setPacking] = useState<string>(
+    (content.packing_list as string) ?? "",
+  );
+  const [costs, setCosts] = useState<string>(
+    (content.estimated_costs as string) ?? "",
+  );
+  const [direDawa, setDireDawa] = useState<string>(
+    (content.dire_dawa_transfer as string) ?? "",
+  );
   const [itineraries, setItineraries] = useState<Itinerary[]>(
     Array.isArray(content.itineraries)
       ? (content.itineraries as Itinerary[])
@@ -44,6 +53,9 @@ export function PlanEditor({
       bestTime: string;
       visa: string;
       accommodation: string;
+      packing: string;
+      costs: string;
+      direDawa: string;
       itineraries: Itinerary[];
     }>,
   ) {
@@ -56,6 +68,9 @@ export function PlanEditor({
         best_time: next?.bestTime ?? bestTime,
         visa_info: next?.visa ?? visa,
         accommodation: next?.accommodation ?? accommodation,
+        packing_list: next?.packing ?? packing,
+        estimated_costs: next?.costs ?? costs,
+        dire_dawa_transfer: next?.direDawa ?? direDawa,
         itineraries: next?.itineraries ?? itineraries,
       },
     });
@@ -133,6 +148,48 @@ export function PlanEditor({
               type="button"
               variant="outline"
               onClick={() => commit({ accommodation })}
+            >
+              Save
+            </Button>
+          </div>
+        </Field>
+        <Field label="Packing List">
+          <RichTextEditor
+            value={packing}
+            onChange={(html) => setPacking(html)}
+          />
+          <div className="mt-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => commit({ packing })}
+            >
+              Save
+            </Button>
+          </div>
+        </Field>
+        <Field label="Estimated Costs">
+          <RichTextEditor value={costs} onChange={(html) => setCosts(html)} />
+          <div className="mt-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => commit({ costs })}
+            >
+              Save
+            </Button>
+          </div>
+        </Field>
+        <Field label="Dire Dawa Transfer">
+          <RichTextEditor
+            value={direDawa}
+            onChange={(html) => setDireDawa(html)}
+          />
+          <div className="mt-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => commit({ direDawa })}
             >
               Save
             </Button>

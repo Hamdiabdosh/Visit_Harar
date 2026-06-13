@@ -2,11 +2,24 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout, AdminCard } from "@/components/AdminLayout";
 import { useMemo } from "react";
-import { Calendar, Clock, Landmark, Users, Plus, Activity } from "lucide-react";
-import { getBookings, getPendingBookingsCount } from "@/lib/bookings-fns";
+import {
+  Calendar,
+  Clock,
+  FileText,
+  Image as ImageIcon,
+  Landmark,
+  Mail,
+  Megaphone,
+  Users,
+  Plus,
+  Activity,
+  AlertCircle,
+} from "lucide-react";
+import { getBookings } from "@/lib/bookings-fns";
 import { getAttractions } from "@/lib/attractions-fns";
 import { getGuides } from "@/lib/guides-fns";
 import { getAuditLogs, getSystemHealth } from "@/lib/audit-fns";
+import { getAdminDashboardStats } from "@/lib/dashboard-fns";
 import { useSessionContext } from "@/lib/contexts/SessionContext";
 
 export const Route = createFileRoute("/admin/")({
@@ -17,9 +30,9 @@ function Dashboard() {
   const { role } = useSessionContext();
   const isSuperadmin = role === "superadmin";
 
-  const { data: pending = 0 } = useQuery({
-    queryKey: ["admin", "bookings", "pending-count"],
-    queryFn: () => getPendingBookingsCount(),
+  const { data: stats } = useQuery({
+    queryKey: ["admin", "dashboard-stats"],
+    queryFn: () => getAdminDashboardStats(),
     refetchInterval: 60_000,
   });
 
@@ -64,8 +77,63 @@ function Dashboard() {
   const publishedAttractionCount = publishedAttractions.length;
   const activeGuideCount = guideList.filter((g) => g.is_published).length;
 
+  const draftTotal = stats
+    ? stats.unpublished_attractions +
+      stats.unpublished_guides +
+      stats.unpublished_announcements +
+      stats.unpublished_pages +
+      (stats.hero_unpublished ? 1 : 0) +
+      (stats.contact_unpublished ? 1 : 0)
+    : 0;
+
+  const needsAttention =
+    (stats?.pending_bookings ?? 0) +
+    (stats?.unread_inquiries ?? 0) +
+    draftTotal;
+
   return (
     <AdminLayout title="Dashboard" breadcrumb="Overview of CMS activity">
+      {needsAttention > 0 && stats && (
+        <AdminCard className="p-5 mb-6 border-amber-200 bg-amber-50">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h2 className="font-semibold text-amber-900">Needs attention</h2>
+              <ul className="mt-2 space-y-1 text-sm text-amber-800">
+                {stats.pending_bookings > 0 && (
+                  <li>
+                    <Link
+                      to="/admin/bookings"
+                      className="hover:underline font-medium"
+                    >
+                      {stats.pending_bookings} pending booking
+                      {stats.pending_bookings === 1 ? "" : "s"}
+                    </Link>
+                  </li>
+                )}
+                {stats.unread_inquiries > 0 && (
+                  <li>
+                    <Link
+                      to="/admin/inquiries"
+                      className="hover:underline font-medium"
+                    >
+                      {stats.unread_inquiries} unread inquir
+                      {stats.unread_inquiries === 1 ? "y" : "ies"}
+                    </Link>
+                  </li>
+                )}
+                {draftTotal > 0 && (
+                  <li>
+                    {draftTotal} unpublished content item
+                    {draftTotal === 1 ? "" : "s"} across CMS modules
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
+        </AdminCard>
+      )}
+
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Metric
           icon={Calendar}
@@ -77,9 +145,28 @@ function Dashboard() {
           icon={Clock}
           color="bg-amber-100 text-amber-700"
           label="Pending Bookings"
-          value={String(pending)}
-          highlight={pending > 0}
+          value={String(stats?.pending_bookings ?? 0)}
+          highlight={(stats?.pending_bookings ?? 0) > 0}
+          href="/admin/bookings"
         />
+        <Metric
+          icon={Mail}
+          color="bg-rose-100 text-rose-700"
+          label="Unread Inquiries"
+          value={String(stats?.unread_inquiries ?? 0)}
+          highlight={(stats?.unread_inquiries ?? 0) > 0}
+          href="/admin/inquiries"
+        />
+        <Metric
+          icon={FileText}
+          color="bg-orange-100 text-orange-700"
+          label="Unpublished Drafts"
+          value={String(draftTotal)}
+          highlight={draftTotal > 0}
+        />
+      </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Metric
           icon={Landmark}
           color="bg-emerald-100 text-emerald-700"
@@ -92,6 +179,21 @@ function Dashboard() {
           label="Active Guides"
           value={String(activeGuideCount)}
         />
+        <Metric
+          icon={Megaphone}
+          color="bg-sky-100 text-sky-700"
+          label="Draft Announcements"
+          value={String(stats?.unpublished_announcements ?? 0)}
+          href="/admin/announcements"
+        />
+        <Metric
+          icon={ImageIcon}
+          color="bg-indigo-100 text-indigo-700"
+          label="Hero Unpublished"
+          value={stats?.hero_unpublished ? "Yes" : "No"}
+          highlight={stats?.hero_unpublished}
+          href="/admin/hero"
+        />
       </div>
 
       <AdminCard className="p-5 mb-6">
@@ -101,6 +203,7 @@ function Dashboard() {
             { l: "+ New Guide", to: "/admin/guides" },
             { l: "+ Announcement", to: "/admin/announcements" },
             { l: "View Bookings", to: "/admin/bookings" },
+            { l: "View Inquiries", to: "/admin/inquiries" },
           ].map((a) => (
             <Link
               key={a.l}
@@ -222,15 +325,19 @@ function Metric({
   label,
   value,
   highlight,
+  href,
 }: {
   icon: typeof Calendar;
   color: string;
   label: string;
   value: string;
   highlight?: boolean;
+  href?: string;
 }) {
-  return (
-    <AdminCard className={`p-5 ${highlight ? "ring-2 ring-amber-300" : ""}`}>
+  const card = (
+    <AdminCard
+      className={`p-5 ${highlight ? "ring-2 ring-amber-300" : ""} ${href ? "hover:bg-surface transition-colors" : ""}`}
+    >
       <div
         className={`w-10 h-10 rounded-md grid place-items-center ${color} mb-3`}
       >
@@ -240,4 +347,14 @@ function Metric({
       <div className="text-xs text-ink-muted mt-1">{label}</div>
     </AdminCard>
   );
+
+  if (href) {
+    return (
+      <Link to={href as never} search={{ denied: false } as never}>
+        {card}
+      </Link>
+    );
+  }
+
+  return card;
 }

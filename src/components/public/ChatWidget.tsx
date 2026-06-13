@@ -26,6 +26,11 @@ export function ChatWidget() {
     select: (s) => s.location.pathname,
   });
 
+  const hideChat =
+    pathname === "/book" ||
+    pathname.startsWith("/book/") ||
+    pathname === "/contact";
+
   const { data: chatStatus } = useQuery({
     queryKey: ["chat", "enabled"],
     queryFn: () => getChatEnabled(),
@@ -55,7 +60,7 @@ export function ChatWidget() {
     });
   }, [messages, send.isPending]);
 
-  if (!chatStatus?.enabled) return null;
+  if (!chatStatus?.enabled || hideChat) return null;
 
   function handleSend() {
     const text = input.trim();
@@ -81,7 +86,7 @@ export function ChatWidget() {
       <Button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-20 right-6 z-40 h-14 w-14 rounded-full shadow-lg"
+        className="fixed bottom-24 right-4 z-40 h-14 w-14 rounded-full shadow-lg md:bottom-20 md:right-6"
         size="icon"
         aria-label="Open chat assistant"
       >

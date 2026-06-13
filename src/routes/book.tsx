@@ -5,6 +5,7 @@ import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/public/PageHero";
 import { createBooking, getBookingEnabledFn } from "@/lib/bookings-fns";
 import { getGuides, type GuideDto } from "@/lib/guides-fns";
+import { useLocale } from "@/lib/contexts/LocaleContext";
 import { BOOKING_COUNTRIES } from "@/lib/countries";
 import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync } from "@/lib/metadata";
@@ -54,6 +55,7 @@ function todayIso(): string {
 }
 
 function BookPage() {
+  const { t } = useLocale();
   const { enabled, guides } = Route.useLoaderData();
   const { guideId: searchGuideId } = Route.useSearch();
   const bookable = guides.filter((g) => g.is_available);
@@ -178,6 +180,9 @@ function BookPage() {
         subtitle="Four quick steps. The commission will confirm within two business days."
       />
       <section className="max-w-3xl mx-auto px-5 lg:px-8 py-12">
+        <div className="mb-8 rounded-lg border border-brand/20 bg-brand/5 px-4 py-3 text-sm text-ink leading-relaxed">
+          {t("book.noPayment")}
+        </div>
         <ol className="flex gap-2 mb-10">
           {steps.map((s, i) => (
             <li key={s} className="flex-1">

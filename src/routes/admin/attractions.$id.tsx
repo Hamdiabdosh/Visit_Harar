@@ -52,6 +52,10 @@ const defaultValues: AttractionInput = {
   sort_order: 0,
   latitude: undefined,
   longitude: undefined,
+  opening_hours: "",
+  best_time_to_visit: "",
+  visitor_tips: "",
+  audio_url: "",
 };
 
 function AttractionEditor() {
@@ -85,6 +89,10 @@ function AttractionEditor() {
           sort_order: existing.sort_order,
           latitude: existing.latitude ?? undefined,
           longitude: existing.longitude ?? undefined,
+          opening_hours: existing.opening_hours ?? "",
+          best_time_to_visit: existing.best_time_to_visit ?? "",
+          visitor_tips: existing.visitor_tips ?? "",
+          audio_url: existing.audio_url ?? "",
         }
       : undefined,
   });
@@ -274,6 +282,33 @@ function AttractionEditor() {
                 form.setValue("longitude", lng, { shouldDirty: true });
               }}
             />
+          </AdminCard>
+
+          <AdminCard className="p-5">
+            <SectionLabel>Visitor info</SectionLabel>
+            <div className="space-y-4 mt-3">
+              <Field label="Opening hours">
+                <Input
+                  {...form.register("opening_hours")}
+                  placeholder="Daily 8am–6pm"
+                />
+              </Field>
+              <Field label="Best time to visit">
+                <Input
+                  {...form.register("best_time_to_visit")}
+                  placeholder="Early morning"
+                />
+              </Field>
+              <Field label="Visitor tips">
+                <Textarea rows={3} {...form.register("visitor_tips")} />
+              </Field>
+              <Field label="Audio guide URL">
+                <Input
+                  {...form.register("audio_url")}
+                  placeholder="https://…/audio.mp3"
+                />
+              </Field>
+            </div>
           </AdminCard>
 
           <AdminCard className="p-5">

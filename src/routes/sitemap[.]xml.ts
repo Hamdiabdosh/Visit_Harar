@@ -4,6 +4,7 @@ import { getAttractions } from "@/lib/attractions-fns";
 import { getGuides } from "@/lib/guides-fns";
 import { getAnnouncements } from "@/lib/announcements-fns";
 import { getPublishedAlbums } from "@/lib/gallery-fns";
+import { getItineraries } from "@/lib/itineraries-fns";
 
 function xmlEscape(s: string) {
   return s
@@ -33,19 +34,25 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/about",
           "/culture",
           "/plan-your-trip",
+          "/plan-your-trip/guide",
+          "/itineraries",
+          "/services",
           "/news",
           "/contact",
           "/book",
           "/book/status",
+          "/search",
         ];
 
-        const [attractions, guides, announcements, albums] = await Promise.all([
+        const [attractions, guides, announcements, albums, itineraries] =
+          await Promise.all([
           getAttractions({ data: { published: true } }),
           getGuides({ data: { published: true } }),
           getAnnouncements({
             data: { publishedOnly: true, page: 1, perPage: 500 },
           }),
           getPublishedAlbums(),
+          getItineraries({ data: { published: true } }),
         ]);
 
         const urls = [
@@ -54,6 +61,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           ...guides.map((g) => absolute(`/guides/${g.slug}`)),
           ...announcements.items.map((a) => absolute(`/news/${a.slug}`)),
           ...albums.map((a) => absolute(`/gallery/${a.id}`)),
+          ...itineraries.map((i) => absolute(`/itineraries/${i.slug}`)),
         ];
 
         const body =

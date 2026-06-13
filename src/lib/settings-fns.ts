@@ -11,6 +11,7 @@ import {
   invalidateSettingsCache,
   upsertSettingsCacheAfterUpdate,
 } from "@/lib/settings";
+import { invalidateChatKnowledgeCache } from "@/lib/chat/knowledge-cache";
 import { settingsInputSchema } from "@/lib/validators/settings";
 import type { UserRole } from "@/lib/types";
 import { auditSnap, fireAudit } from "@/lib/audit";
@@ -24,6 +25,7 @@ export type SiteSettingsDto = {
   booking_enabled: boolean;
   bureau_email: string | null;
   analytics_id: string | null;
+  chat_knowledge_extra: string | null;
   updated_by: string | null;
   updated_at: Date;
   updated_by_name?: string | null;
@@ -56,6 +58,7 @@ function rowToDto(
     booking_enabled: row.bookingEnabled,
     bureau_email: row.bureauEmail ?? null,
     analytics_id: row.analyticsId ?? null,
+    chat_knowledge_extra: row.chatKnowledgeExtra ?? null,
     updated_by: row.updatedBy ?? null,
     updated_at: row.updatedAt,
     updated_by_name: updatedByName ?? null,
@@ -139,6 +142,12 @@ export const updateSiteSettings = createServerFn({ method: "POST" })
             ? null
             : (data.bureau_email ?? existing?.bureauEmail ?? null),
         analyticsId: data.analytics_id ?? existing?.analyticsId ?? null,
+        chatKnowledgeExtra:
+          data.chat_knowledge_extra === ""
+            ? null
+            : (data.chat_knowledge_extra ??
+              existing?.chatKnowledgeExtra ??
+              null),
         updatedBy: admin.id,
         updatedAt: new Date(),
       };
@@ -155,6 +164,7 @@ export const updateSiteSettings = createServerFn({ method: "POST" })
       }
 
       invalidateSettingsCache();
+      invalidateChatKnowledgeCache();
       await upsertSettingsCacheAfterUpdate();
 
       fireAudit({

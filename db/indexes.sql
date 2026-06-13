@@ -37,6 +37,15 @@ CREATE INDEX IF NOT EXISTS idx_media_type ON media_assets (type);
 CREATE INDEX IF NOT EXISTS idx_media_uploaded_by ON media_assets (uploaded_by);
 CREATE INDEX IF NOT EXISTS idx_media_used_in_gin ON media_assets USING GIN (used_in);
 
+-- Inquiries
+CREATE INDEX IF NOT EXISTS idx_inquiries_created_at ON inquiries (created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_inquiries_is_read ON inquiries (is_read);
+
+-- Search helpers (published content ILIKE scans)
+CREATE INDEX IF NOT EXISTS idx_attractions_title ON attractions (title);
+CREATE INDEX IF NOT EXISTS idx_guides_name ON guides (name);
+CREATE INDEX IF NOT EXISTS idx_announcements_title ON announcements (title);
+
 -- Audit
 CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_logs (user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_module ON audit_logs (module);

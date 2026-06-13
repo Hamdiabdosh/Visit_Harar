@@ -37,6 +37,10 @@ export const attractionInputSchema = z
     sort_order: z.number().int().default(0),
     latitude: coordinateSchema.nullish(),
     longitude: longitudeSchema.nullish(),
+    opening_hours: z.string().max(200).optional(),
+    best_time_to_visit: z.string().max(200).optional(),
+    visitor_tips: z.string().max(2000).optional(),
+    audio_url: z.string().url().optional().or(z.literal("")),
   })
   .superRefine((data, ctx) => {
     const hasLat = data.latitude != null;

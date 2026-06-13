@@ -1,7 +1,39 @@
+import { useRouterState } from "@tanstack/react-router";
 import { PublicNavbar } from "@/components/public/PublicNavbar";
 import { PublicFooter } from "@/components/public/PublicFooter";
+import { PublicMobileBar } from "@/components/public/PublicMobileBar";
 import { ChatWidget } from "@/components/public/ChatWidget";
 import { usePublicContact } from "@/components/public/contact-context";
+import { LocaleProvider } from "@/lib/contexts/LocaleContext";
+
+function PublicLayoutInner({
+  children,
+  transparentNav,
+}: {
+  children: React.ReactNode;
+  transparentNav: boolean;
+}) {
+  const { contact } = usePublicContact();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const hideMobileBar = pathname === "/book" || pathname.startsWith("/book/");
+  const showMobileBar = !hideMobileBar;
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white text-ink">
+      <PublicNavbar transparentOnTop={transparentNav} />
+
+      <main
+        className={`flex-1 ${showMobileBar ? "pb-[4.5rem] md:pb-0" : ""}`}
+      >
+        {children}
+      </main>
+
+      <PublicFooter contact={contact} />
+      {showMobileBar && <PublicMobileBar />}
+      <ChatWidget />
+    </div>
+  );
+}
 
 export function PublicLayout({
   children,
@@ -10,16 +42,11 @@ export function PublicLayout({
   children: React.ReactNode;
   transparentNav?: boolean;
 }) {
-  const { contact } = usePublicContact();
-
   return (
-    <div className="min-h-screen flex flex-col bg-white text-ink">
-      <PublicNavbar transparentOnTop={transparentNav} />
-
-      <main className="flex-1">{children}</main>
-
-      <PublicFooter contact={contact} />
-      <ChatWidget />
-    </div>
+    <LocaleProvider>
+      <PublicLayoutInner transparentNav={transparentNav}>
+        {children}
+      </PublicLayoutInner>
+    </LocaleProvider>
   );
 }

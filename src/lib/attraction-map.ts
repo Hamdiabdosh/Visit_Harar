@@ -15,6 +15,10 @@ export type AttractionDto = {
   sort_order: number;
   latitude: number | null;
   longitude: number | null;
+  opening_hours: string | null;
+  best_time_to_visit: string | null;
+  visitor_tips: string | null;
+  audio_url: string | null;
   created_by: string | null;
   updated_by: string | null;
   created_at: Date;
@@ -39,6 +43,10 @@ export function rowToAttractionDto(
     sort_order: row.sortOrder,
     latitude: row.latitude ? Number(row.latitude) : null,
     longitude: row.longitude ? Number(row.longitude) : null,
+    opening_hours: row.openingHours ?? null,
+    best_time_to_visit: row.bestTimeToVisit ?? null,
+    visitor_tips: row.visitorTips ?? null,
+    audio_url: row.audioUrl ?? null,
     created_by: row.createdBy,
     updated_by: row.updatedBy,
     created_at: row.createdAt,
@@ -64,6 +72,10 @@ export function inputToRowValues(
     sortOrder: input.sort_order ?? 0,
     latitude: input.latitude != null ? String(input.latitude) : null,
     longitude: input.longitude != null ? String(input.longitude) : null,
+    openingHours: input.opening_hours ?? null,
+    bestTimeToVisit: input.best_time_to_visit ?? null,
+    visitorTips: input.visitor_tips ?? null,
+    audioUrl: input.audio_url || null,
     updatedBy: userId,
     updatedAt: new Date(),
   };

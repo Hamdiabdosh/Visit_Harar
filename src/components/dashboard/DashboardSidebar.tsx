@@ -17,10 +17,15 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Mail,
+  Handshake,
+  Route,
+  BarChart3,
 } from "lucide-react";
 import { SiteLogo } from "@/components/SiteLogo";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { getPendingBookingsCount } from "@/lib/bookings-fns";
+import { getUnreadInquiriesCount } from "@/lib/inquiry-fns";
 import { useSessionContext } from "@/lib/contexts/SessionContext";
 import { useSidebarOpen } from "@/store/sidebarStore";
 import { cn } from "@/lib/utils";
@@ -31,7 +36,7 @@ type NavItem = {
   icon: typeof LayoutDashboard;
   exact?: boolean;
   badge?: number;
-  badgeKey?: "bookings";
+  badgeKey?: "bookings" | "inquiries";
 };
 type NavSection = { label: string; muted?: boolean; items: NavItem[] };
 
@@ -40,12 +45,15 @@ const sections: NavSection[] = [
     label: "Content",
     items: [
       { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+      { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
       { to: "/admin/hero", label: "Hero", icon: ImageIcon },
       { to: "/admin/attractions", label: "Attractions", icon: Landmark },
       { to: "/admin/gallery", label: "Gallery", icon: GalleryHorizontal },
       { to: "/admin/pages", label: "Pages", icon: FileText },
       { to: "/admin/announcements", label: "Announcements", icon: Megaphone },
       { to: "/admin/guides", label: "Guides", icon: UsersIcon },
+      { to: "/admin/partners", label: "Partners", icon: Handshake },
+      { to: "/admin/itineraries", label: "Itineraries", icon: Route },
       { to: "/admin/contact", label: "Contact", icon: Phone },
     ],
   },
@@ -57,6 +65,12 @@ const sections: NavSection[] = [
         label: "Bookings",
         icon: Calendar,
         badgeKey: "bookings" as const,
+      },
+      {
+        to: "/admin/inquiries",
+        label: "Inquiries",
+        icon: Mail,
+        badgeKey: "inquiries" as const,
       },
     ],
   },
@@ -93,6 +107,13 @@ function SidebarContent({
   const { data: pendingBookings = 0 } = useQuery({
     queryKey: ["admin", "bookings", "pending-count"],
     queryFn: () => getPendingBookingsCount(),
+    refetchInterval: 60_000,
+    enabled: !!user,
+  });
+
+  const { data: unreadInquiries = 0 } = useQuery({
+    queryKey: ["admin", "inquiries", "unread-count"],
+    queryFn: () => getUnreadInquiriesCount(),
     refetchInterval: 60_000,
     enabled: !!user,
   });
@@ -189,6 +210,11 @@ function SidebarContent({
                           pendingBookings > 0 ? (
                             <span className="rounded-full bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-amber-950">
                               {pendingBookings}
+                            </span>
+                          ) : item.badgeKey === "inquiries" &&
+                            unreadInquiries > 0 ? (
+                            <span className="rounded-full bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-amber-950">
+                              {unreadInquiries}
                             </span>
                           ) : "badge" in item && item.badge ? (
                             <span className="rounded-full bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-amber-950">

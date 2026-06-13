@@ -1,30 +1,40 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Globe, Menu, Search } from "lucide-react";
 import { SiteLogo } from "@/components/SiteLogo";
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  PublicSearchButton,
+  PublicSearchDialog,
+} from "@/components/public/PublicSearch";
+import { useLocale } from "@/lib/contexts/LocaleContext";
+import type { TranslationKey } from "@/lib/i18n";
+import { useEffect, useState } from "react";
 
-const navLinks = [
-  { to: "/", label: "Home", exact: true },
-  { to: "/attractions", label: "Attractions" },
-  { to: "/map", label: "Map" },
-  { to: "/guides", label: "Guides" },
-  { to: "/gallery", label: "Gallery" },
-  { to: "/culture", label: "Culture" },
-  { to: "/plan-your-trip", label: "Plan Your Trip" },
-  { to: "/news", label: "News" },
-  { to: "/contact", label: "Contact" },
-] as const;
+/** Top nav: 7 links — Gallery & Culture live in footer only. Map is 2nd. */
+const navItems: { to: string; labelKey: TranslationKey; exact?: boolean }[] = [
+  { to: "/", labelKey: "nav.home", exact: true },
+  { to: "/map", labelKey: "nav.map" },
+  { to: "/attractions", labelKey: "nav.attractions" },
+  { to: "/guides", labelKey: "nav.guides" },
+  { to: "/plan-your-trip", labelKey: "nav.plan" },
+  { to: "/news", labelKey: "nav.news" },
+  { to: "/contact", labelKey: "nav.contact" },
+];
 
 export function PublicNavbar({
   transparentOnTop = false,
 }: {
   transparentOnTop?: boolean;
 }) {
+  const { locale, setLocale, t } = useLocale();
   const [scrolled, setScrolled] = useState(!transparentOnTop);
-  const [open, setOpen] = useState(false);
-  const drawerId = useId();
-  const drawerRef = useRef<HTMLDivElement | null>(null);
-  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     if (!transparentOnTop) return;
@@ -34,61 +44,13 @@ export function PublicNavbar({
     return () => window.removeEventListener("scroll", onScroll);
   }, [transparentOnTop]);
 
-  // Focus trap + escape + scroll lock
-  useEffect(() => {
-    if (!open) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+  const textClass = scrolled ? "text-ink" : "text-white";
+  const trustClass = scrolled ? "text-ink-muted" : "text-white/60";
 
-    const el = drawerRef.current;
-    const focusables = () =>
-      Array.from(
-        el?.querySelectorAll<HTMLElement>(
-          'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])',
-        ) ?? [],
-      );
-
-    const first = () => focusables()[0];
-    const last = () => {
-      const items = focusables();
-      return items[items.length - 1];
-    };
-
-    const focusFirst = () => first()?.focus();
-    const t = window.setTimeout(focusFirst, 0);
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        setOpen(false);
-        return;
-      }
-      if (e.key !== "Tab") return;
-      const f = first();
-      const l = last();
-      if (!f || !l) return;
-      const active = document.activeElement as HTMLElement | null;
-      if (e.shiftKey) {
-        if (active === f || !el?.contains(active)) {
-          e.preventDefault();
-          l.focus();
-        }
-      } else {
-        if (active === l) {
-          e.preventDefault();
-          f.focus();
-        }
-      }
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.clearTimeout(t);
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = prevOverflow;
-      triggerRef.current?.focus();
-    };
-  }, [open]);
+  function openSearch() {
+    setMenuOpen(false);
+    setSearchOpen(true);
+  }
 
   return (
     <>
@@ -99,117 +61,200 @@ export function PublicNavbar({
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
-          <Link
-            to="/"
-            className="flex items-center gap-3"
-            aria-label="Visit Harar Home"
-          >
-            <SiteLogo />
-            <span
-              className={`font-serif font-bold text-[17px] ${scrolled ? "text-ink" : "text-white"}`}
-            >
-              Visit Harar
-            </span>
-          </Link>
-
-          <nav
-            className="hidden lg:flex items-center gap-7"
-            aria-label="Primary navigation"
-          >
-            {navLinks.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                className={`text-[13.5px] font-medium transition-colors hover:text-gold ${
-                  scrolled ? "text-ink" : "text-white/90"
-                }`}
-                activeProps={{ className: "text-gold" }}
-                activeOptions={{ exact: l.exact ?? false }}
-              >
-                {l.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-5 lg:px-8">
+          <div className="h-16 flex items-center justify-between gap-3">
             <Link
-              to="/book"
-              className="hidden md:inline-flex items-center px-4 py-2 rounded-md bg-gold text-ink text-sm font-semibold hover:bg-gold-dark hover:text-white transition-colors"
+              to="/"
+              className="flex items-center gap-3 shrink-0 min-w-0"
+              aria-label={`${t("brand")} Home`}
             >
-              Book a Guide
+              <SiteLogo />
+              <div className="min-w-0 leading-tight">
+                <span
+                  className={`block font-serif font-bold text-[17px] truncate ${textClass}`}
+                >
+                  {t("brand")}
+                </span>
+                <span
+                  className={`hidden sm:block text-[10px] tracking-wide truncate ${trustClass}`}
+                >
+                  {t("header.official")}
+                </span>
+              </div>
             </Link>
-            <button
-              ref={triggerRef}
-              onClick={() => setOpen(true)}
-              className={`lg:hidden p-2 rounded-md ${scrolled ? "text-ink" : "text-white"}`}
-              aria-label="Open menu"
-              aria-haspopup="dialog"
-              aria-controls={drawerId}
-              aria-expanded={open}
+
+            <nav
+              className="hidden lg:flex items-center gap-5 xl:gap-6"
+              aria-label="Primary navigation"
             >
-              <Menu className="w-6 h-6" />
-            </button>
+              {navItems.map((l) => (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className={`text-[13.5px] font-medium transition-colors hover:text-gold whitespace-nowrap ${
+                    scrolled ? "text-ink" : "text-white/90"
+                  }`}
+                  activeProps={{ className: "text-gold" }}
+                  activeOptions={{ exact: l.exact ?? false }}
+                >
+                  {t(l.labelKey)}
+                </Link>
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              <PublicSearchButton
+                scrolled={scrolled}
+                open={searchOpen}
+                onOpenChange={setSearchOpen}
+              />
+
+              <div
+                className={`hidden sm:flex items-center rounded-md border text-xs overflow-hidden ${
+                  scrolled ? "border-border" : "border-white/25"
+                }`}
+              >
+                {(["en", "am"] as const).map((code) => (
+                  <button
+                    key={code}
+                    type="button"
+                    onClick={() => setLocale(code)}
+                    className={`px-2.5 py-1.5 font-medium transition-colors ${
+                      locale === code
+                        ? scrolled
+                          ? "bg-brand text-white"
+                          : "bg-white/20 text-white"
+                        : scrolled
+                          ? "text-ink-muted hover:text-ink"
+                          : "text-white/70 hover:text-white"
+                    }`}
+                    aria-label={t(code === "en" ? "locale.en" : "locale.am")}
+                  >
+                    {code === "en" ? "EN" : "አማ"}
+                  </button>
+                ))}
+              </div>
+
+              <Link
+                to="/book"
+                className="hidden md:inline-flex items-center px-4 py-2 rounded-md bg-gold text-ink text-sm font-semibold hover:bg-gold-dark hover:text-white transition-colors whitespace-nowrap"
+              >
+                {t("nav.bookGuide")}
+              </Link>
+              <button
+                onClick={() => setMenuOpen(true)}
+                className={`lg:hidden p-2 rounded-md ${textClass}`}
+                aria-label="Open menu"
+                aria-expanded={menuOpen}
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {open ? (
-        <div className="fixed inset-0 z-50">
-          <button
-            className="absolute inset-0 bg-black/50"
-            aria-label="Close menu"
-            onClick={() => setOpen(false)}
-          />
-          <div
-            id={drawerId}
-            role="dialog"
-            aria-modal="true"
-            ref={drawerRef}
-            className="absolute inset-0 bg-brand-dark text-white flex flex-col"
-          >
-            <div className="h-16 px-5 flex items-center justify-between border-b border-white/10">
-              <div className="flex items-center gap-2">
-                <SiteLogo />
-                <span className="font-serif font-bold text-lg">
-                  Visit Harar
-                </span>
+      <PublicSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
+
+      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+        <SheetContent
+          side="left"
+          className="flex h-full w-[min(85vw,320px)] min-h-0 flex-col border-white/10 bg-brand-dark p-0 text-white sm:max-w-[320px] [&>button]:text-white/80 [&>button]:hover:text-white [&>button]:focus:ring-gold"
+        >
+          <SheetHeader className="border-b border-white/10 px-5 py-4 text-left">
+            <div className="flex items-center gap-2 pr-8">
+              <SiteLogo />
+              <div className="min-w-0">
+                <SheetTitle className="font-serif text-lg font-bold text-white">
+                  {t("brand")}
+                </SheetTitle>
+                <p className="text-[10px] text-white/60 mt-0.5">
+                  {t("header.official")}
+                </p>
               </div>
-              <button
-                onClick={() => setOpen(false)}
-                aria-label="Close menu"
-                className="p-2"
-              >
-                <X className="w-6 h-6" />
-              </button>
             </div>
-            <nav
-              className="flex-1 flex flex-col items-center justify-center gap-6"
-              aria-label="Mobile navigation"
-            >
-              {navLinks.map((l) => (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  onClick={() => setOpen(false)}
-                  className="text-2xl font-serif"
-                  activeProps={{ className: "text-gold" }}
-                  activeOptions={{ exact: l.exact ?? false }}
-                >
-                  {l.label}
-                </Link>
-              ))}
-              <Link
-                to="/book"
-                onClick={() => setOpen(false)}
-                className="mt-4 px-6 py-3 rounded-md bg-gold text-ink font-semibold"
+          </SheetHeader>
+
+          <div className="px-5 py-3 border-b border-white/10 flex items-center gap-2">
+            <Globe className="w-4 h-4 text-white/60 shrink-0" />
+            {(["en", "am"] as const).map((code) => (
+              <button
+                key={code}
+                type="button"
+                onClick={() => setLocale(code)}
+                className={`px-3 py-1 rounded text-sm font-medium ${
+                  locale === code
+                    ? "bg-gold text-ink"
+                    : "text-white/80 hover:bg-white/10"
+                }`}
               >
-                Book a Guide
-              </Link>
-            </nav>
+                {t(code === "en" ? "locale.en" : "locale.am")}
+              </button>
+            ))}
           </div>
-        </div>
-      ) : null}
+
+          <button
+            type="button"
+            onClick={openSearch}
+            className="mx-3 mt-3 flex items-center gap-3 rounded-md border border-white/15 bg-white/5 px-3 py-2.5 text-sm text-white/90 hover:bg-white/10"
+          >
+            <Search className="h-4 w-4 text-gold" />
+            {t("nav.search")}
+          </button>
+
+          <nav
+            className="min-h-0 flex-1 overflow-y-auto px-3 py-4"
+            aria-label="Mobile navigation"
+          >
+            <ul className="space-y-1">
+              {navItems.map((l) => (
+                <li key={l.to}>
+                  <Link
+                    to={l.to}
+                    onClick={() => setMenuOpen(false)}
+                    className="block rounded-md px-3 py-2.5 font-serif text-lg text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+                    activeProps={{
+                      className:
+                        "bg-white/10 text-gold font-semibold hover:text-gold",
+                    }}
+                    activeOptions={{ exact: l.exact ?? false }}
+                  >
+                    {t(l.labelKey)}
+                  </Link>
+                </li>
+              ))}
+              <li className="pt-2 mt-2 border-t border-white/10">
+                <Link
+                  to="/gallery"
+                  onClick={() => setMenuOpen(false)}
+                  className="block rounded-md px-3 py-2 text-sm text-white/70 hover:bg-white/10"
+                >
+                  {t("nav.gallery")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/culture"
+                  onClick={() => setMenuOpen(false)}
+                  className="block rounded-md px-3 py-2 text-sm text-white/70 hover:bg-white/10"
+                >
+                  {t("nav.culture")}
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          <div className="border-t border-white/10 p-4">
+            <Link
+              to="/book"
+              onClick={() => setMenuOpen(false)}
+              className="flex w-full items-center justify-center rounded-md bg-gold px-4 py-3 text-sm font-semibold text-ink transition-colors hover:bg-gold-dark hover:text-white"
+            >
+              {t("nav.bookGuide")}
+            </Link>
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

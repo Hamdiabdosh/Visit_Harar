@@ -6,6 +6,7 @@ import { AdminLayout, AdminCard, Toggle } from "@/components/AdminLayout";
 import {
   deleteAnnouncement,
   getAnnouncements,
+  bulkSetPublished,
   pinAnnouncement,
   togglePublished,
   unpinAnnouncement,
@@ -21,6 +22,7 @@ const tabs = ["All", "News", "Event", "Notice"] as const;
 function AnnouncementsAdmin() {
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<(typeof tabs)[number]>("All");
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin", "announcements", tab],
@@ -72,6 +74,41 @@ function AnnouncementsAdmin() {
     onError: () => toast.error("Failed to unpin"),
   });
 
+  const bulk = useMutation({
+    mutationFn: (publish: boolean) =>
+      bulkSetPublished({
+        data: { ids: [...selected], publish },
+      }),
+    onSuccess: (result, publish) => {
+      invalidate();
+      queryClient.invalidateQueries({ queryKey: ["public", "news"] });
+      setSelected(new Set());
+      toast.success(
+        publish
+          ? `Published ${result.updated} item(s)`
+          : `Unpublished ${result.updated} item(s)`,
+      );
+    },
+    onError: () => toast.error("Bulk update failed"),
+  });
+
+  function toggleSelect(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    if (selected.size === items.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(items.map((a) => a.id)));
+    }
+  }
+
   function onDelete(id: string, title: string) {
     if (window.confirm(`Delete "${title}"? This cannot be undone.`)) {
       del.mutate(id);
@@ -107,6 +144,37 @@ function AnnouncementsAdmin() {
         ))}
       </AdminCard>
 
+      {selected.size > 0 && (
+        <AdminCard className="p-3 mb-4 flex flex-wrap items-center gap-2">
+          <span className="text-sm text-ink-muted mr-2">
+            {selected.size} selected
+          </span>
+          <button
+            type="button"
+            onClick={() => bulk.mutate(true)}
+            disabled={bulk.isPending}
+            className="px-3 py-1.5 rounded-md bg-brand text-white text-sm font-semibold hover:bg-brand-dark disabled:opacity-50"
+          >
+            Publish selected
+          </button>
+          <button
+            type="button"
+            onClick={() => bulk.mutate(false)}
+            disabled={bulk.isPending}
+            className="px-3 py-1.5 rounded-md border border-border text-sm font-semibold hover:bg-surface disabled:opacity-50"
+          >
+            Unpublish selected
+          </button>
+          <button
+            type="button"
+            onClick={() => setSelected(new Set())}
+            className="px-3 py-1.5 text-sm text-ink-muted hover:text-ink"
+          >
+            Clear
+          </button>
+        </AdminCard>
+      )}
+
       {isError ? (
         <AdminCard className="p-6 border-amber-200 bg-amber-50">
           <p className="text-sm text-amber-800">
@@ -120,6 +188,14 @@ function AnnouncementsAdmin() {
           <table className="w-full text-sm">
             <thead className="text-[11px] uppercase tracking-wider text-ink-muted">
               <tr className="border-b border-border">
+                <th className="p-3 w-10">
+                  <input
+                    type="checkbox"
+                    checked={items.length > 0 && selected.size === items.length}
+                    onChange={toggleSelectAll}
+                    aria-label="Select all"
+                  />
+                </th>
                 <th className="p-3 w-10"></th>
                 <th className="p-3 w-16">Cover</th>
                 <th className="p-3 text-left">Title</th>
@@ -135,6 +211,14 @@ function AnnouncementsAdmin() {
                   key={a.id}
                   className="border-b border-border last:border-0 hover:bg-surface"
                 >
+                  <td className="p-3 text-center">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(a.id)}
+                      onChange={() => toggleSelect(a.id)}
+                      aria-label={`Select ${a.title}`}
+                    />
+                  </td>
                   <td className="p-3 text-center">
                     <button
                       type="button"

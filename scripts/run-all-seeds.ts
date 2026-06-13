@@ -9,6 +9,8 @@ import { seedGuides } from "./seed-guides";
 import { seedAnnouncements } from "./seed-announcements";
 import { seedGallery } from "./seed-gallery";
 import { seedMediaImages } from "./seed-media-images";
+import { seedPartners } from "./seed-partners";
+import { seedItineraries } from "./seed-itineraries";
 
 async function main() {
   console.log("Running seeds…");
@@ -20,6 +22,8 @@ async function main() {
   await seedHero();
   await seedAttractions();
   await seedGuides();
+  await seedPartners();
+  await seedItineraries();
   await seedAnnouncements();
   await seedGallery();
   await seedMediaImages();

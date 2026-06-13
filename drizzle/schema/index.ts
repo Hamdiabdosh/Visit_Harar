@@ -10,4 +10,7 @@ export * from "./bookings";
 export * from "./media";
 export * from "./audit";
 export * from "./settings";
+export * from "./inquiries";
+export * from "./partners";
+export * from "./itineraries";
 export * from "./relations";

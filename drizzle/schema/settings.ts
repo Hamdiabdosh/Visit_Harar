@@ -10,6 +10,7 @@ export const siteSettings = pgTable("site_settings", {
   bookingEnabled: boolean("booking_enabled").default(true).notNull(),
   bureauEmail: text("bureau_email"),
   analyticsId: text("analytics_id"),
+  chatKnowledgeExtra: text("chat_knowledge_extra"),
   updatedBy: text("updated_by").references(() => user.id),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

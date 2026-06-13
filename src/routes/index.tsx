@@ -23,6 +23,8 @@ import { SectionHeader } from "@/components/public/SectionHeader";
 import { AnnouncementCard } from "@/components/public/AnnouncementCard";
 import { GuideCard } from "@/components/public/GuideCard";
 import { GalleryThumb } from "@/components/public/GalleryThumb";
+import { useLocale } from "@/lib/contexts/LocaleContext";
+import { HomeMapStrip } from "@/components/public/HomeMapStrip";
 import type { AttractionDto } from "@/lib/attraction-map";
 import type { AnnouncementDto } from "@/lib/announcements-fns";
 import type { GuideDto } from "@/lib/guides-fns";
@@ -82,6 +84,9 @@ function Index() {
         <HeroSection hero={hero} />
       </ErrorBoundary>
       <ErrorBoundary>
+        <HomeMapStrip />
+      </ErrorBoundary>
+      <ErrorBoundary>
         <FeaturedAttractions items={featured} />
       </ErrorBoundary>
       <ErrorBoundary>
@@ -104,6 +109,7 @@ function Index() {
 }
 
 function FeaturedAttractions({ items }: { items: AttractionDto[] }) {
+  const { t } = useLocale();
   const cards = items.map((a) => ({
     title: a.title,
     slug: a.slug,
@@ -117,9 +123,9 @@ function FeaturedAttractions({ items }: { items: AttractionDto[] }) {
   return (
     <section className="py-24 max-w-7xl mx-auto px-5 lg:px-8">
       <SectionHeader
-        eyebrow="What to See"
-        title="Top Attractions"
-        subtitle="Six unforgettable experiences inside the walls of Africa's holiest city."
+        eyebrow={t("home.attractions.eyebrow")}
+        title={t("home.attractions.title")}
+        subtitle={t("home.attractions.subtitle")}
       />
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((a) => (
@@ -138,21 +144,24 @@ function stripHtml(html: string) {
 }
 
 function Announcements({ items }: { items: AnnouncementDto[] }) {
+  const { t } = useLocale();
   return (
     <section className="py-20 bg-surface">
       <div className="max-w-7xl mx-auto px-5 lg:px-8">
         <div className="flex items-end justify-between gap-4 mb-8">
           <div>
             <div className="text-xs uppercase tracking-wider text-ink-muted font-semibold">
-              Latest
+              {t("home.news.latest")}
             </div>
-            <h2 className="font-serif text-3xl font-bold">News & Events</h2>
+            <h2 className="font-serif text-3xl font-bold">
+              {t("home.news.title")}
+            </h2>
           </div>
           <Link
             to="/news"
             className="text-sm font-semibold text-brand hover:text-gold"
           >
-            View all →
+            {t("home.news.viewAll")}
           </Link>
         </div>
 
@@ -176,12 +185,13 @@ function Announcements({ items }: { items: AnnouncementDto[] }) {
 }
 
 function FeaturedGuides({ items }: { items: GuideDto[] }) {
+  const { t } = useLocale();
   return (
     <section className="py-24 max-w-7xl mx-auto px-5 lg:px-8">
       <SectionHeader
-        eyebrow="Trusted Locals"
-        title="Licensed Guides"
-        subtitle="Commission-certified guides who grew up inside the walls of Harar."
+        eyebrow={t("home.guides.eyebrow")}
+        title={t("home.guides.title")}
+        subtitle={t("home.guides.subtitle")}
       />
       <div className="grid md:grid-cols-3 gap-6">
         {items.map((g) => (
@@ -309,28 +319,28 @@ function AboutTeaser({ page }: { page: PageDto | null }) {
 }
 
 function CTABanner() {
+  const { t } = useLocale();
   return (
     <section className="py-20 bg-brand-dark text-white">
       <div className="max-w-4xl mx-auto px-5 text-center">
         <h2 className="font-serif text-4xl md:text-5xl font-bold text-gold">
-          Ready to Experience Harar?
+          {t("home.cta.title")}
         </h2>
         <p className="mt-4 text-white/75 max-w-xl mx-auto">
-          Book a licensed local guide and step into one of the world's most
-          extraordinary living cities.
+          {t("home.cta.subtitle")}
         </p>
         <div className="mt-8 flex justify-center gap-3 flex-wrap">
           <Link
-            to="/plan-your-trip"
+            to="/book"
             className="px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark hover:text-white transition-colors"
           >
-            Plan Your Visit
+            {t("home.cta.button")}
           </Link>
           <Link
-            to="/guides"
+            to="/plan-your-trip"
             className="px-6 py-3 rounded-md border border-white/40 hover:bg-white/10 transition-colors font-medium"
           >
-            Browse Guides
+            {t("nav.plan")}
           </Link>
         </div>
       </div>

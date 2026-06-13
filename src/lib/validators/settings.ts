@@ -9,6 +9,7 @@ export const settingsInputSchema = z.object({
   booking_enabled: z.boolean().optional(),
   bureau_email: z.string().email().optional().nullable().or(z.literal("")),
   analytics_id: z.string().max(40).optional().nullable(),
+  chat_knowledge_extra: z.string().max(8000).optional().nullable(),
 });
 
 export type SettingsInput = z.infer<typeof settingsInputSchema>;

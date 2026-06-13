@@ -176,4 +176,16 @@
   .font-serif {
     font-family: var(--font-serif);
   }
+
+  html[lang="am"] body {
+    font-family: "Noto Sans Ethiopic", var(--font-sans);
+  }
+
+  html[lang="am"] .font-serif {
+    font-family: "Noto Sans Ethiopic", var(--font-serif);
+  }
+
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
