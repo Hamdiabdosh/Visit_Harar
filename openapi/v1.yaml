@@ -1,0 +1,1211 @@
+openapi: 3.1.0
+info:
+  title: Visit Harar Public API
+  version: v1
+  description: |
+    Public REST API for the Visit Harar tourism platform (web CMS, PWA, Flutter app).
+    Human reference: docs/09-api-v1.md
+    Shared TS types: packages/shared, packages/api-client
+servers:
+  - url: https://visitharar.raafat.site/api/v1
+    description: Production
+  - url: http://localhost:3000/api/v1
+    description: Local development
+
+paths:
+  /:
+    get:
+      summary: API index
+      operationId: getApiIndex
+      tags: [meta]
+      responses:
+        "200":
+          description: API metadata and endpoint list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessApiIndex"
+
+  /attractions:
+    get:
+      summary: List published attractions
+      operationId: listAttractions
+      tags: [content]
+      responses:
+        "200":
+          description: Attraction summaries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessAttractionList"
+
+  /attractions/{slug}:
+    get:
+      summary: Single published attraction
+      operationId: getAttraction
+      tags: [content]
+      parameters:
+        - $ref: "#/components/parameters/slug"
+      responses:
+        "200":
+          description: Attraction detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessAttraction"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /guides:
+    get:
+      summary: List published guides
+      operationId: listGuides
+      tags: [content]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessGuideList"
+
+  /guides/{slug}:
+    get:
+      summary: Single published guide
+      operationId: getGuide
+      tags: [content]
+      parameters:
+        - $ref: "#/components/parameters/slug"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessGuide"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /gallery/albums:
+    get:
+      summary: List published gallery albums
+      operationId: listGalleryAlbums
+      tags: [content]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessGalleryAlbumList"
+
+  /gallery/albums/{id}:
+    get:
+      summary: Gallery album with items
+      operationId: getGalleryAlbum
+      tags: [content]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessGalleryAlbumDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /announcements:
+    get:
+      summary: Paginated announcements (news, events, notices)
+      operationId: listAnnouncements
+      tags: [content]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 20
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [News, Event, Notice]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessAnnouncementPage"
+
+  /announcements/{slug}:
+    get:
+      summary: Single announcement
+      operationId: getAnnouncement
+      tags: [content]
+      parameters:
+        - $ref: "#/components/parameters/slug"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessAnnouncement"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /pages/{key}:
+    get:
+      summary: Published CMS page
+      operationId: getPage
+      tags: [content]
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [about, culture, plan]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessPage"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /contact:
+    get:
+      summary: Published contact information
+      operationId: getContact
+      tags: [content]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessContact"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /hero:
+    get:
+      summary: Published homepage hero
+      operationId: getHero
+      tags: [content]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessHero"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /map/pois:
+    get:
+      summary: Map points of interest (published attractions with coordinates)
+      operationId: listMapPois
+      tags: [map]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessMapPoiList"
+
+  /partners:
+    get:
+      summary: Services directory (partners)
+      operationId: listPartners
+      tags: [content]
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessPartnerList"
+
+  /itineraries:
+    get:
+      summary: List published itineraries
+      operationId: listItineraries
+      tags: [content]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessItineraryList"
+
+  /itineraries/{slug}:
+    get:
+      summary: Single itinerary
+      operationId: getItinerary
+      tags: [content]
+      parameters:
+        - $ref: "#/components/parameters/slug"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessItinerary"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /search:
+    get:
+      summary: Global search across published content
+      operationId: search
+      tags: [content]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 2
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 30
+            default: 15
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessSearch"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+
+  /chat/enabled:
+    get:
+      summary: Whether AI chat is configured
+      operationId: getChatEnabled
+      tags: [meta]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessChatEnabled"
+
+  /bookings/enabled:
+    get:
+      summary: Whether tour booking is open
+      operationId: getBookingEnabled
+      tags: [booking]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessBookingEnabled"
+
+  /push/enabled:
+    get:
+      summary: Whether push delivery is configured
+      operationId: getPushEnabled
+      tags: [push]
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessPushEnabled"
+
+  /bookings:
+    post:
+      summary: Create a guide booking request
+      operationId: createBooking
+      tags: [booking]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInput"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessBookingCreated"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /bookings/status:
+    post:
+      summary: Look up booking status by reference and email
+      operationId: getBookingStatus
+      tags: [booking]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingStatusInput"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessBookingStatus"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /inquiries:
+    post:
+      summary: Submit a contact inquiry
+      operationId: createInquiry
+      tags: [content]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InquiryInput"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessOk"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /push/register:
+    post:
+      summary: Register device for push notifications
+      operationId: registerPush
+      tags: [push]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PushRegisterInput"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessOk"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /push/unregister:
+    post:
+      summary: Unregister device push token
+      operationId: unregisterPush
+      tags: [push]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PushUnregisterInput"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessOk"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /chat:
+    post:
+      summary: Send a chat message (when enabled)
+      operationId: sendChat
+      tags: [chat]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatInput"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccessChatReply"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+components:
+  parameters:
+    slug:
+      name: slug
+      in: path
+      required: true
+      schema:
+        type: string
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    ValidationError:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    RateLimited:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+
+  schemas:
+    ApiMeta:
+      type: object
+      properties:
+        version:
+          type: string
+          example: v1
+        generated_at:
+          type: string
+          format: date-time
+
+    ApiError:
+      type: object
+      required: [ok, error]
+      properties:
+        ok:
+          type: boolean
+          enum: [false]
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+
+    ApiSuccessOk:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          properties:
+            ok:
+              type: boolean
+              enum: [true]
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiIndex:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        documentation:
+          type: string
+        endpoints:
+          type: array
+          items:
+            type: string
+
+    ApiSuccessApiIndex:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: "#/components/schemas/ApiIndex"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    AttractionSummary:
+      type: object
+      required: [id, title, slug, category, is_featured]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        slug:
+          type: string
+        short_desc:
+          type: string
+          nullable: true
+        full_desc:
+          type: string
+          nullable: true
+        image:
+          type: string
+          nullable: true
+        category:
+          type: string
+        is_featured:
+          type: boolean
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
+        opening_hours:
+          type: string
+          nullable: true
+        best_time_to_visit:
+          type: string
+          nullable: true
+        visitor_tips:
+          type: string
+          nullable: true
+        audio_url:
+          type: string
+          nullable: true
+
+    ApiSuccessAttractionList:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttractionSummary"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessAttraction:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: "#/components/schemas/AttractionSummary"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    GuideSummary:
+      type: object
+      required: [id, name, slug, is_available]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        photo:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        languages:
+          type: array
+          items:
+            type: string
+        specialties:
+          type: array
+          items:
+            type: string
+        is_available:
+          type: boolean
+
+    ApiSuccessGuideList:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/GuideSummary"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessGuide:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: "#/components/schemas/GuideSummary"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    MapPoi:
+      type: object
+      required: [id, title, slug, category, is_featured]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        slug:
+          type: string
+        category:
+          type: string
+        short_desc:
+          type: string
+          nullable: true
+        image:
+          type: string
+          nullable: true
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
+        is_featured:
+          type: boolean
+
+    ApiSuccessMapPoiList:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MapPoi"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ItineraryDayItem:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        attraction_slug:
+          type: string
+
+    ItineraryDay:
+      type: object
+      properties:
+        label:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ItineraryDayItem"
+
+    ItinerarySummary:
+      type: object
+      required: [id, title, slug, duration]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        slug:
+          type: string
+        duration:
+          type: string
+        summary:
+          type: string
+          nullable: true
+        days:
+          type: array
+          items:
+            $ref: "#/components/schemas/ItineraryDay"
+
+    ApiSuccessItineraryList:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ItinerarySummary"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessItinerary:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: "#/components/schemas/ItinerarySummary"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    AnnouncementSummary:
+      type: object
+      required: [id, title, slug, type]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        slug:
+          type: string
+        type:
+          type: string
+        body:
+          type: string
+          nullable: true
+        cover_image:
+          type: string
+          nullable: true
+        event_date:
+          type: string
+          nullable: true
+        event_location:
+          type: string
+          nullable: true
+        published_at:
+          type: string
+          nullable: true
+
+    PaginatedAnnouncements:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AnnouncementSummary"
+        total:
+          type: integer
+        page:
+          type: integer
+        perPage:
+          type: integer
+
+    ApiSuccessAnnouncementPage:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: "#/components/schemas/PaginatedAnnouncements"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessAnnouncement:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: "#/components/schemas/AnnouncementSummary"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessPage:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          additionalProperties: true
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessContact:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          additionalProperties: true
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessHero:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          additionalProperties: true
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    PartnerSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+          nullable: true
+
+    ApiSuccessPartnerList:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/PartnerSummary"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    GalleryAlbumSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+
+    ApiSuccessGalleryAlbumList:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/GalleryAlbumSummary"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessGalleryAlbumDetail:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          additionalProperties: true
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    SearchResultItem:
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        title:
+          type: string
+        slug:
+          type: string
+        excerpt:
+          type: string
+        href:
+          type: string
+        meta:
+          type: string
+
+    SearchResult:
+      type: object
+      properties:
+        query:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/SearchResultItem"
+
+    ApiSuccessSearch:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: "#/components/schemas/SearchResult"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessChatEnabled:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessBookingEnabled:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessPushEnabled:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    BookingInput:
+      type: object
+      required:
+        - guide_id
+        - visitor_name
+        - visitor_email
+        - visitor_country
+        - tour_date
+        - tour_duration
+        - group_size
+      properties:
+        guide_id:
+          type: string
+          format: uuid
+        visitor_name:
+          type: string
+          maxLength: 200
+        visitor_email:
+          type: string
+          format: email
+        visitor_phone:
+          type: string
+          maxLength: 30
+        visitor_country:
+          type: string
+          maxLength: 100
+        tour_date:
+          type: string
+          format: date
+        tour_duration:
+          type: string
+          enum: [Half Day, Full Day, Multi Day]
+        group_size:
+          type: integer
+          minimum: 1
+          maximum: 50
+        special_requests:
+          type: string
+          maxLength: 1000
+
+    BookingStatusInput:
+      type: object
+      required: [booking_ref, visitor_email]
+      properties:
+        booking_ref:
+          type: string
+        visitor_email:
+          type: string
+          format: email
+
+    BookingStatus:
+      type: object
+      properties:
+        booking_ref:
+          type: string
+        status:
+          type: string
+        guide_name:
+          type: string
+        tour_date:
+          type: string
+        tour_duration:
+          type: string
+        group_size:
+          type: integer
+        status_note:
+          type: string
+          nullable: true
+
+    ApiSuccessBookingCreated:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          properties:
+            booking_ref:
+              type: string
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    ApiSuccessBookingStatus:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          $ref: "#/components/schemas/BookingStatus"
+        meta:
+          $ref: "#/components/schemas/ApiMeta"
+
+    InquiryInput:
+      type: object
+      required: [name, email, subject, message]
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 120
+        email:
+          type: string
+          format: email
+        subject:
+          type: string
+          minLength: 3
+          maxLength: 200
+        message:
+          type: string
+          minLength: 10
+          maxLength: 5000
+
+    PushRegisterInput:
+      type: object
+      required: [expo_push_token]
+      properties:
+        expo_push_token:
+          type: string
+          description: Expo push token (Phase D). Flutter F3 will add fcm_token.
+        visitor_email:
+          type: string
+          format: email
+        notify_bookings:
+          type: boolean
+        notify_events:
+          type: boolean
+        platform:
+          type: string
+          enum: [ios, android, web]
+
+    PushUnregisterInput:
+      type: object
+      required: [expo_push_token]
+      properties:
+        expo_push_token:
+          type: string
+
+    ChatInput:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+        session_id:
+          type: string
+
+    ApiSuccessChatReply:
+      type: object
+      required: [ok, data]
+      properties:
+        ok:
+          type: boolean
+          enum: [true]
+        data:
+          type: object
+          additionalProperties: true
+        meta:
+          $ref: "#/components/schemas/ApiMeta"

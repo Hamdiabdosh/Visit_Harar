@@ -14,7 +14,7 @@
 | **A** | Stabilize & launch confidence | 2–4 weeks | 🟡 In progress |
 | **B** | "Everything in one place" | 1–2 months | 🔲 Not started |
 | **C** | Mobile-ready API + PWA | ~1 month | 🔄 In progress |
-| **D** | Native mobile app | 2–3 months | 🔲 Not started |
+| **D** | Native mobile app | 2–3 months | 🔄 In progress |
 | **E** | Differentiation & scale | Ongoing | 🔲 Not started |
 
 ---
@@ -106,7 +106,7 @@
 - [x] QR codes on attraction detail pages
 - [x] API contract documented ([09-api-v1.md](./09-api-v1.md))
 - [x] Offline map tile caching (OSM tiles, runtime cache in SW)
-- [ ] OpenAPI machine-readable spec (optional Phase D)
+- [x] OpenAPI machine-readable spec (`openapi/v1.yaml`)
 
 ---
 
@@ -126,11 +126,17 @@
 
 ### Phase D checklist
 
+- [x] Expo app scaffold + monorepo (`apps/mobile`, `packages/api-client`)
+- [x] Offline Jugol map (react-native-maps + tile prefetch)
+- [x] Favorites (local storage on Plan tab)
+- [x] Guide booking + status lookup (`/book`, `/book/status`)
+- [x] Push notifications (Expo Push — booking updates + event/news alerts)
 - [ ] iOS + Android builds in TestFlight / internal testing
-- [ ] Offline Jugol map verified on device
-- [ ] Booking flow end-to-end on mobile
+- [ ] Booking flow end-to-end on device
 - [ ] Store listings live
-- [ ] Website promotes app install
+- [x] Website promotes app install (PWA + coming soon banner)
+
+**Pivot (June 2026):** Expo work is frozen; native app continues as **Flutter** — see [10-flutter-migration-plan.md](./10-flutter-migration-plan.md).
 
 ---
 

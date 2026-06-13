@@ -4,6 +4,7 @@ import { attractions } from "./attractions";
 import { announcements } from "./announcements";
 import { auditLogs } from "./audit";
 import { bookings } from "./bookings";
+import { eventRegistrations } from "./event-registrations";
 import { contactInfo } from "./contact";
 import { galleryAlbums, galleryItems } from "./gallery";
 import { guides } from "./guides";
@@ -24,6 +25,7 @@ export const userRelations = relations(user, ({ many }) => ({
   guidesCreated: many(guides, { relationName: "createdBy" }),
   guidesUpdated: many(guides, { relationName: "updatedBy" }),
   bookingsUpdated: many(bookings),
+  eventRegistrationsUpdated: many(eventRegistrations),
   mediaAssets: many(mediaAssets),
   auditLogs: many(auditLogs),
   heroUpdates: many(heroContent),
@@ -89,18 +91,36 @@ export const pagesRelations = relations(pages, ({ one }) => ({
   }),
 }));
 
-export const announcementsRelations = relations(announcements, ({ one }) => ({
-  createdByUser: one(user, {
-    fields: [announcements.createdBy],
-    references: [user.id],
-    relationName: "createdBy",
+export const announcementsRelations = relations(
+  announcements,
+  ({ one, many }) => ({
+    createdByUser: one(user, {
+      fields: [announcements.createdBy],
+      references: [user.id],
+      relationName: "createdBy",
+    }),
+    updatedByUser: one(user, {
+      fields: [announcements.updatedBy],
+      references: [user.id],
+      relationName: "updatedBy",
+    }),
+    eventRegistrations: many(eventRegistrations),
   }),
-  updatedByUser: one(user, {
-    fields: [announcements.updatedBy],
-    references: [user.id],
-    relationName: "updatedBy",
+);
+
+export const eventRegistrationsRelations = relations(
+  eventRegistrations,
+  ({ one }) => ({
+    announcement: one(announcements, {
+      fields: [eventRegistrations.announcementId],
+      references: [announcements.id],
+    }),
+    updatedByUser: one(user, {
+      fields: [eventRegistrations.updatedBy],
+      references: [user.id],
+    }),
   }),
-}));
+);
 
 export const guidesRelations = relations(guides, ({ one, many }) => ({
   createdByUser: one(user, {

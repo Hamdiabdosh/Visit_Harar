@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/index";
 import { announcements } from "../drizzle/schema/index";
-import { announcements as announcementSeeds } from "../src/lib/harar-data";
+import { announcements as announcementSeeds } from "../apps/web/src/lib/harar-data";
 
 const EVENT_DATES: Record<string, string> = {
   "eid-2026": "2026-05-30",

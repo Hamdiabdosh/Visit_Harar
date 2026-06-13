@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/index";
 import { heroContent, user } from "../drizzle/schema/index";
-import { defaultHeroInput, inputToRowValues } from "../src/lib/hero-map";
+import { defaultHeroInput, inputToRowValues } from "../apps/web/src/lib/hero-map";
 
 async function seedUserId(): Promise<string | null> {
   const email = process.env.SUPERADMIN_EMAIL;

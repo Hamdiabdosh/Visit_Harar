@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { auth } from "../src/lib/auth";
+import { auth } from "../apps/web/src/lib/auth";
 import { db } from "../db/index";
 import { account, user } from "../drizzle/schema/index";
 

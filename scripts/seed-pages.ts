@@ -4,7 +4,7 @@ import { pages } from "../drizzle/schema/index";
 import {
   CULTURE_DEFAULT_CONTENT,
   isCultureContentEmpty,
-} from "../src/lib/culture-defaults";
+} from "../apps/web/src/lib/culture-defaults";
 import {
   ABOUT_SEED_CONTENT,
   isAboutContentEmpty,

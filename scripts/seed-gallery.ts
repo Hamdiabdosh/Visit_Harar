@@ -5,7 +5,7 @@ import {
   galleryItems,
   mediaAssets,
 } from "../drizzle/schema/index";
-import { galleryAlbums as albumSeeds } from "../src/lib/harar-data";
+import { galleryAlbums as albumSeeds } from "../apps/web/src/lib/harar-data";
 
 export async function seedGallery() {
   const albumIds: string[] = [];

@@ -27,7 +27,7 @@ export type Paginated<T> = {
   items: T[];
   total: number;
   page: number;
-  per_page: number;
+  perPage: number;
 };
 
 export const PUBLIC_PAGE_KEYS = ["about", "culture", "plan"] as const;

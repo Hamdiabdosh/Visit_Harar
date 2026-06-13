@@ -1,0 +1,39 @@
+{
+  "name": "Visit Harar",
+  "short_name": "Visit Harar",
+  "description": "Official tourism guide to Harar Jugol — attractions, map, guides, and trip planning.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fdf1c7",
+  "theme_color": "#1a99b1",
+  "lang": "en",
+  "categories": ["travel", "navigation"],
+  "icons": [
+    {
+      "src": "/brand/logo-emblem-192.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/logo-emblem-512.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Map",
+      "url": "/map",
+      "description": "Interactive tourism map"
+    },
+    {
+      "name": "Book a Guide",
+      "url": "/book",
+      "description": "Request a licensed guide"
+    }
+  ]
+}

@@ -6,3 +6,5 @@ dist
 .DS_Store
 .vinxi
 /uploads
+.expo
+apps/mobile/

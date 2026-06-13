@@ -6,8 +6,8 @@ WORKDIR /app
 ENV NODE_ENV=development
 
 COPY package.json bun.lock ./
-# Workspace manifests must be present before install (lockfile is frozen).
 COPY packages ./packages
+COPY apps/web/package.json ./apps/web/
 RUN NODE_ENV=development bun install --frozen-lockfile
 
 COPY . .
@@ -38,16 +38,17 @@ RUN mkdir -p /data/uploads && chown app:app /data/uploads
 COPY --from=oven/bun:1-alpine /usr/local/bin/bun /usr/local/bin/bun
 COPY package.json bun.lock ./
 COPY packages ./packages
-# Install runtime deps here instead of copying builder node_modules (avoids huge cross-stage layer).
+COPY apps/web/package.json ./apps/web/
 RUN bun install --frozen-lockfile --production \
   && bun install drizzle-kit tsx dotenv \
   && chown -R app:app /app
-COPY --from=builder --chown=app:app /app/dist ./dist
+COPY --from=builder --chown=app:app /app/apps/web/dist ./apps/web/dist
 COPY --from=builder --chown=app:app /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder --chown=app:app /app/drizzle ./drizzle
 COPY --from=builder --chown=app:app /app/db ./db
 COPY --from=builder --chown=app:app /app/scripts ./scripts
-COPY --from=builder --chown=app:app /app/src ./src
+COPY --from=builder --chown=app:app /app/apps/web/src ./apps/web/src
+COPY --from=builder --chown=app:app /app/apps/web/tsconfig.json ./apps/web/tsconfig.json
 COPY --from=builder --chown=app:app /app/tsconfig.json ./tsconfig.json
 COPY --chown=app:app scripts/docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x docker-entrypoint.sh

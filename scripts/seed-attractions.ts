@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/index";
 import { attractions } from "../drizzle/schema/index";
-import { attractions as attractionSeeds } from "../src/lib/harar-data";
+import { attractions as attractionSeeds } from "../apps/web/src/lib/harar-data";
 
 const FEATURED_SLUGS = new Set([
   "harar-jugol",

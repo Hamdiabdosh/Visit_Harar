@@ -4,6 +4,8 @@
 
 Base URL: `https://visitharar.raafat.site/api/v1` (or your deployment origin).
 
+OpenAPI 3.1 spec: [`openapi/v1.yaml`](../openapi/v1.yaml) (source of truth for Flutter/codegen).
+
 ---
 
 ## Response format
@@ -59,6 +61,8 @@ Common status codes: `200`, `404`, `422`, `429`, `500`.
 | `/api/v1/itineraries/:slug` | Single itinerary | 60s |
 | `/api/v1/search?q=jugol&limit=15` | Global search | 60s |
 | `/api/v1/chat/enabled` | Whether chat is configured | 60s |
+| `/api/v1/bookings/enabled` | Whether tour booking is open | 60s |
+| `/api/v1/push/enabled` | Whether push delivery is configured | 60s |
 
 All read endpoints return **published content only**.
 
@@ -71,6 +75,8 @@ All read endpoints return **published content only**.
 | `/api/v1/bookings` | See `bookingInputSchema` in `src/lib/validators/bookings.ts` | 10/min/IP |
 | `/api/v1/bookings/status` | `{ "booking_ref": "…", "visitor_email": "…" }` | 20/min/IP |
 | `/api/v1/inquiries` | See `inquirySchema` in `src/lib/validators/inquiry.ts` | 5/min/IP |
+| `/api/v1/push/register` | See `pushRegisterSchema` in `src/lib/validators/push.ts` | 30/min/IP |
+| `/api/v1/push/unregister` | `{ "expo_push_token": "ExponentPushToken[…]" }` | 30/min/IP |
 | `/api/v1/chat` | See `sendChatInputSchema` in `src/lib/validators/chat.ts` | 20/min/IP |
 
 ---

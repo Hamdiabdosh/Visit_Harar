@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../db/index";
 import { guides } from "../drizzle/schema/index";
-import { guides as guideSeeds } from "../src/lib/harar-data";
+import { guides as guideSeeds } from "../apps/web/src/lib/harar-data";
 
 export async function seedGuides() {
   let order = 0;

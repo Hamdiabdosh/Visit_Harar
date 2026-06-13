@@ -11,7 +11,7 @@ import {
   heroContent,
   mediaAssets,
 } from "../drizzle/schema/index";
-import { uploadImageBuffer } from "../src/lib/storage.server";
+import { uploadImageBuffer } from "../apps/web/src/lib/storage.server";
 
 const LEGACY_ROOT = path.resolve(
   import.meta.dirname,
@@ -53,6 +53,7 @@ async function registerAsset(
   await db.insert(mediaAssets).values({
     cloudinaryId: uploaded.publicId,
     url: uploaded.url,
+    thumbnailUrl: uploaded.thumbnailUrl ?? null,
     filename: uploaded.filename,
     type: "image",
     sizeBytes,

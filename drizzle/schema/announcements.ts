@@ -1,6 +1,7 @@
 import {
   boolean,
   date,
+  integer,
   pgTable,
   text,
   timestamp,
@@ -17,6 +18,13 @@ export const announcements = pgTable("announcements", {
   coverImage: text("cover_image"),
   eventDate: date("event_date"),
   eventLocation: text("event_location"),
+  registrationEnabled: boolean("registration_enabled").default(false).notNull(),
+  registrationCapacity: integer("registration_capacity"),
+  registrationDeadline: date("registration_deadline"),
+  registrationNote: text("registration_note"),
+  registrationAutoConfirm: boolean("registration_auto_confirm")
+    .default(true)
+    .notNull(),
   isPinned: boolean("is_pinned").default(false).notNull(),
   isPublished: boolean("is_published").default(false).notNull(),
   publishedAt: timestamp("published_at"),
