@@ -21,22 +21,6 @@ ENV NODE_OPTIONS=--max-old-space-size=2048
 
 RUN bun run build
 
-# Drop heavy build-only packages before copying to runner (keep drizzle-kit, tsx, etc.)
-RUN rm -rf \
-  node_modules/vite \
-  node_modules/@vitejs \
-  node_modules/nitro \
-  node_modules/rolldown \
-  node_modules/@rolldown \
-  node_modules/typescript \
-  node_modules/eslint \
-  node_modules/prettier \
-  node_modules/@eslint \
-  node_modules/@typescript-eslint \
-  node_modules/lightningcss \
-  node_modules/@tailwindcss \
-  2>/dev/null || true
-
 # --- Production stage ---
 FROM node:22-alpine AS runner
 
@@ -52,10 +36,13 @@ RUN addgroup -S app && adduser -S app -G app
 RUN mkdir -p /data/uploads && chown app:app /data/uploads
 
 COPY --from=oven/bun:1-alpine /usr/local/bin/bun /usr/local/bin/bun
+COPY package.json bun.lock ./
+COPY packages ./packages
+# Install runtime deps here instead of copying builder node_modules (avoids huge cross-stage layer).
+RUN bun install --frozen-lockfile --production \
+  && bun install drizzle-kit tsx dotenv \
+  && chown -R app:app /app
 COPY --from=builder --chown=app:app /app/dist ./dist
-COPY --from=builder --chown=app:app /app/node_modules ./node_modules
-COPY --from=builder --chown=app:app /app/package.json ./package.json
-COPY --from=builder --chown=app:app /app/bun.lock ./bun.lock
 COPY --from=builder --chown=app:app /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder --chown=app:app /app/drizzle ./drizzle
 COPY --from=builder --chown=app:app /app/db ./db
