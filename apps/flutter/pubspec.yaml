@@ -1,0 +1,49 @@
+name: visit_harar
+description: Official Visit Harar tourism app — Harari Tourism Commission.
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  dio: ^5.8.0+1
+  go_router: ^14.8.1
+  flutter_riverpod: ^2.6.1
+  shared_preferences: ^2.5.3
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  path_provider: ^2.1.5
+  cached_network_image: ^3.4.1
+  url_launcher: ^6.3.1
+  google_fonts: ^6.2.1
+  flutter_widget_from_html: ^0.16.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.4.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/icon.png
+  adaptive_icon_background: "#1A99B1"
+  adaptive_icon_foreground: assets/adaptive-icon.png
+
+flutter_native_splash:
+  color: "#1A99B1"
+  image: assets/splash-icon.png
+  android_12:
+    color: "#1A99B1"
+    image: assets/splash-icon.png
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/

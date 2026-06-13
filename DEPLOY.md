@@ -13,6 +13,15 @@ The compose stack builds the app with Nitro’s **`node-server`** preset. Vercel
 
 Copy-paste template: [`coolify.env.example`](./coolify.env.example)
 
+### Pre-deploy (local)
+
+```bash
+bun run deploy:preflight   # checks monorepo paths, compose, optional APK
+docker compose build app   # optional: full image build smoke test (needs Docker + RAM/swap)
+```
+
+Push to the connected branch when preflight passes. Coolify rebuilds on each deploy.
+
 ---
 
 ## 1. Coolify application (Docker Compose)
@@ -47,12 +56,13 @@ Only set what you need. Optional vars can be omitted entirely; template placehol
 | `POSTGRES_PASSWORD`  | Recommended | No       | Shared by postgres + app; change from default      |
 | `BETTER_AUTH_SECRET` | Yes      | No          | `openssl rand -base64 32`                          |
 | `VITE_APP_URL`       | Recommended | **Yes**  | `https://visitharar.raafat.site` — embedded in client bundle |
+| `VITE_ANDROID_APK_URL` | No     | **Yes**  | Only if APK is hosted outside the image; default is `/downloads/visit-harar.apk` |
 | `RESEND_API_KEY`     | No       | No          | Omit until Resend is ready                         |
 | `RESEND_FROM_EMAIL`  | No       | No          | Omit until Resend is ready                         |
 | `APP_URL`            | No       | No          | Coolify sets via `SERVICE_URL_APP` when domain is configured |
 | `BETTER_AUTH_URL`    | No       | No          | Defaults to `SERVICE_URL_APP`                      |
 
-**Only `VITE_APP_URL` should be marked “Available at Buildtime”.**  
+**Only `VITE_*` vars should be marked “Available at Buildtime”.**  
 Do **not** mark `NODE_ENV`, `POSTGRES_PASSWORD`, or secrets as build-time — that skips devDependencies and breaks the Docker build.
 
 Remove any previously set `DATABASE_URL` from Coolify env vars.
@@ -110,7 +120,19 @@ To force re-seed after wiping the database volume: redeploy with an empty `user`
 - [ ] Homepage loads after migrations + seed
 - [ ] `/admin/login` with seeded superadmin
 - [ ] `/admin/media` — upload an image; copy URL works
+- [ ] `/downloads/visit-harar.apk` downloads (if APK was included in the build — see below)
 - [ ] No database connection errors in Coolify logs
+
+### Android APK (optional)
+
+The homepage links to `/downloads/visit-harar.apk`. The file is **not** committed to git (see `.gitignore`). To ship it on Coolify:
+
+1. **Include in the image (recommended):** before push/deploy, run `bun run flutter:apk:web`, then `git add -f apps/web/public/downloads/visit-harar.apk` and deploy so the APK is in the Docker build context.
+2. **External URL:** host the APK elsewhere and set `VITE_ANDROID_APK_URL` as a **build-time** variable in Coolify, then redeploy.
+
+If the APK is missing, the site still works; only the download link returns 404.
+
+---
 
 ### VPS memory (recommended for small servers)
 
@@ -138,6 +160,8 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 | App up but empty / login fails | Check app **Logs** for migration/seed errors; set `SUPERADMIN_*` in Coolify. |
 | Auth redirects wrong host      | Set domain in Coolify; rebuild with correct `VITE_APP_URL`.       |
 | Emails not sent                | Add real `RESEND_*` vars in Coolify (omit until ready — no errors). |
+| Build fails: `apps/web/package.json` not found | `.dockerignore` must **not** exclude `apps/web/` (Flutter-only exclusion is fine). Run `bun run deploy:preflight`. |
+| APK download 404               | Run `bun run flutter:apk:web` and redeploy with the file in `apps/web/public/downloads/`, or set `VITE_ANDROID_APK_URL`. |
 | Upload fails                   | Confirm `uploads` volume is mounted at `/data/uploads`.           |
 
 ---
@@ -172,6 +196,6 @@ For Vercel + Supabase serverless deploy, set `NITRO_PRESET=vercel` in the Vercel
 | App URL      | `http://localhost:8080`           | `https://visitharar.raafat.site`     |
 | Deploy file  | —                                 | `docker-compose.yml`                 |
 | Media storage| `./uploads`                       | `/data/uploads` (named volume)       |
-| Start        | `bun run dev`                     | `node dist/server/index.mjs`         |
+| Start        | `bun run dev`                     | `bun run start` (→ `apps/web/dist/server/index.mjs`) |
 
 See [SETUP.md](./SETUP.md) for local development.

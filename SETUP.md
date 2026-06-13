@@ -64,6 +64,8 @@ The spec describes custom `users` / `sessions` tables. This project uses **Bette
    bun run dev
    ```
 
+   Web app source lives in **`apps/web/`**. The command above starts Vite from that package.
+
    Open the URL Vite prints (often http://localhost:8080) and `/admin/login`.
    Set `BETTER_AUTH_URL` and `APP_URL` to match that port.
 

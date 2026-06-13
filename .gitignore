@@ -8,3 +8,4 @@ dist
 /uploads
 .expo
 apps/mobile/
+apps/web/public/downloads/*.apk

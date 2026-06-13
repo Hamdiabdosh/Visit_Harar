@@ -2,7 +2,7 @@
   "name": "visit-harar",
   "private": true,
   "type": "module",
-  "workspaces": ["packages/*", "apps/*"],
+  "workspaces": ["packages/*", "apps/web"],
   "scripts": {
     "dev": "bun run --cwd apps/web dev",
     "dev:web": "bun run --cwd apps/web dev",
@@ -17,6 +17,8 @@
     "flutter:analyze": "cd apps/flutter && ../../scripts/flutter.sh analyze",
     "flutter:test": "cd apps/flutter && ../../scripts/flutter.sh test",
     "flutter:bundle": "cd apps/flutter && ../../scripts/flutter.sh build appbundle --release",
+    "flutter:apk": "cd apps/flutter && ../../scripts/flutter.sh build apk --release",
+    "flutter:apk:web": "bun run flutter:apk && cp apps/flutter/build/app/outputs/flutter-apk/app-release.apk apps/web/public/downloads/visit-harar.apk",
     "flutter:icons": "cd apps/flutter && ../../scripts/flutter.sh pub get && ../../scripts/flutter.sh pub run flutter_launcher_icons",
     "lint": "eslint apps/web",
     "format": "prettier --write .",
@@ -29,7 +31,8 @@
     "db:reset": "tsx scripts/reset-db.ts",
     "db:up": "docker start visit-harar-pg 2>/dev/null || docker compose -f docker-compose.dev.yml up -d",
     "db:check": "tsx scripts/db-check.ts",
-    "images:migrate": "tsx scripts/migrate-images-to-webp.ts"
+    "images:migrate": "tsx scripts/migrate-images-to-webp.ts",
+    "deploy:preflight": "tsx scripts/deploy-preflight.ts"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",

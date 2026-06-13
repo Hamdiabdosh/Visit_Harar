@@ -36,9 +36,15 @@ Tourism platform for Harar — a public site for visitors and an admin CMS for t
 ## Project structure
 
 ```
-Visit-Harar/
-├── src/               # Routes, components, server logic
+Visit_Harar/
+├── apps/
+│   ├── web/           # TanStack Start — public site, admin CMS, /api/v1
+│   └── flutter/       # Native mobile app
+├── packages/
+│   ├── shared/        # Shared TS types
+│   └── api-client/    # Typed API client
 ├── drizzle/           # Database schema and migrations
+├── db/                # Database client
 ├── scripts/           # Seed and utility scripts
 ├── Dockerfile         # Production Docker build
 ├── docker-compose.yml # Coolify production stack

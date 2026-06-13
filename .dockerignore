@@ -16,6 +16,6 @@ Dockerfile
 coverage
 *.log
 .DS_Store
-# Exclude mobile app from web image (keep package.json for workspace install when pushed).
-apps/**
-!apps/mobile/package.json
+uploads
+# Flutter app — not needed for the web Docker image (large SDK/build artifacts).
+apps/flutter/**

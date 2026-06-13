@@ -26,6 +26,7 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_APP_URL: ${VITE_APP_URL:-https://visitharar.raafat.site}
+        VITE_ANDROID_APK_URL: ${VITE_ANDROID_APK_URL:-}
     restart: unless-stopped
     expose:
       - "3000"

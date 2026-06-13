@@ -5,12 +5,15 @@
 //     error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import path from "node:path";
+import { config as loadEnvFile } from "dotenv";
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+
+const repoRoot = path.resolve(import.meta.dirname, "../..");
+loadEnvFile({ path: path.join(repoRoot, ".env") });
+loadEnvFile({ path: path.join(repoRoot, ".env.local"), override: true });
 
 const nitroPreset =
   process.env.NITRO_PRESET ?? (process.env.VERCEL ? "vercel" : "node-server");
-
-const repoRoot = path.resolve(import.meta.dirname, "../..");
 
 export default defineConfig({
   // Coolify/Docker: node-server. Vercel: set NITRO_PRESET=vercel or deploy on Vercel (auto-detected).
@@ -20,6 +23,8 @@ export default defineConfig({
     sourceMap: false,
   },
   vite: {
+    // Load .env from monorepo root (not apps/web/)
+    envDir: repoRoot,
     build: {
       sourcemap: false,
     },
