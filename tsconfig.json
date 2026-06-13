@@ -27,7 +27,8 @@
     "noUncheckedSideEffectImports": true,
     "paths": {
       "@/*": ["./src/*"],
-      "~/*": ["./*"]
+      "~/*": ["./*"],
+      "@visit-harar/shared": ["./packages/shared/src/index.ts"]
     }
   }
 }

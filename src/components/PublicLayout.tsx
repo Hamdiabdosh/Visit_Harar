@@ -3,6 +3,7 @@ import { PublicNavbar } from "@/components/public/PublicNavbar";
 import { PublicFooter } from "@/components/public/PublicFooter";
 import { PublicMobileBar } from "@/components/public/PublicMobileBar";
 import { ChatWidget } from "@/components/public/ChatWidget";
+import { PwaRegister } from "@/components/public/PwaRegister";
 import { usePublicContact } from "@/components/public/contact-context";
 import { LocaleProvider } from "@/lib/contexts/LocaleContext";
 
@@ -31,6 +32,7 @@ function PublicLayoutInner({
       <PublicFooter contact={contact} />
       {showMobileBar && <PublicMobileBar />}
       <ChatWidget />
+      <PwaRegister />
     </div>
   );
 }

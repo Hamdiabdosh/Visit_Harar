@@ -28,6 +28,10 @@ export default defineConfig({
     resolve: {
       alias: {
         "~": path.resolve(import.meta.dirname, "."),
+        "@visit-harar/shared": path.resolve(
+          import.meta.dirname,
+          "packages/shared/src/index.ts",
+        ),
       },
     },
   },

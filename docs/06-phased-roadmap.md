@@ -13,7 +13,7 @@
 |-------|-------|----------|--------|
 | **A** | Stabilize & launch confidence | 2–4 weeks | 🟡 In progress |
 | **B** | "Everything in one place" | 1–2 months | 🔲 Not started |
-| **C** | Mobile-ready API + PWA | ~1 month | 🔲 Not started |
+| **C** | Mobile-ready API + PWA | ~1 month | 🔄 In progress |
 | **D** | Native mobile app | 2–3 months | 🔲 Not started |
 | **E** | Differentiation & scale | Ongoing | 🔲 Not started |
 
@@ -101,10 +101,12 @@
 
 ### Phase C checklist
 
-- [ ] All public content available via `/api/v1`
-- [ ] PWA installable on mobile browsers
-- [ ] QR codes tested on 3+ attraction pages
-- [ ] API contract documented
+- [x] All public content available via `/api/v1`
+- [x] PWA installable on mobile browsers (manifest + service worker)
+- [x] QR codes on attraction detail pages
+- [x] API contract documented ([09-api-v1.md](./09-api-v1.md))
+- [x] Offline map tile caching (OSM tiles, runtime cache in SW)
+- [ ] OpenAPI machine-readable spec (optional Phase D)
 
 ---
 

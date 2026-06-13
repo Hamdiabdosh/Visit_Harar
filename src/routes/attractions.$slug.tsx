@@ -20,6 +20,7 @@ import {
   hasCoordinates,
 } from "@/lib/geo";
 import { ClientOnly } from "@/components/admin/ClientOnly";
+import { AttractionQr } from "@/components/public/AttractionQr";
 import { MapSkeleton } from "@/components/map/MapSkeleton";
 import { MapSuspense, LazySingleLocationMap } from "@/components/map/lazy-maps";
 import { NearbyWithRoutes } from "@/components/map/NearbyWithRoutes";
@@ -188,6 +189,20 @@ function AttractionDetail() {
               nearby={nearby}
             />
           ) : null}
+
+          <section className="mt-10 pt-8 border-t border-border">
+            <h2 className="font-serif text-2xl font-bold mb-4">Share & print</h2>
+            <ClientOnly
+              fallback={
+                <p className="text-sm text-ink-muted">Loading QR code…</p>
+              }
+            >
+              <AttractionQr
+                path={`/attractions/${item.slug}`}
+                title={item.title}
+              />
+            </ClientOnly>
+          </section>
 
           <Link
             to="/book"

@@ -19,7 +19,8 @@
 | 5 | [Evolve, Don't Rebuild](./05-evolve-not-rebuild.md) | Why we customize the existing platform |
 | 6 | [Phased Roadmap](./06-phased-roadmap.md) | Phases A–E with priorities and effort |
 | 7 | [Team & Success Metrics](./07-team-and-success-metrics.md) | Roles, AI assist, and KPIs |
-| 8 | [UI/UX Investigation](./08-ui-ux-investigation.md) | *Upcoming* — design audit and improvement plan |
+| 8 | [UI/UX Investigation](./08-ui-ux-investigation.md) | Design audit and improvement plan |
+| 9 | [Public REST API v1](./09-api-v1.md) | `/api/v1` contract for mobile and PWA |
 
 ---
 

@@ -58,6 +58,7 @@ import { Route as AdminAuditRouteImport } from './routes/admin/audit'
 import { Route as AdminAttractionsRouteImport } from './routes/admin/attractions'
 import { Route as AdminAnnouncementsRouteImport } from './routes/admin/announcements'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
+import { Route as ApiV1IndexRouteImport } from './routes/api/v1/index'
 import { Route as AdminPartnersIndexRouteImport } from './routes/admin/partners.index'
 import { Route as AdminPagesIndexRouteImport } from './routes/admin/pages.index'
 import { Route as AdminItinerariesIndexRouteImport } from './routes/admin/itineraries.index'
@@ -66,6 +67,7 @@ import { Route as AdminGuidesIndexRouteImport } from './routes/admin/guides.inde
 import { Route as AdminGalleryIndexRouteImport } from './routes/admin/gallery.index'
 import { Route as AdminBookingsIndexRouteImport } from './routes/admin/bookings.index'
 import { Route as AdminAttractionsIndexRouteImport } from './routes/admin/attractions.index'
+import { Route as ApiV1SplatRouteImport } from './routes/api/v1/$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AdminPartnersIdRouteImport } from './routes/admin/partners.$id'
 import { Route as AdminPagesPageKeyRouteImport } from './routes/admin/pages.$pageKey'
@@ -322,6 +324,11 @@ const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const ApiV1IndexRoute = ApiV1IndexRouteImport.update({
+  id: '/api/v1/',
+  path: '/api/v1/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPartnersIndexRoute = AdminPartnersIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -361,6 +368,11 @@ const AdminAttractionsIndexRoute = AdminAttractionsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminAttractionsRoute,
+} as any)
+const ApiV1SplatRoute = ApiV1SplatRouteImport.update({
+  id: '/api/v1/$',
+  path: '/api/v1/$',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -473,6 +485,7 @@ export interface FileRoutesByFullPath {
   '/admin/pages/$pageKey': typeof AdminPagesPageKeyRoute
   '/admin/partners/$id': typeof AdminPartnersIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
   '/admin/attractions/': typeof AdminAttractionsIndexRoute
   '/admin/bookings/': typeof AdminBookingsIndexRoute
   '/admin/gallery/': typeof AdminGalleryIndexRoute
@@ -481,6 +494,7 @@ export interface FileRoutesByFullPath {
   '/admin/itineraries/': typeof AdminItinerariesIndexRoute
   '/admin/pages/': typeof AdminPagesIndexRoute
   '/admin/partners/': typeof AdminPartnersIndexRoute
+  '/api/v1/': typeof ApiV1IndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -533,6 +547,7 @@ export interface FileRoutesByTo {
   '/admin/pages/$pageKey': typeof AdminPagesPageKeyRoute
   '/admin/partners/$id': typeof AdminPartnersIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
   '/admin/attractions': typeof AdminAttractionsIndexRoute
   '/admin/bookings': typeof AdminBookingsIndexRoute
   '/admin/gallery': typeof AdminGalleryIndexRoute
@@ -541,6 +556,7 @@ export interface FileRoutesByTo {
   '/admin/itineraries': typeof AdminItinerariesIndexRoute
   '/admin/pages': typeof AdminPagesIndexRoute
   '/admin/partners': typeof AdminPartnersIndexRoute
+  '/api/v1': typeof ApiV1IndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -603,6 +619,7 @@ export interface FileRoutesById {
   '/admin/pages/$pageKey': typeof AdminPagesPageKeyRoute
   '/admin/partners/$id': typeof AdminPartnersIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/v1/$': typeof ApiV1SplatRoute
   '/admin/attractions/': typeof AdminAttractionsIndexRoute
   '/admin/bookings/': typeof AdminBookingsIndexRoute
   '/admin/gallery/': typeof AdminGalleryIndexRoute
@@ -611,6 +628,7 @@ export interface FileRoutesById {
   '/admin/itineraries/': typeof AdminItinerariesIndexRoute
   '/admin/pages/': typeof AdminPagesIndexRoute
   '/admin/partners/': typeof AdminPartnersIndexRoute
+  '/api/v1/': typeof ApiV1IndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -674,6 +692,7 @@ export interface FileRouteTypes {
     | '/admin/pages/$pageKey'
     | '/admin/partners/$id'
     | '/api/auth/$'
+    | '/api/v1/$'
     | '/admin/attractions/'
     | '/admin/bookings/'
     | '/admin/gallery/'
@@ -682,6 +701,7 @@ export interface FileRouteTypes {
     | '/admin/itineraries/'
     | '/admin/pages/'
     | '/admin/partners/'
+    | '/api/v1/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -734,6 +754,7 @@ export interface FileRouteTypes {
     | '/admin/pages/$pageKey'
     | '/admin/partners/$id'
     | '/api/auth/$'
+    | '/api/v1/$'
     | '/admin/attractions'
     | '/admin/bookings'
     | '/admin/gallery'
@@ -742,6 +763,7 @@ export interface FileRouteTypes {
     | '/admin/itineraries'
     | '/admin/pages'
     | '/admin/partners'
+    | '/api/v1'
   id:
     | '__root__'
     | '/'
@@ -803,6 +825,7 @@ export interface FileRouteTypes {
     | '/admin/pages/$pageKey'
     | '/admin/partners/$id'
     | '/api/auth/$'
+    | '/api/v1/$'
     | '/admin/attractions/'
     | '/admin/bookings/'
     | '/admin/gallery/'
@@ -811,6 +834,7 @@ export interface FileRouteTypes {
     | '/admin/itineraries/'
     | '/admin/pages/'
     | '/admin/partners/'
+    | '/api/v1/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -835,6 +859,8 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   UploadsSplatRoute: typeof UploadsSplatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiV1SplatRoute: typeof ApiV1SplatRoute
+  ApiV1IndexRoute: typeof ApiV1IndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1182,6 +1208,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAnalyticsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/api/v1/': {
+      id: '/api/v1/'
+      path: '/api/v1'
+      fullPath: '/api/v1/'
+      preLoaderRoute: typeof ApiV1IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/partners/': {
       id: '/admin/partners/'
       path: '/'
@@ -1237,6 +1270,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/attractions/'
       preLoaderRoute: typeof AdminAttractionsIndexRouteImport
       parentRoute: typeof AdminAttractionsRoute
+    }
+    '/api/v1/$': {
+      id: '/api/v1/$'
+      path: '/api/v1/$'
+      fullPath: '/api/v1/$'
+      preLoaderRoute: typeof ApiV1SplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -1586,6 +1626,8 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   UploadsSplatRoute: UploadsSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiV1SplatRoute: ApiV1SplatRoute,
+  ApiV1IndexRoute: ApiV1IndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
