@@ -6,6 +6,8 @@ WORKDIR /app
 ENV NODE_ENV=development
 
 COPY package.json bun.lock ./
+# Workspace manifests must be present before install (lockfile is frozen).
+COPY packages ./packages
 RUN NODE_ENV=development bun install --frozen-lockfile
 
 COPY . .
