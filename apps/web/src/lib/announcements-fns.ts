@@ -111,9 +111,9 @@ export const getAnnouncements = createServerFn({ method: "GET" })
       page: number;
       perPage: number;
     }> => {
+      const page = filters?.page ?? 1;
+      const perPage = filters?.perPage ?? 10;
       try {
-        const page = filters?.page ?? 1;
-        const perPage = filters?.perPage ?? 10;
         const conditions = [];
         if (filters?.type)
           conditions.push(eq(announcements.type, filters.type));
@@ -146,6 +146,10 @@ export const getAnnouncements = createServerFn({ method: "GET" })
           perPage,
         };
       } catch (err) {
+        if (isDbUnavailableError(err)) {
+          console.error("[getAnnouncements]", DB_SETUP_HINT);
+          return { items: [], total: 0, page, perPage };
+        }
         if (isAppError(err)) throw err;
         throw createError(
           "INTERNAL",
@@ -169,6 +173,7 @@ export const getAnnouncementBySlug = createServerFn({ method: "GET" })
       const meta = await buildEventRegistrationMeta(row);
       return rowToDto(row, meta);
     } catch (err) {
+      if (isDbUnavailableError(err)) return null;
       if (isAppError(err)) throw err;
       throw createError(
         "INTERNAL",

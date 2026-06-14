@@ -59,6 +59,7 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
               { to: "/map", label: t("nav.map") },
               { to: "/guides", label: t("nav.guides") },
               { to: "/gallery", label: t("nav.gallery") },
+              { to: "/culture", label: t("nav.culture") },
               { to: "/news", label: t("nav.news") },
             ]}
           />
@@ -68,6 +69,7 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
               { to: "/plan-your-trip", label: t("nav.plan") },
               { to: "/book", label: t("nav.bookGuide") },
               { to: "/itineraries", label: t("footer.itineraries") },
+              { to: "/services", label: t("footer.services") },
               { to: "/about", label: t("footer.aboutHarar") },
               { to: "/contact", label: t("nav.contact") },
             ]}

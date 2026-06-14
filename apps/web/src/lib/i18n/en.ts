@@ -14,6 +14,7 @@ export const en: Translations = {
   "nav.contact": "Contact",
   "nav.bookGuide": "Book a Guide",
   "nav.search": "Search",
+  "nav.more": "More",
   "search.placeholder": "Search attractions, guides, news…",
   "search.noResults": "No results found.",
   "search.viewAll": "View all results",

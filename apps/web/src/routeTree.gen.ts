@@ -32,7 +32,6 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as UploadsSplatRouteImport } from './routes/uploads/$'
 import { Route as PlanYourTripGuideRouteImport } from './routes/plan-your-trip.guide'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
-import { Route as NewsIdRouteImport } from './routes/news.$id'
 import { Route as ItinerariesSlugRouteImport } from './routes/itineraries.$slug'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as GuidesIdRouteImport } from './routes/guides.$id'
@@ -197,11 +196,6 @@ const PlanYourTripGuideRoute = PlanYourTripGuideRouteImport.update({
 const NewsSlugRoute = NewsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
-  getParentRoute: () => NewsRoute,
-} as any)
-const NewsIdRoute = NewsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
   getParentRoute: () => NewsRoute,
 } as any)
 const ItinerariesSlugRoute = ItinerariesSlugRouteImport.update({
@@ -504,7 +498,6 @@ export interface FileRoutesByFullPath {
   '/guides/$id': typeof GuidesIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/itineraries/$slug': typeof ItinerariesSlugRoute
-  '/news/$id': typeof NewsIdRoute
   '/news/$slug': typeof NewsSlugRoute
   '/plan-your-trip/guide': typeof PlanYourTripGuideRoute
   '/uploads/$': typeof UploadsSplatRoute
@@ -570,7 +563,6 @@ export interface FileRoutesByTo {
   '/guides/$id': typeof GuidesIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/itineraries/$slug': typeof ItinerariesSlugRoute
-  '/news/$id': typeof NewsIdRoute
   '/news/$slug': typeof NewsSlugRoute
   '/plan-your-trip/guide': typeof PlanYourTripGuideRoute
   '/uploads/$': typeof UploadsSplatRoute
@@ -647,7 +639,6 @@ export interface FileRoutesById {
   '/guides/$id': typeof GuidesIdRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/itineraries/$slug': typeof ItinerariesSlugRoute
-  '/news/$id': typeof NewsIdRoute
   '/news/$slug': typeof NewsSlugRoute
   '/plan-your-trip/guide': typeof PlanYourTripGuideRoute
   '/uploads/$': typeof UploadsSplatRoute
@@ -725,7 +716,6 @@ export interface FileRouteTypes {
     | '/guides/$id'
     | '/guides/$slug'
     | '/itineraries/$slug'
-    | '/news/$id'
     | '/news/$slug'
     | '/plan-your-trip/guide'
     | '/uploads/$'
@@ -791,7 +781,6 @@ export interface FileRouteTypes {
     | '/guides/$id'
     | '/guides/$slug'
     | '/itineraries/$slug'
-    | '/news/$id'
     | '/news/$slug'
     | '/plan-your-trip/guide'
     | '/uploads/$'
@@ -867,7 +856,6 @@ export interface FileRouteTypes {
     | '/guides/$id'
     | '/guides/$slug'
     | '/itineraries/$slug'
-    | '/news/$id'
     | '/news/$slug'
     | '/plan-your-trip/guide'
     | '/uploads/$'
@@ -1086,13 +1074,6 @@ declare module '@tanstack/react-router' {
       path: '/$slug'
       fullPath: '/news/$slug'
       preLoaderRoute: typeof NewsSlugRouteImport
-      parentRoute: typeof NewsRoute
-    }
-    '/news/$id': {
-      id: '/news/$id'
-      path: '/$id'
-      fullPath: '/news/$id'
-      preLoaderRoute: typeof NewsIdRouteImport
       parentRoute: typeof NewsRoute
     }
     '/itineraries/$slug': {
@@ -1696,12 +1677,10 @@ const ItinerariesRouteWithChildren = ItinerariesRoute._addFileChildren(
 )
 
 interface NewsRouteChildren {
-  NewsIdRoute: typeof NewsIdRoute
   NewsSlugRoute: typeof NewsSlugRoute
 }
 
 const NewsRouteChildren: NewsRouteChildren = {
-  NewsIdRoute: NewsIdRoute,
   NewsSlugRoute: NewsSlugRoute,
 }
 

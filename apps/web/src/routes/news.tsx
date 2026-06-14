@@ -5,6 +5,7 @@ import { PageHero } from "@/components/public/PageHero";
 import { AnnouncementCard } from "@/components/public/AnnouncementCard";
 import { EventsCalendar } from "@/components/public/EventsCalendar";
 import { getAnnouncements } from "@/lib/announcements-fns";
+import type { AnnouncementType } from "@/lib/types";
 import { buildHeadAsync } from "@/lib/metadata";
 
 export const Route = createFileRoute("/news")({
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/news")({
   },
   head: async () =>
     buildHeadAsync({
-      title: "News & Announcements",
+      title: "News & Events",
       description:
         "Stay updated on events, notices, and stories from the Harari Tourism Commission.",
       canonicalPath: "/news",
@@ -25,7 +26,15 @@ export const Route = createFileRoute("/news")({
   component: NewsPage,
 });
 
-const tabs = ["All", "News", "Event", "Notice"] as const;
+type TabKey = "All" | AnnouncementType;
+
+const tabs: { key: TabKey; label: string }[] = [
+  { key: "All", label: "All" },
+  { key: "News", label: "News" },
+  { key: "Event", label: "Events" },
+  { key: "Notice", label: "Notices" },
+];
+
 const views = ["List", "Calendar"] as const;
 
 function stripHtml(html: string) {
@@ -37,53 +46,62 @@ function stripHtml(html: string) {
 
 function NewsPage() {
   const { result, events } = Route.useLoaderData();
-  const [tab, setTab] = useState<(typeof tabs)[number]>("All");
+  const [tab, setTab] = useState<TabKey>("All");
   const [view, setView] = useState<(typeof views)[number]>("List");
   const [calendarMonth, setCalendarMonth] = useState(() => new Date());
 
   const items = result.items;
-  const filtered = tab === "All" ? items : items.filter((a) => a.type === tab);
+  const filtered =
+    tab === "All" ? items : items.filter((a) => a.type === tab);
   const pinned = filtered.find((a) => a.is_pinned);
   const rest = filtered.filter((a) => !a.is_pinned);
   const showCalendar = view === "Calendar" && (tab === "All" || tab === "Event");
 
+  const emptyMessage =
+    items.length === 0
+      ? "News and events will be published here soon."
+      : `No ${tabs.find((t) => t.key === tab)?.label.toLowerCase() ?? "items"} yet.`;
+
   return (
     <PublicLayout>
       <PageHero
-        title="News & Announcements"
-        subtitle="Stay updated on events, notices and stories from the Commission."
+        title="News & Events"
+        subtitle="Official updates, festival dates, and notices from the Tourism Commission."
       />
       <section className="max-w-5xl mx-auto px-5 lg:px-8 py-12">
         <div className="flex flex-wrap gap-2 mb-4 justify-between items-center">
           <div className="flex flex-wrap gap-2">
-            {tabs.map((t) => (
+            {tabs.map(({ key, label }) => (
               <button
-                key={t}
-                onClick={() => setTab(t)}
+                key={key}
+                type="button"
+                onClick={() => setTab(key)}
                 className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
-                  tab === t
+                  tab === key
                     ? "bg-brand text-white border-brand"
                     : "bg-white border-border hover:border-brand"
                 }`}
               >
-                {t}
-                {t !== "All" ? "s" : ""}
+                {label}
               </button>
             ))}
           </div>
-          <div className="flex gap-1 rounded-full border border-border p-1 bg-white">
-            {views.map((v) => (
-              <button
-                key={v}
-                onClick={() => setView(v)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium ${
-                  view === v ? "bg-brand text-white" : "text-ink-muted"
-                }`}
-              >
-                {v}
-              </button>
-            ))}
-          </div>
+          {(tab === "All" || tab === "Event") && (
+            <div className="flex gap-1 rounded-full border border-border p-1 bg-white">
+              {views.map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setView(v)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium ${
+                    view === v ? "bg-brand text-white" : "text-ink-muted"
+                  }`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {showCalendar ? (
@@ -92,10 +110,8 @@ function NewsPage() {
             month={calendarMonth}
             onMonthChange={setCalendarMonth}
           />
-        ) : items.length === 0 ? (
-          <p className="text-center text-ink-muted py-12">
-            News and announcements will be published here soon.
-          </p>
+        ) : filtered.length === 0 ? (
+          <p className="text-center text-ink-muted py-12">{emptyMessage}</p>
         ) : (
           <>
             {pinned && (

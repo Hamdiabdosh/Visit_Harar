@@ -14,6 +14,7 @@ export type TranslationKey =
   | "nav.contact"
   | "nav.bookGuide"
   | "nav.search"
+  | "nav.more"
   | "search.placeholder"
   | "search.noResults"
   | "search.viewAll"

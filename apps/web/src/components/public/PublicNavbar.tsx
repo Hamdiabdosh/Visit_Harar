@@ -14,16 +14,75 @@ import { useLocale } from "@/lib/contexts/LocaleContext";
 import type { TranslationKey } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 
-/** Top nav: 7 links — Gallery & Culture live in footer only. Map is 2nd. */
-const navItems: { to: string; labelKey: TranslationKey; exact?: boolean }[] = [
-  { to: "/", labelKey: "nav.home", exact: true },
+type NavItem = { to: string; labelKey: TranslationKey; exact?: boolean };
+
+/** Primary bar: Map first — Home via logo; Contact in footer + mobile More. */
+const primaryNavItems: NavItem[] = [
   { to: "/map", labelKey: "nav.map" },
   { to: "/attractions", labelKey: "nav.attractions" },
   { to: "/guides", labelKey: "nav.guides" },
   { to: "/plan-your-trip", labelKey: "nav.plan" },
   { to: "/news", labelKey: "nav.news" },
+];
+
+/** Mobile drawer + footer — secondary discovery. */
+const moreNavItems: NavItem[] = [
+  { to: "/gallery", labelKey: "nav.gallery" },
+  { to: "/culture", labelKey: "nav.culture" },
+  { to: "/about", labelKey: "footer.aboutHarar" },
   { to: "/contact", labelKey: "nav.contact" },
 ];
+
+function NavLink({
+  item,
+  scrolled,
+  onNavigate,
+  size = "desktop",
+}: {
+  item: NavItem;
+  scrolled: boolean;
+  onNavigate?: () => void;
+  size?: "desktop" | "mobile-primary" | "mobile-secondary";
+}) {
+  const { t } = useLocale();
+
+  if (size === "desktop") {
+    return (
+      <Link
+        to={item.to}
+        className={`text-[13.5px] font-medium transition-colors hover:text-gold whitespace-nowrap ${
+          scrolled ? "text-ink" : "text-white/90"
+        }`}
+        activeProps={{ className: "text-gold" }}
+        activeOptions={{ exact: item.exact ?? false }}
+      >
+        {t(item.labelKey)}
+      </Link>
+    );
+  }
+
+  const primaryClass =
+    "block rounded-md px-3 py-2.5 font-serif text-lg text-white/90 transition-colors hover:bg-white/10 hover:text-white";
+  const secondaryClass =
+    "block rounded-md px-3 py-2 text-sm text-white/75 hover:bg-white/10 hover:text-white";
+
+  return (
+    <Link
+      to={item.to}
+      onClick={onNavigate}
+      className={size === "mobile-primary" ? primaryClass : secondaryClass}
+      activeProps={{
+        className:
+          size === "mobile-primary"
+            ? "bg-white/10 text-gold font-semibold hover:text-gold"
+            : "bg-white/10 text-gold",
+      }}
+      activeOptions={{ exact: item.exact ?? false }}
+    >
+      {t(item.labelKey)}
+    </Link>
+  );
+}
 
 export function PublicNavbar({
   transparentOnTop = false,
@@ -50,6 +109,10 @@ export function PublicNavbar({
     setSearchOpen(true);
   }
 
+  function closeMenu() {
+    setMenuOpen(false);
+  }
+
   return (
     <>
       <header
@@ -71,29 +134,15 @@ export function PublicNavbar({
                 size="md"
                 className="hidden sm:block"
               />
-              <SiteLogo
-                variant="emblem"
-                size="md"
-                className="sm:hidden"
-              />
+              <SiteLogo variant="emblem" size="md" className="sm:hidden" />
             </Link>
 
             <nav
-              className="hidden lg:flex items-center gap-5 xl:gap-6"
+              className="hidden md:flex items-center gap-5 lg:gap-6"
               aria-label="Primary navigation"
             >
-              {navItems.map((l) => (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  className={`text-[13.5px] font-medium transition-colors hover:text-gold whitespace-nowrap ${
-                    scrolled ? "text-ink" : "text-white/90"
-                  }`}
-                  activeProps={{ className: "text-gold" }}
-                  activeOptions={{ exact: l.exact ?? false }}
-                >
-                  {t(l.labelKey)}
-                </Link>
+              {primaryNavItems.map((item) => (
+                <NavLink key={item.to} item={item} scrolled={scrolled} />
               ))}
             </nav>
 
@@ -132,13 +181,13 @@ export function PublicNavbar({
 
               <Link
                 to="/book"
-                className="hidden md:inline-flex items-center px-4 py-2 rounded-md bg-gold text-ink text-sm font-semibold hover:bg-gold-dark hover:text-white transition-colors whitespace-nowrap"
+                className="hidden sm:inline-flex items-center px-4 py-2 rounded-md bg-gold text-ink text-sm font-semibold hover:bg-gold-dark hover:text-white transition-colors whitespace-nowrap"
               >
                 {t("nav.bookGuide")}
               </Link>
               <button
                 onClick={() => setMenuOpen(true)}
-                className={`lg:hidden p-2 rounded-md ${textClass}`}
+                className={`md:hidden p-2 rounded-md ${textClass}`}
                 aria-label="Open menu"
                 aria-expanded={menuOpen}
               >
@@ -194,47 +243,39 @@ export function PublicNavbar({
             aria-label="Mobile navigation"
           >
             <ul className="space-y-1">
-              {navItems.map((l) => (
-                <li key={l.to}>
-                  <Link
-                    to={l.to}
-                    onClick={() => setMenuOpen(false)}
-                    className="block rounded-md px-3 py-2.5 font-serif text-lg text-white/90 transition-colors hover:bg-white/10 hover:text-white"
-                    activeProps={{
-                      className:
-                        "bg-white/10 text-gold font-semibold hover:text-gold",
-                    }}
-                    activeOptions={{ exact: l.exact ?? false }}
-                  >
-                    {t(l.labelKey)}
-                  </Link>
+              {primaryNavItems.map((item) => (
+                <li key={item.to}>
+                  <NavLink
+                    item={item}
+                    scrolled={false}
+                    onNavigate={closeMenu}
+                    size="mobile-primary"
+                  />
                 </li>
               ))}
-              <li className="pt-2 mt-2 border-t border-white/10">
-                <Link
-                  to="/gallery"
-                  onClick={() => setMenuOpen(false)}
-                  className="block rounded-md px-3 py-2 text-sm text-white/70 hover:bg-white/10"
-                >
-                  {t("nav.gallery")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/culture"
-                  onClick={() => setMenuOpen(false)}
-                  className="block rounded-md px-3 py-2 text-sm text-white/70 hover:bg-white/10"
-                >
-                  {t("nav.culture")}
-                </Link>
-              </li>
+            </ul>
+
+            <p className="mt-5 mb-2 px-3 text-[10px] uppercase tracking-widest text-white/45 font-semibold">
+              {t("nav.more")}
+            </p>
+            <ul className="space-y-0.5">
+              {moreNavItems.map((item) => (
+                <li key={item.to}>
+                  <NavLink
+                    item={item}
+                    scrolled={false}
+                    onNavigate={closeMenu}
+                    size="mobile-secondary"
+                  />
+                </li>
+              ))}
             </ul>
           </nav>
 
           <div className="border-t border-white/10 p-4">
             <Link
               to="/book"
-              onClick={() => setMenuOpen(false)}
+              onClick={closeMenu}
               className="flex w-full items-center justify-center rounded-md bg-gold px-4 py-3 text-sm font-semibold text-ink transition-colors hover:bg-gold-dark hover:text-white"
             >
               {t("nav.bookGuide")}

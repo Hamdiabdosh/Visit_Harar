@@ -14,6 +14,7 @@ export const am: Translations = {
   "nav.contact": "አግኙን",
   "nav.bookGuide": "መሪ ይቀጥሩ",
   "nav.search": "ፈልግ",
+  "nav.more": "ተጨማሪ",
   "search.placeholder": "ቦታዎች፣ መሪዎች፣ ዜና ፈልግ…",
   "search.noResults": "ምንም ውጤት አልተገኘም።",
   "search.viewAll": "ሁሉን ውጤቶች ይመልከቱ",
