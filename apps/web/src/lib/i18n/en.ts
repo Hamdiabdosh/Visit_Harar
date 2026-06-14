@@ -31,6 +31,10 @@ export const en: Translations = {
   "home.attractions.title": "Top Attractions",
   "home.attractions.subtitle":
     "Six unforgettable experiences inside the walls of Africa's holiest city.",
+  "home.attractions.viewAll": "All attractions",
+  "home.gallery.eyebrow": "Visual Stories",
+  "home.gallery.title": "Gallery",
+  "home.gallery.viewAll": "View full gallery",
   "home.news.latest": "Latest",
   "home.news.title": "News & Events",
   "home.news.viewAll": "View all →",

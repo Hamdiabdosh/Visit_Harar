@@ -91,7 +91,7 @@ bun run flutter:apk:web
 bun run build
 ```
 
-The file is served at **`/downloads/visit-harar.apk`**. `HomeAppPromo` on the homepage links to it automatically.
+The file is served at **`/downloads/visit-harar.apk`**. The site footer links to it automatically.
 
 To host the APK elsewhere (CDN, object storage), set `VITE_ANDROID_APK_URL` at web build time (see `.env.example`).
 
@@ -99,7 +99,7 @@ To host the APK elsewhere (CDN, object storage), set `VITE_ANDROID_APK_URL` at w
 
 ## 6. After Play Store link exists
 
-Optionally add a Play Store button alongside the APK download in `apps/web/src/components/public/HomeAppPromo.tsx`. iOS (TestFlight / App Store) when Mac + Apple Developer account available.
+Optionally add a Play Store button alongside the APK download in `apps/web/src/components/public/PublicFooter.tsx`. iOS (TestFlight / App Store) when Mac + Apple Developer account available.
 
 ---
 

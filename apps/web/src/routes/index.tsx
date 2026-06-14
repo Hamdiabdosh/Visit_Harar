@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { HeroSection } from "@/components/public/HeroSection";
 import { AttractionCard } from "@/components/public/AttractionCard";
@@ -9,55 +9,30 @@ import { isAttractionCategory } from "@/lib/attraction-styles";
 import { getLatestAnnouncements } from "@/lib/announcements-fns";
 import { getGuides } from "@/lib/guides-fns";
 import { getLatestGalleryItems } from "@/lib/gallery-fns";
-import { getPublishedPage } from "@/lib/pages-fns";
-import {
-  Pin,
-  Mountain,
-  Globe,
-  Users,
-  ArrowRight,
-  Landmark,
-} from "lucide-react";
 import { ErrorBoundary } from "@/components/public/ErrorBoundary";
 import { SectionHeader } from "@/components/public/SectionHeader";
 import { AnnouncementCard } from "@/components/public/AnnouncementCard";
 import { GuideCard } from "@/components/public/GuideCard";
 import { GalleryThumb } from "@/components/public/GalleryThumb";
-import { useLocale } from "@/lib/contexts/LocaleContext";
 import { HomeMapStrip } from "@/components/public/HomeMapStrip";
-import { HomeAppPromo } from "@/components/public/HomeAppPromo";
+import { useLocale } from "@/lib/contexts/LocaleContext";
 import type { AttractionDto } from "@/lib/attraction-map";
 import type { AnnouncementDto } from "@/lib/announcements-fns";
 import type { GuideDto } from "@/lib/guides-fns";
 import type { GalleryItemDto } from "@/lib/gallery-fns";
-import type { PageDto } from "@/lib/pages-fns";
 import { buildHeadAsync } from "@/lib/metadata";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
-    const [
-      hero,
-      featured,
-      latestAnnouncements,
-      featuredGuides,
-      galleryItems,
-      aboutPage,
-    ] = await Promise.all([
-      getPublishedHero(),
-      getAttractions({ data: { featured: true, published: true, limit: 6 } }),
-      getLatestAnnouncements({ data: 3 }),
-      getGuides({ data: { published: true, limit: 3 } }),
-      getLatestGalleryItems({ data: 8 }),
-      getPublishedPage({ data: "about" }),
-    ]);
-    return {
-      hero,
-      featured,
-      latestAnnouncements,
-      featuredGuides,
-      galleryItems,
-      aboutPage,
-    };
+    const [hero, featured, latestAnnouncements, featuredGuides, galleryItems] =
+      await Promise.all([
+        getPublishedHero(),
+        getAttractions({ data: { featured: true, published: true, limit: 6 } }),
+        getLatestAnnouncements({ data: 3 }),
+        getGuides({ data: { published: true, limit: 3 } }),
+        getLatestGalleryItems({ data: 8 }),
+      ]);
+    return { hero, featured, latestAnnouncements, featuredGuides, galleryItems };
   },
   head: async ({ loaderData }) =>
     buildHeadAsync({
@@ -71,14 +46,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const {
-    hero,
-    featured,
-    latestAnnouncements,
-    featuredGuides,
-    galleryItems,
-    aboutPage,
-  } = Route.useLoaderData();
+  const { hero, featured, latestAnnouncements, featuredGuides, galleryItems } =
+    Route.useLoaderData();
+
   return (
     <PublicLayout transparentNav>
       <ErrorBoundary>
@@ -90,30 +60,29 @@ function Index() {
       <ErrorBoundary>
         <FeaturedAttractions items={featured} />
       </ErrorBoundary>
-      <ErrorBoundary>
-        <Announcements items={latestAnnouncements} />
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <FeaturedGuides items={featuredGuides} />
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <GalleryTeaser items={galleryItems} />
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <AboutTeaser page={aboutPage} />
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <HomeAppPromo />
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <CTABanner />
-      </ErrorBoundary>
+      {latestAnnouncements.length > 0 ? (
+        <ErrorBoundary>
+          <Announcements items={latestAnnouncements} />
+        </ErrorBoundary>
+      ) : null}
+      {featuredGuides.length > 0 ? (
+        <ErrorBoundary>
+          <FeaturedGuides items={featuredGuides} />
+        </ErrorBoundary>
+      ) : null}
+      {galleryItems.length > 0 ? (
+        <ErrorBoundary>
+          <GalleryTeaser items={galleryItems} />
+        </ErrorBoundary>
+      ) : null}
     </PublicLayout>
   );
 }
 
 function FeaturedAttractions({ items }: { items: AttractionDto[] }) {
   const { t } = useLocale();
+  if (items.length === 0) return null;
+
   const cards = items.map((a) => ({
     title: a.title,
     slug: a.slug,
@@ -125,16 +94,33 @@ function FeaturedAttractions({ items }: { items: AttractionDto[] }) {
   }));
 
   return (
-    <section className="py-24 max-w-7xl mx-auto px-5 lg:px-8">
-      <SectionHeader
-        eyebrow={t("home.attractions.eyebrow")}
-        title={t("home.attractions.title")}
-        subtitle={t("home.attractions.subtitle")}
-      />
+    <section className="py-16 md:py-20 max-w-7xl mx-auto px-5 lg:px-8">
+      <div className="flex items-end justify-between gap-4 mb-10">
+        <SectionHeader
+          eyebrow={t("home.attractions.eyebrow")}
+          title={t("home.attractions.title")}
+          subtitle={t("home.attractions.subtitle")}
+          className="mb-0"
+        />
+        <Link
+          to="/attractions"
+          className="hidden sm:inline-flex shrink-0 text-sm font-semibold text-brand hover:text-gold items-center gap-1"
+        >
+          {t("home.attractions.viewAll")} <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((a) => (
           <AttractionCard key={a.slug} {...a} />
         ))}
+      </div>
+      <div className="sm:hidden mt-6 text-center">
+        <Link
+          to="/attractions"
+          className="text-sm font-semibold text-brand hover:text-gold inline-flex items-center gap-1"
+        >
+          {t("home.attractions.viewAll")} <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
     </section>
   );
@@ -150,7 +136,7 @@ function stripHtml(html: string) {
 function Announcements({ items }: { items: AnnouncementDto[] }) {
   const { t } = useLocale();
   return (
-    <section className="py-20 bg-surface">
+    <section className="py-16 md:py-20 bg-surface">
       <div className="max-w-7xl mx-auto px-5 lg:px-8">
         <div className="flex items-end justify-between gap-4 mb-8">
           <div>
@@ -163,12 +149,11 @@ function Announcements({ items }: { items: AnnouncementDto[] }) {
           </div>
           <Link
             to="/news"
-            className="text-sm font-semibold text-brand hover:text-gold"
+            className="text-sm font-semibold text-brand hover:text-gold shrink-0"
           >
             {t("home.news.viewAll")}
           </Link>
         </div>
-
         <div className="grid md:grid-cols-3 gap-6">
           {items.map((a) => (
             <AnnouncementCard
@@ -191,7 +176,7 @@ function Announcements({ items }: { items: AnnouncementDto[] }) {
 function FeaturedGuides({ items }: { items: GuideDto[] }) {
   const { t } = useLocale();
   return (
-    <section className="py-24 max-w-7xl mx-auto px-5 lg:px-8">
+    <section className="py-16 md:py-20 max-w-7xl mx-auto px-5 lg:px-8">
       <SectionHeader
         eyebrow={t("home.guides.eyebrow")}
         title={t("home.guides.title")}
@@ -212,17 +197,33 @@ function FeaturedGuides({ items }: { items: GuideDto[] }) {
           />
         ))}
       </div>
+      <div className="mt-10 flex flex-wrap justify-center gap-3">
+        <Link
+          to="/book"
+          className="px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark transition-colors"
+        >
+          {t("home.cta.button")}
+        </Link>
+        <Link
+          to="/guides"
+          className="px-6 py-3 rounded-md border border-border text-ink font-medium hover:bg-surface transition-colors inline-flex items-center gap-2"
+        >
+          {t("nav.guides")} <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
     </section>
   );
 }
 
 function GalleryTeaser({ items }: { items: GalleryItemDto[] }) {
-  if (items.length === 0) return null;
-
+  const { t } = useLocale();
   return (
-    <section className="py-20 bg-surface">
+    <section className="py-16 md:py-20 bg-surface">
       <div className="max-w-7xl mx-auto px-5 lg:px-8">
-        <SectionHeader eyebrow="Visual Stories" title="Gallery" />
+        <SectionHeader
+          eyebrow={t("home.gallery.eyebrow")}
+          title={t("home.gallery.title")}
+        />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {items.map((it) => (
             <GalleryThumb
@@ -241,110 +242,7 @@ function GalleryTeaser({ items }: { items: GalleryItemDto[] }) {
             to="/gallery"
             className="text-brand font-semibold inline-flex items-center gap-1 hover:text-gold"
           >
-            View Full Gallery <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function AboutTeaser({ page }: { page: PageDto | null }) {
-  const content = (page?.content ?? {}) as Record<string, unknown>;
-  const intro =
-    typeof content.intro_text === "string" ? content.intro_text : null;
-  const facts: { label: string; value: string }[] = Array.isArray(
-    content.quick_facts,
-  )
-    ? content.quick_facts
-    : [];
-
-  return (
-    <section className="py-24 max-w-7xl mx-auto px-5 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
-      <div>
-        <div className="text-xs uppercase tracking-[0.2em] text-gold font-semibold mb-3">
-          About Harar
-        </div>
-        <h2 className="font-serif text-4xl font-bold text-ink leading-tight">
-          The Walled City of Saints
-        </h2>
-        <div className="mt-5 space-y-4 text-ink-muted leading-relaxed">
-          {intro ? (
-            <p className="line-clamp-4">{stripHtml(intro)}</p>
-          ) : (
-            <>
-              <p>
-                Founded in the 7th century, Harar grew into the most important
-                trading and Islamic centre on the Horn of Africa. Its fortified
-                walls were built in the 16th century to defend against attack —
-                and they remain largely intact today.
-              </p>
-              <p>
-                Step inside the gates and time slows. Bright doors, narrow
-                alleys, calls to prayer and the smell of incense and freshly
-                roasted coffee greet you.
-              </p>
-            </>
-          )}
-        </div>
-      </div>
-      <div className="aspect-[4/5] rounded-lg bg-gradient-to-br from-brand-dark via-brand to-gold relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(60deg, transparent 0 18px, rgba(255,255,255,0.4) 18px 19px), repeating-linear-gradient(-60deg, transparent 0 18px, rgba(255,255,255,0.4) 18px 19px)",
-          }}
-        />
-      </div>
-      <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-        {(facts.length > 0
-          ? facts
-              .slice(0, 4)
-              .map((f) => ({ icon: Globe, label: `${f.label}: ${f.value}` }))
-          : [
-              { icon: Mountain, label: "1,885m elevation" },
-              { icon: Landmark, label: "1,000+ years old" },
-              { icon: Globe, label: "UNESCO 2006" },
-              { icon: Users, label: "~99,000 residents" },
-            ]
-        ).map(({ icon: Icon, label }) => (
-          <div
-            key={label}
-            className="flex items-center gap-3 p-4 rounded-lg bg-surface"
-          >
-            <Icon className="w-5 h-5 text-brand" />
-            <span className="text-sm font-medium text-ink">{label}</span>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function CTABanner() {
-  const { t } = useLocale();
-  return (
-    <section className="py-20 bg-brand-dark text-white">
-      <div className="max-w-4xl mx-auto px-5 text-center">
-        <h2 className="font-serif text-4xl md:text-5xl font-bold text-gold">
-          {t("home.cta.title")}
-        </h2>
-        <p className="mt-4 text-white/75 max-w-xl mx-auto">
-          {t("home.cta.subtitle")}
-        </p>
-        <div className="mt-8 flex justify-center gap-3 flex-wrap">
-          <Link
-            to="/book"
-            className="px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark hover:text-white transition-colors"
-          >
-            {t("home.cta.button")}
-          </Link>
-          <Link
-            to="/plan-your-trip"
-            className="px-6 py-3 rounded-md border border-white/40 hover:bg-white/10 transition-colors font-medium"
-          >
-            {t("nav.plan")}
+            {t("home.gallery.viewAll")} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>

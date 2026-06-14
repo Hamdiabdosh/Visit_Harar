@@ -32,6 +32,10 @@ export const am: Translations = {
   "home.attractions.subtitle":
     "በአፍሪካ ቅዱስ ከተማ ግድግዳዎች ውስጥ ስድስት ማይረሱ ተሞክሮዎች።",
   "home.news.latest": "አዲስ",
+  "home.attractions.viewAll": "ሁሉንም ቦታዎች",
+  "home.gallery.eyebrow": "የምስል ታሪኮች",
+  "home.gallery.title": "ጋለሪ",
+  "home.gallery.viewAll": "ሙሉ ጋለሪ ይመልከቱ",
   "home.news.title": "ዜና እና ዝግጅቶች",
   "home.news.viewAll": "ሁሉን ይመልከቱ →",
   "home.guides.eyebrow": "የታመኑ ተወላጆች",

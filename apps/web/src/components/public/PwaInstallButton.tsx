@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 
 type PwaInstallButtonProps = {
   className?: string;
-  variant?: "brand" | "outline-light" | "outline-dark";
+  variant?: "brand" | "outline-light" | "outline-dark" | "link";
   label?: string;
   hideWhenInstalled?: boolean;
 };
@@ -53,7 +53,9 @@ export function PwaInstallButton({
         onClick={() => void handleClick()}
         disabled={installing}
         className={cn(
-          "inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold transition-colors disabled:opacity-60",
+          variant === "link"
+            ? "text-white/60 hover:text-gold text-xs font-normal p-0"
+            : "inline-flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold transition-colors disabled:opacity-60",
           variant === "brand" &&
             "bg-gold text-ink hover:bg-gold-dark px-6 py-3",
           variant === "outline-light" &&
@@ -63,7 +65,9 @@ export function PwaInstallButton({
           className,
         )}
       >
-        <Smartphone className="w-4 h-4 shrink-0" aria-hidden />
+        {variant !== "link" ? (
+          <Smartphone className="w-4 h-4 shrink-0" aria-hidden />
+        ) : null}
         {installing ? t("pwa.installing") : text}
       </button>
 
