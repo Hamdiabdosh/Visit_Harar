@@ -44,6 +44,18 @@ COPY apps/web/package.json ./apps/web/
 RUN bun install --frozen-lockfile --production \
   && bun install drizzle-kit tsx dotenv \
   && chown -R app:app /app
+# Nitro bundles sharp JS into dist; runtime still requires musl native binaries in node_modules/@img/.
+RUN mkdir -p /tmp/sharp-install && cd /tmp/sharp-install \
+  && npm init -y >/dev/null \
+  && npm install --os=linux --libc=musl --cpu=x64 \
+       sharp@0.35.1 \
+       @img/sharp-linuxmusl-x64@0.35.1 \
+       @img/sharp-libvips-linuxmusl-x64@1.3.0 \
+  && mkdir -p /app/node_modules/@img \
+  && cp -r node_modules/sharp /app/node_modules/sharp \
+  && cp -r node_modules/@img/* /app/node_modules/@img/ \
+  && rm -rf /tmp/sharp-install \
+  && chown -R app:app /app/node_modules
 COPY --from=builder --chown=app:app /app/apps/web/dist ./apps/web/dist
 COPY --from=builder --chown=app:app /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder --chown=app:app /app/drizzle ./drizzle

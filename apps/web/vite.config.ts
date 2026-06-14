@@ -21,6 +21,8 @@ export default defineConfig({
     preset: nitroPreset,
     // Smaller Nitro rollup — helps low-RAM VPS Docker builds avoid OOM SIGKILL.
     sourceMap: false,
+    // sharp has native bindings — must be traced, not bundled into _libs/sharp.mjs.
+    traceDeps: ["sharp*", "@img/sharp*"],
   },
   vite: {
     // Load .env from monorepo root (not apps/web/)
