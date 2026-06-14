@@ -75,4 +75,16 @@ export const am: Translations = {
   "mobile.bar.book": "መሪ",
   "locale.en": "English",
   "locale.am": "አማርኛ",
+  "pwa.dialogTitle": "Visit Harar ይጫኑ",
+  "pwa.dialogSubtitle":
+    "ኦፊሴሻዊ የቱሪዝም መሪውን ወደ መነሻ ማያዎ ይጨመሩ — ቀላል መዳረሻ እና ካርታ መቆጠብ።",
+  "pwa.installing": "እየተጫነ ነው…",
+  "pwa.iosStep1": "በ Safari የሼር (Share) ቁልፍን ይጫኑ",
+  "pwa.iosStep2": "ወደ ታች ይሸብልሉ እና «Add to Home Screen» ይጫኑ",
+  "pwa.iosStep3": "Add ይጫኑ — የ Visit Harar አዶ በመነሻ ማያዎ ላይ ይታያል",
+  "pwa.androidStep1": "የማሳያ (browser) ምናሌ (⋮) ይክፈቱ",
+  "pwa.androidStep2": "«Install app» ወይም «Add to Home screen» ይጫኑ",
+  "pwa.androidStep3": "ያረጋግጡ — Visit Harar እንደ መተግበሪያ ይከፈታል",
+  "pwa.offlineNote":
+    "ከተጫነ በኋላ፣ ያዩት ቁልፍ ገጾች እና ካርታ ቀለሞች ለ ኦፍላይን ጥቅም ይቆጠራሉ።",
 };

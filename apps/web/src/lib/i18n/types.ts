@@ -67,6 +67,16 @@ export type TranslationKey =
   | "mobile.bar.map"
   | "mobile.bar.book"
   | "locale.en"
-  | "locale.am";
+  | "locale.am"
+  | "pwa.dialogTitle"
+  | "pwa.dialogSubtitle"
+  | "pwa.installing"
+  | "pwa.iosStep1"
+  | "pwa.iosStep2"
+  | "pwa.iosStep3"
+  | "pwa.androidStep1"
+  | "pwa.androidStep2"
+  | "pwa.androidStep3"
+  | "pwa.offlineNote";
 
 export type Translations = Record<TranslationKey, string>;

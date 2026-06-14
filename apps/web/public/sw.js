@@ -1,5 +1,5 @@
 /* Visit Harar PWA service worker — Phase C */
-const CACHE_VERSION = "visit-harar-v1";
+const CACHE_VERSION = "visit-harar-v2";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const TILE_CACHE = `${CACHE_VERSION}-tiles`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
@@ -8,7 +8,11 @@ const PRECACHE = [
   "/",
   "/map",
   "/attractions",
+  "/guides",
   "/plan-your-trip",
+  "/book",
+  "/about",
+  "/news",
   "/contact",
   "/logo.webp",
   "/brand/logo-emblem-512.webp",

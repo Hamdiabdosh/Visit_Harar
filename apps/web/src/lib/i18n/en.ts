@@ -75,4 +75,16 @@ export const en: Translations = {
   "mobile.bar.book": "Book",
   "locale.en": "English",
   "locale.am": "አማርኛ",
+  "pwa.dialogTitle": "Install Visit Harar",
+  "pwa.dialogSubtitle":
+    "Add the official tourism guide to your home screen for quick access and offline map caching.",
+  "pwa.installing": "Installing…",
+  "pwa.iosStep1": "Tap the Share button in Safari's toolbar",
+  "pwa.iosStep2": "Scroll down and tap “Add to Home Screen”",
+  "pwa.iosStep3": "Tap Add — the Visit Harar icon will appear on your home screen",
+  "pwa.androidStep1": "Open the browser menu (⋮ or ⋯)",
+  "pwa.androidStep2": "Tap “Install app” or “Add to Home screen”",
+  "pwa.androidStep3": "Confirm — Visit Harar will open like a native app",
+  "pwa.offlineNote":
+    "Once installed, key pages and map tiles you have viewed are cached for offline use.",
 };

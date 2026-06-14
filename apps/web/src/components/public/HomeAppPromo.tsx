@@ -1,5 +1,6 @@
 import { Smartphone, Download } from "lucide-react";
 import { ANDROID_APK_FILENAME, ANDROID_APK_URL } from "@/lib/app-download";
+import { PwaInstallButton } from "@/components/public/PwaInstallButton";
 
 export function HomeAppPromo() {
   return (
@@ -26,12 +27,7 @@ export function HomeAppPromo() {
             <Download className="w-4 h-4" aria-hidden />
             Download for Android (APK)
           </a>
-          <a
-            href="/manifest.webmanifest"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-md border border-white/30 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
-          >
-            Add to home screen (PWA)
-          </a>
+          <PwaInstallButton variant="outline-light" className="px-6 py-3" />
           <span className="inline-flex items-center px-6 py-3 rounded-md border border-white/30 text-sm text-white/90">
             App Store — coming soon
           </span>

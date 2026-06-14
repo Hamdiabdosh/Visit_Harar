@@ -12,6 +12,7 @@ import {
 import { SiteLogo } from "@/components/SiteLogo";
 import type { ContactDto } from "@/lib/contact-fns";
 import { ANDROID_APK_FILENAME, ANDROID_APK_URL } from "@/lib/app-download";
+import { PwaInstallButton } from "@/components/public/PwaInstallButton";
 import { useLocale } from "@/lib/contexts/LocaleContext";
 import { ORG_NAME } from "@/lib/org";
 
@@ -65,12 +66,7 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
               <Download className="w-4 h-4" aria-hidden />
               {t("footer.downloadAndroid")}
             </a>
-            <a
-              href="/manifest.webmanifest"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-md border border-white/25 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
-            >
-              {t("footer.addToHome")}
-            </a>
+            <PwaInstallButton variant="outline-dark" />
           </div>
         </div>
       </div>
