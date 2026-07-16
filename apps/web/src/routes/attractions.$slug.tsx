@@ -15,6 +15,10 @@ import { ArrowLeft, ArrowRight, Clock, ExternalLink, Lightbulb, MapPin, Volume2 
 import { optimizeImage } from "@/lib/media-url";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
 import {
+  jsonLdScript,
+  touristAttractionJsonLd,
+} from "@/lib/json-ld";
+import {
   formatCoordinates,
   googleMapsDirectionsUrl,
   hasCoordinates,
@@ -37,14 +41,29 @@ export const Route = createFileRoute("/attractions/$slug")({
   },
   head: async ({ loaderData }) => {
     const item = loaderData?.item;
+    const description =
+      item?.short_desc ||
+      excerptFromHtml(item?.full_desc ?? "") ||
+      `Explore ${item?.title ?? "Harar"} in Harar Jugol.`;
     return buildHeadAsync({
       title: item?.title ?? "Attraction",
-      description:
-        item?.short_desc ||
-        excerptFromHtml(item?.full_desc ?? "") ||
-        `Explore ${item?.title ?? "Harar"} in Harar Jugol.`,
+      description,
       ogImage: item?.image,
       canonicalPath: item ? `/attractions/${item.slug}` : "/attractions",
+      scripts: item
+        ? [
+            jsonLdScript(
+              touristAttractionJsonLd({
+                name: item.title,
+                description,
+                slug: item.slug,
+                image: item.image,
+                latitude: item.latitude,
+                longitude: item.longitude,
+              }),
+            ),
+          ]
+        : undefined,
     });
   },
   component: AttractionDetail,

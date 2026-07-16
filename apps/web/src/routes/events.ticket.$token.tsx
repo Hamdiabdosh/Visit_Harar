@@ -24,6 +24,7 @@ export const Route = createFileRoute("/events/ticket/$token")({
       title: "Event Ticket",
       description: "Your Visit Harar event ticket.",
       canonicalPath: "/events/status",
+      noindex: true,
     }),
   component: EventTicketPage,
 });

@@ -7,6 +7,12 @@ type MetaTag =
   | { name: string; content: string }
   | { property: string; content: string };
 type LinkTag = { rel: string; href: string };
+type ScriptTag = {
+  type?: string;
+  children?: string;
+  src?: string;
+  async?: boolean;
+};
 
 export function stripHtml(html: string) {
   return html
@@ -27,6 +33,9 @@ export type BuildMetadataOverrides = {
   description?: string;
   ogImage?: string | null;
   canonicalPath?: string;
+  noindex?: boolean;
+  /** Extra head scripts (e.g. JSON-LD). */
+  scripts?: ScriptTag[];
 };
 
 const DEFAULT_TITLE = "Visit Harar — Official Tourism Website";
@@ -34,11 +43,11 @@ const DEFAULT_DESCRIPTION =
   `Discover Harar, Ethiopia's UNESCO World Heritage City of Saints. Plan your visit with the official ${ORG_NAME}.`;
 
 /** Public site origin for canonical/OG URLs (safe in route `head` on server + client). */
-function publicAppOrigin() {
+export function publicAppOrigin() {
   return import.meta.env.VITE_APP_URL?.replace(/\/+$/, "") ?? "";
 }
 
-function absoluteUrl(pathOrUrl: string) {
+export function absoluteUrl(pathOrUrl: string) {
   // Rewrite stale absolute /uploads hosts, then absolutize for OG/canonical.
   const normalized = toMediaSrc(pathOrUrl) ?? pathOrUrl;
   if (normalized.startsWith("http://") || normalized.startsWith("https://"))
@@ -51,6 +60,7 @@ function absoluteUrl(pathOrUrl: string) {
 export function buildHead(overrides?: BuildMetadataOverrides): {
   meta: MetaTag[];
   links: LinkTag[];
+  scripts?: ScriptTag[];
 } {
   const title = overrides?.title
     ? `${overrides.title} — Visit Harar`
@@ -69,15 +79,34 @@ export function buildHead(overrides?: BuildMetadataOverrides): {
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Visit Harar" },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
   ];
 
-  if (ogImage)
-    meta.push({ property: "og:image", content: absoluteUrl(ogImage) });
+  if (overrides?.noindex) {
+    meta.push({ name: "robots", content: "noindex, nofollow" });
+  }
+
+  if (canonical) {
+    meta.push({ property: "og:url", content: canonical });
+  }
+
+  if (ogImage) {
+    const imageUrl = absoluteUrl(ogImage);
+    meta.push({ property: "og:image", content: imageUrl });
+    meta.push({ name: "twitter:image", content: imageUrl });
+  }
+
   const links: LinkTag[] = canonical
     ? [{ rel: "canonical", href: canonical }]
     : [];
 
-  return { meta, links };
+  const scripts = overrides?.scripts?.length
+    ? overrides.scripts
+    : undefined;
+
+  return { meta, links, ...(scripts ? { scripts } : {}) };
 }
 
 /** Like buildHead, but loads published hero background as default og:image when none is set. */

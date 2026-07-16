@@ -39,27 +39,33 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/services",
           "/news",
           "/contact",
-          "/book",
-          "/book/status",
           "/search",
         ];
 
-        const [attractions, guides, announcements, albums, itineraries] =
-          await Promise.all([
+        const [attractions, guides, albums, itineraries] = await Promise.all([
           getAttractions({ data: { published: true } }),
           getGuides({ data: { published: true } }),
-          getAnnouncements({
-            data: { publishedOnly: true, page: 1, perPage: 500 },
-          }),
           getPublishedAlbums(),
           getItineraries({ data: { published: true } }),
         ]);
+
+        // Page through published news (API perPage max is 50)
+        const newsUrls: string[] = [];
+        for (let page = 1; ; page++) {
+          const batch = await getAnnouncements({
+            data: { publishedOnly: true, page, perPage: 50 },
+          });
+          for (const a of batch.items) {
+            newsUrls.push(absolute(`/news/${a.slug}`));
+          }
+          if (batch.items.length < 50) break;
+        }
 
         const urls = [
           ...staticRoutes.map((p) => absolute(p)),
           ...attractions.map((a) => absolute(`/attractions/${a.slug}`)),
           ...guides.map((g) => absolute(`/guides/${g.slug}`)),
-          ...announcements.items.map((a) => absolute(`/news/${a.slug}`)),
+          ...newsUrls,
           ...albums.map((a) => absolute(`/gallery/${a.id}`)),
           ...itineraries.map((i) => absolute(`/itineraries/${i.slug}`)),
         ];

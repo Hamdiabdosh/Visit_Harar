@@ -18,6 +18,7 @@ export const Route = createFileRoute("/book/status")({
       title: "Booking Status",
       description: "Check the status of your Harar tour booking request.",
       canonicalPath: "/book/status",
+      noindex: true,
     }),
   component: BookingStatusPage,
 });

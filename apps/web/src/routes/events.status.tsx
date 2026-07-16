@@ -23,6 +23,7 @@ export const Route = createFileRoute("/events/status")({
       title: "Event Registration Status",
       description: "Check the status of your Harar event registration.",
       canonicalPath: "/events/status",
+      noindex: true,
     }),
   component: EventRegistrationStatusPage,
 });

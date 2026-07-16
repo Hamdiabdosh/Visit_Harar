@@ -10,13 +10,11 @@ ALTER TABLE site_settings
 ALTER TABLE site_settings
   ADD COLUMN IF NOT EXISTS app_promo_enabled boolean NOT NULL DEFAULT false;
 
--- One-time (optional): align existing production with V2 product stance.
--- Uncomment and run once if booking_enabled is still true after deploy:
---
--- UPDATE site_settings
--- SET booking_enabled = false,
---     event_rsvp_enabled = false,
---     pwa_install_enabled = false,
---     app_promo_enabled = false;
---
--- Or toggle off in Admin → Settings (preferred).
+-- One-time: force V2 surface lock (booking / RSVP / PWA / app promo OFF).
+-- Prefer Admin → Settings, or run ops-v2-lock-and-rewrite-urls.sql which includes this.
+
+UPDATE site_settings
+SET booking_enabled = false,
+    event_rsvp_enabled = false,
+    pwa_install_enabled = false,
+    app_promo_enabled = false;

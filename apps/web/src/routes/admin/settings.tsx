@@ -204,7 +204,10 @@ function SettingsAdmin() {
               />
             </div>
             <div className="mt-2 p-3 rounded bg-amber-50 border border-amber-200 text-[12px] text-amber-900">
-              Android APK link in the footer. Flutter store ship is V3.
+              Android APK link in the footer. Keep OFF until an APK is in the
+              image (`/downloads/visit-harar.apk`) or{" "}
+              <code className="text-[11px]">VITE_ANDROID_APK_URL</code> is set
+              — otherwise the link 404s. Flutter store ship is V3.
             </div>
           </div>
 

@@ -22,6 +22,7 @@ import type { AnnouncementDto } from "@/lib/announcements-fns";
 import type { GuideDto } from "@/lib/guides-fns";
 import type { GalleryItemDto } from "@/lib/gallery-fns";
 import { buildHeadAsync } from "@/lib/metadata";
+import { jsonLdScript, organizationWebsiteJsonLd } from "@/lib/json-ld";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -37,11 +38,11 @@ export const Route = createFileRoute("/")({
   },
   head: async ({ loaderData }) =>
     buildHeadAsync({
-      title: "Visit Harar",
       description:
-        "Discover Harar, Ethiopia — UNESCO World Heritage Walled City of Saints. Plan your visit, book licensed guides and explore the cultural heart of eastern Ethiopia.",
+        "Discover Harar, Ethiopia — UNESCO World Heritage Walled City of Saints. Plan your visit with licensed guides and explore the cultural heart of eastern Ethiopia.",
       ogImage: loaderData?.hero?.background_image ?? null,
       canonicalPath: "/",
+      scripts: [jsonLdScript(organizationWebsiteJsonLd())],
     }),
   component: Index,
 });

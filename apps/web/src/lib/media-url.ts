@@ -10,7 +10,7 @@ export function isCloudinaryUrl(url: string) {
 
 /**
  * Strip host from local upload URLs so images load from the current origin.
- * Fixes DB rows saved with an old APP_URL (e.g. visitharar.raafat.site).
+ * Fixes DB rows saved with an old APP_URL host.
  */
 export function toMediaSrc(url: string | null | undefined): string | null {
   if (!url) return null;

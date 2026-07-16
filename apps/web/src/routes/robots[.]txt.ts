@@ -12,7 +12,18 @@ export const Route = createFileRoute("/robots.txt")({
     handlers: {
       GET: () => {
         const sitemapUrl = absolute("/sitemap.xml");
-        const body = `User-agent: *\nAllow: /\nDisallow: /admin\n\nSitemap: ${sitemapUrl}\n`;
+        const body = [
+          "User-agent: *",
+          "Allow: /",
+          "Disallow: /admin",
+          "Disallow: /book",
+          "Disallow: /book/",
+          "Disallow: /events/status",
+          "Disallow: /events/ticket",
+          "",
+          `Sitemap: ${sitemapUrl}`,
+          "",
+        ].join("\n");
         return new Response(body, {
           headers: {
             "content-type": "text/plain; charset=utf-8",

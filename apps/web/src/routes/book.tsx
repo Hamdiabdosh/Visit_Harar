@@ -39,6 +39,7 @@ export const Route = createFileRoute("/book")({
       description:
         "Request a licensed local guide for your visit to Harar. The commission will confirm your booking request.",
       canonicalPath: "/book",
+      noindex: true,
     }),
   component: BookPage,
 });
