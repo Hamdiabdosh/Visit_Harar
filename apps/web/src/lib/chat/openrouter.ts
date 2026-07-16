@@ -25,7 +25,7 @@ export async function chatCompletion(messages: ChatMessage[]): Promise<string> {
       headers: {
         Authorization: `Bearer ${openRouterApiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": appUrl ?? "https://visitharar.raafat.site",
+        "HTTP-Referer": appUrl ?? "https://visitharar.et",
         "X-Title": "Visit Harar",
       },
       body: JSON.stringify({ messages }),

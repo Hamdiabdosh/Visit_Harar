@@ -13,7 +13,7 @@ Visit Harar is the **official tourism website** of the **Harari Tourism Commissi
 |------|-------|
 | Public brand | Visit Harar |
 | Organization | Harari Tourism Commission |
-| Production URL | https://visitharar.raafat.site |
+| Production URL | https://visitharar.et |
 | Built by | RAAFAT-DIGITAL |
 
 ---
@@ -141,4 +141,4 @@ Visit Harar is **not an MVP**. It is a production-grade tourism platform.
 - [ ] Partner listings: commission-managed only, or self-service for businesses?
 - [ ] Itinerary builder: pre-built templates only, or user-created trips?
 - [ ] Payment integration timeline (if ever)?
-- [ ] Official domain migration from `visitharar.raafat.site`?
+- [x] Official domain: `visitharar.et`

@@ -2,7 +2,7 @@
 
 > Phase C — mobile-ready read/write API wrapping existing `*-fns.ts` logic.
 
-Base URL: `https://visitharar.raafat.site/api/v1` (or your deployment origin).
+Base URL: `https://visitharar.et/api/v1` (or your deployment origin).
 
 OpenAPI 3.1 spec: [`openapi/v1.yaml`](../openapi/v1.yaml) (source of truth for Flutter/codegen).
 
@@ -85,16 +85,16 @@ All read endpoints return **published content only**.
 
 ```bash
 # List attractions
-curl -s https://visitharar.raafat.site/api/v1/attractions | jq .
+curl -s https://visitharar.et/api/v1/attractions | jq .
 
 # Map POIs for mobile
-curl -s https://visitharar.raafat.site/api/v1/map/pois | jq .
+curl -s https://visitharar.et/api/v1/map/pois | jq .
 
 # Search
-curl -s "https://visitharar.raafat.site/api/v1/search?q=jugol" | jq .
+curl -s "https://visitharar.et/api/v1/search?q=jugol" | jq .
 
 # Submit inquiry
-curl -s -X POST https://visitharar.raafat.site/api/v1/inquiries \
+curl -s -X POST https://visitharar.et/api/v1/inquiries \
   -H 'content-type: application/json' \
   -d '{"name":"Jane Doe","email":"jane@example.com","subject":"Visit info","message":"Planning a trip in July."}'
 ```

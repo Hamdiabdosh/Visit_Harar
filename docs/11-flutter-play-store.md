@@ -74,7 +74,7 @@ flutter build apk --release
 | Package | `et.gov.harar.visit_harar` |
 | Category | Travel & Local |
 | Content rating | Questionnaire |
-| Data safety | API calls to visitharar.raafat.site; favorites stored on device |
+| Data safety | API calls to visitharar.et; favorites stored on device |
 | Screenshots | Phone — Home, Map, Attractions, Book flow |
 | Short description | Official Harar tourism guide — map, places, book a licensed guide |
 | Contact email | Commission / bureau email |

@@ -15,7 +15,7 @@ void main() {
   test('default API v1 URL points at production', () {
     expect(
       Env.apiV1,
-      'https://visitharar.raafat.site/api/v1',
+      'https://visitharar.et/api/v1',
     );
   });
 

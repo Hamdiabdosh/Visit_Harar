@@ -89,7 +89,7 @@ function PrintGuide() {
             </p>
             <h1 className="font-serif text-4xl font-bold mt-2">{page.title}</h1>
             <p className="text-sm text-ink-muted mt-2">
-              Harari Tourism Commission · visitharar.gov.et
+              Harari Tourism Commission · visitharar.et
             </p>
           </header>
 
@@ -139,7 +139,7 @@ function PrintGuide() {
           <footer className="border-t border-border pt-6 text-xs text-ink-muted">
             <p>
               For the latest information, visit{" "}
-              <span className="font-mono">visitharar.gov.et</span> or contact
+              <span className="font-mono">visitharar.et</span> or contact
               the commission via the Contact page.
             </p>
           </footer>

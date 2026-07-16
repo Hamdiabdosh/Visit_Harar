@@ -324,7 +324,7 @@ function AttractionEditor() {
                   {title || "New Attraction"} — Visit Harar
                 </div>
                 <div className="text-emerald-700 text-[11px]">
-                  visitharar.gov.et/attractions/{previewSlug}
+                  visitharar.et/attractions/{previewSlug}
                 </div>
                 <div className="text-xs text-ink-muted mt-1 line-clamp-2">
                   {shortDesc}

@@ -11,7 +11,7 @@
 
 The compose stack builds the app with Nitro’s `**node-server`** preset. Vercel deploys use `NITRO_PRESET=vercel` (see [Vercel section](#vercel-alternative) below).
 
-**Production domain:** `https://visitharar.raafat.site`
+**Production domain:** `https://visitharar.et`
 
 Copy-paste template: `[coolify.env.example](./coolify.env.example)`
 
@@ -34,7 +34,7 @@ Push to the connected branch when preflight passes. Coolify rebuilds on each dep
 2. Connect your Git repository.
 3. **Base Directory**: **leave empty** (repo root). See [Base Directory](#base-directory-critical) below.
 4. **Build Pack**: **Docker Compose** (uses `docker-compose.yml` at repo root).
-5. **Domain**: add `visitharar.raafat.site` on the **app** service (enable SSL).
+5. **Domain**: add `visitharar.et` on the **app** service (enable SSL).
 6. No separate Postgres resource needed — compose includes a `postgres` service and wires `DATABASE_URL` automatically.
 
 ### Base Directory (critical)
@@ -74,7 +74,7 @@ Only set what you need. Optional vars can be omitted entirely; template placehol
 | ---------------------- | ----------- | ----------- | -------------------------------------------------------------------------------- |
 | `POSTGRES_PASSWORD`    | Recommended | No          | Shared by postgres + app; change from default                                    |
 | `BETTER_AUTH_SECRET`   | Yes         | No          | `openssl rand -base64 32`                                                        |
-| `VITE_APP_URL`         | Recommended | **Yes**     | `https://visitharar.raafat.site` — embedded in client bundle                     |
+| `VITE_APP_URL`         | Recommended | **Yes**     | `https://visitharar.et` — embedded in client bundle                     |
 | `VITE_ANDROID_APK_URL` | No          | **Yes**     | Only if APK is hosted outside the image; default is `/downloads/visit-harar.apk` |
 | `RESEND_API_KEY`       | No          | No          | Omit until Resend is ready                                                       |
 | `RESEND_FROM_EMAIL`    | No          | No          | Omit until Resend is ready                                                       |
@@ -136,7 +136,7 @@ To force re-seed after wiping the database volume: redeploy with an empty `user`
 
 ## 4. Post-deploy checks
 
-- `https://visitharar.raafat.site/health` returns `ok`
+- `https://visitharar.et/health` returns `ok`
 - Homepage loads after migrations + seed
 - `/admin/login` with seeded superadmin
 - `/admin/media` — upload an image; copy URL works
@@ -217,7 +217,7 @@ For Vercel + Supabase serverless deploy, set `NITRO_PRESET=vercel` in the Vercel
 |               | Local dev                          | Coolify (compose)                                    |
 | ------------- | ---------------------------------- | ---------------------------------------------------- |
 | Postgres      | `docker-compose.dev.yml` → `:5434` | Bundled `postgres` service                           |
-| App URL       | `http://localhost:8080`            | `https://visitharar.raafat.site`                     |
+| App URL       | `http://localhost:8080`            | `https://visitharar.et`                     |
 | Deploy file   | —                                  | `docker-compose.yml`                                 |
 | Media storage | `./uploads`                        | `/data/uploads` (named volume)                       |
 | Start         | `bun run dev`                      | `bun run start` (→ `apps/web/dist/server/index.mjs`) |

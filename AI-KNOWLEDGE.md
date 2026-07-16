@@ -15,7 +15,7 @@
 |------|-------|
 | **Public brand** | Visit Harar |
 | **Organization** | Harari Tourism Commission |
-| **Production URL** | https://visitharar.raafat.site |
+| **Production URL** | https://visitharar.et |
 | **Default SEO title** | Visit Harar — Official Tourism Website |
 | **License** | Private project |
 | **Built by** | RAAFAT-DIGITAL (credited in admin sidebar) |

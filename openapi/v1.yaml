@@ -7,7 +7,7 @@ info:
     Human reference: docs/09-api-v1.md
     Shared TS types: packages/shared, packages/api-client
 servers:
-  - url: https://visitharar.raafat.site/api/v1
+  - url: https://visitharar.et/api/v1
     description: Production
   - url: http://localhost:3000/api/v1
     description: Local development

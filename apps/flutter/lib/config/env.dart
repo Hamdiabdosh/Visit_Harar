@@ -5,7 +5,7 @@
 class Env {
   static const apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://visitharar.raafat.site',
+    defaultValue: 'https://visitharar.et',
   );
 
   static String get apiV1 => '$apiBaseUrl/api/v1';

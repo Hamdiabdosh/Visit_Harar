@@ -9,7 +9,7 @@ import 'tile_utils.dart';
 
 /// OSM tile usage policy — identify the app.
 const osmUserAgent =
-    'VisitHararFlutter/0.1 (Harari Tourism Commission; +https://visitharar.raafat.site)';
+    'VisitHararFlutter/0.1 (Harari Tourism Commission; +https://visitharar.et)';
 
 const _offlineKey = 'offline_map_ready_v1';
 const _offlineZooms = [14, 15, 16];
