@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/public/PageHero";
+import { SoftUnavailablePage } from "@/components/public/SoftUnavailablePage";
 import { createBooking, getBookingEnabledFn } from "@/lib/bookings-fns";
 import { getGuides, type GuideDto } from "@/lib/guides-fns";
 import { useLocale } from "@/lib/contexts/LocaleContext";
@@ -108,24 +109,11 @@ function BookPage() {
 
   if (!enabled) {
     return (
-      <PublicLayout>
-        <PageHero
-          title="Book a Guide"
-          subtitle="Booking requests are temporarily paused."
-        />
-        <section className="max-w-xl mx-auto px-5 py-16 text-center">
-          <p className="text-ink-muted mb-6">
-            The commission is not accepting new tour requests at this time. Please
-            check back later or contact us directly.
-          </p>
-          <Link
-            to="/contact"
-            className="inline-flex px-6 py-3 rounded-md bg-brand text-white font-semibold hover:bg-brand-dark"
-          >
-            Contact the Commission
-          </Link>
-        </section>
-      </PublicLayout>
+      <SoftUnavailablePage
+        title="Book a Guide"
+        subtitle="Booking requests are temporarily paused."
+        body="The commission is not accepting online tour requests at this time. Meet our licensed guides or contact us to arrange a visit."
+      />
     );
   }
 

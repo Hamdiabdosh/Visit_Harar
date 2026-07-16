@@ -124,6 +124,8 @@ To skip auto-setup (debug only): set `SKIP_DB_SETUP=1` on the app service.
 
 To force re-seed after wiping the database volume: redeploy with an empty `user` table, or set `RUN_DB_SEED=1`.
 
+**V2-001 public surfaces:** `db:push` adds `event_rsvp_enabled`, `pwa_install_enabled`, `app_promo_enabled` (default off). Existing DBs may still have `booking_enabled = true` — turn **Booking / Event RSVP / PWA / App promo** off in **Admin → Settings**, or run the optional `UPDATE` in [`drizzle/manual/v2-001-public-surfaces.sql`](./drizzle/manual/v2-001-public-surfaces.sql) once.
+
 ---
 
 ## 3. Custom domain

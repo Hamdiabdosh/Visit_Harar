@@ -12,7 +12,9 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { getPublishedContactInfo } from "@/lib/contact-fns";
 import { PublicContactProvider } from "@/components/public/contact-context";
+import { PublicSurfacesProvider } from "@/components/public/surfaces-context";
 import { getAnalyticsIdFn, getMaintenanceModeFn } from "@/lib/settings-fns";
+import { getPublicSurfacesFn } from "@/lib/public-surfaces";
 import { MaintenancePage } from "@/components/public/MaintenancePage";
 import { ORG_NAME } from "@/lib/org";
 
@@ -97,9 +99,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       return { maintenanceActive };
     },
     loader: async () => {
-      const contact = await getPublishedContactInfo();
-      const analyticsId = await getAnalyticsIdFn();
-      return { contact, analyticsId };
+      const [contact, analyticsId, surfaces] = await Promise.all([
+        getPublishedContactInfo(),
+        getAnalyticsIdFn(),
+        getPublicSurfacesFn(),
+      ]);
+      return { contact, analyticsId, surfaces };
     },
     head: ({ loaderData }) => {
       const analyticsId = loaderData?.analyticsId;
@@ -199,7 +204,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const { contact } = Route.useLoaderData();
+  const { contact, surfaces } = Route.useLoaderData();
   const { maintenanceActive } = Route.useRouteContext({
     strict: false,
   }) as { maintenanceActive?: boolean };
@@ -210,7 +215,9 @@ function RootComponent() {
         <MaintenancePage />
       ) : (
         <PublicContactProvider contact={contact}>
-          <Outlet />
+          <PublicSurfacesProvider surfaces={surfaces}>
+            <Outlet />
+          </PublicSurfacesProvider>
         </PublicContactProvider>
       )}
       <Toaster position="bottom-right" richColors closeButton />

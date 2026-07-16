@@ -3,6 +3,7 @@ import { PublicLayout } from "@/components/PublicLayout";
 import { getItineraryBySlug } from "@/lib/itineraries-fns";
 import { buildHeadAsync } from "@/lib/metadata";
 import { ArrowLeft, ArrowRight, MapPin } from "lucide-react";
+import { usePublicSurfaces } from "@/components/public/surfaces-context";
 
 export const Route = createFileRoute("/itineraries/$slug")({
   loader: async ({ params }) => {
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/itineraries/$slug")({
 
 function ItineraryDetail() {
   const { item } = Route.useLoaderData();
+  const { bookingEnabled } = usePublicSurfaces();
 
   return (
     <PublicLayout>
@@ -83,10 +85,11 @@ function ItineraryDetail() {
 
         <div className="mt-10 flex flex-wrap gap-4">
           <Link
-            to="/book"
+            to={bookingEnabled ? "/book" : "/guides"}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark hover:text-white transition-colors"
           >
-            Book a Guide <ArrowRight className="w-4 h-4" />
+            {bookingEnabled ? "Book a Guide" : "Meet Guides"}{" "}
+            <ArrowRight className="w-4 h-4" />
           </Link>
           <Link
             to="/map"

@@ -31,8 +31,10 @@ import {
 import type { EventRegistrationStatus, UserRole } from "@/lib/types";
 import { auditSnap, fireAudit } from "@/lib/audit";
 import {
+  buildEventRegistrationMeta,
   countRegisteredPartySize,
 } from "@/lib/event-registration-meta";
+import { getEventRsvpEnabled } from "@/lib/settings";
 
 const ACTIVE_STATUSES: EventRegistrationStatus[] = ["Pending", "Confirmed"];
 
@@ -370,6 +372,13 @@ export const createEventRegistration = createServerFn({ method: "POST" })
           throw createError(
             "VALIDATION_ERROR",
             "Event registration is not available",
+          );
+        }
+
+        if (!(await getEventRsvpEnabled())) {
+          throw createError(
+            "FORBIDDEN",
+            "Event registration is temporarily unavailable",
           );
         }
 

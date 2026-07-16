@@ -23,6 +23,7 @@ import { ClientOnly } from "@/components/admin/ClientOnly";
 import { AttractionQr } from "@/components/public/AttractionQr";
 import { MapSkeleton } from "@/components/map/MapSkeleton";
 import { MapSuspense, LazySingleLocationMap } from "@/components/map/lazy-maps";
+import { usePublicSurfaces } from "@/components/public/surfaces-context";
 import { NearbyWithRoutes } from "@/components/map/NearbyWithRoutes";
 
 export const Route = createFileRoute("/attractions/$slug")({
@@ -51,6 +52,7 @@ export const Route = createFileRoute("/attractions/$slug")({
 
 function AttractionDetail() {
   const { item, nearby } = Route.useLoaderData();
+  const { bookingEnabled } = usePublicSurfaces();
   const cat = isAttractionCategory(item.category) ? item.category : "Heritage";
   const paragraphs = fullDescParagraphs(item.full_desc);
   const isHtml = Boolean(
@@ -205,10 +207,13 @@ function AttractionDetail() {
           </section>
 
           <Link
-            to="/book"
+            to={bookingEnabled ? "/book" : "/guides"}
             className="mt-10 inline-flex items-center gap-2 px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark hover:text-white transition-colors"
           >
-            Book a Guide for This Attraction <ArrowRight className="w-4 h-4" />
+            {bookingEnabled
+              ? "Book a Guide for This Attraction"
+              : "Meet Guides for This Attraction"}{" "}
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </article>

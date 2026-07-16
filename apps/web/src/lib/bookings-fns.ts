@@ -334,7 +334,7 @@ export const getBookingEnabledFn = createServerFn({ method: "GET" }).handler(
     try {
       return await getBookingEnabled();
     } catch {
-      return true;
+      return false;
     }
   },
 );

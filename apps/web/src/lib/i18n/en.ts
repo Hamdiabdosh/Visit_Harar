@@ -13,6 +13,7 @@ export const en: Translations = {
   "nav.news": "News",
   "nav.contact": "Contact",
   "nav.bookGuide": "Book a Guide",
+  "nav.meetGuides": "Meet Guides",
   "nav.search": "Search",
   "nav.more": "More",
   "search.placeholder": "Search attractions, guides, news…",
@@ -47,6 +48,9 @@ export const en: Translations = {
   "home.cta.subtitle":
     "Book a licensed guide and walk the alleyways of the City of Saints.",
   "home.cta.button": "Book a Guide",
+  "home.cta.subtitleGuides":
+    "Meet licensed local guides and contact the commission to arrange your visit.",
+  "home.cta.buttonGuides": "Meet Guides",
   "footer.tagline":
     "Official tourism website of the Harari Tourism Commission — Africa's fourth holiest Islamic city and a UNESCO World Heritage Site.",
   "footer.explore": "Explore",
@@ -78,6 +82,7 @@ export const en: Translations = {
     "No online payment — submit your request and the commission will confirm or decline by email within two business days.",
   "mobile.bar.map": "Map",
   "mobile.bar.book": "Book",
+  "mobile.bar.guides": "Guides",
   "locale.en": "English",
   "locale.am": "አማርኛ",
   "pwa.dialogTitle": "Install Visit Harar",

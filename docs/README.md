@@ -4,7 +4,7 @@
 
 **Status:** Living documents — to be refined through implementation discussions and UI/UX investigation.
 
-**Last updated:** June 2026
+**Last updated:** July 2026
 
 ---
 
@@ -23,6 +23,8 @@
 | 9 | [Public REST API v1](./09-api-v1.md) | `/api/v1` contract for mobile and PWA |
 | 10 | [Flutter migration plan](./10-flutter-migration-plan.md) | Replace Expo client with Flutter (Phase F) |
 | 11 | [Flutter Play Store release](./11-flutter-play-store.md) | v1.0 ship checklist (push in v1.1) |
+| — | [V2 Plan](./v2-plan.md) | V2 locks: admin social shell + hide book/event RSVP/app/PWA; Flutter → V3 |
+| — | [V2 Roadmap](./roadmap-v2.md) | Sprint index V2-001…V2-006 (shell + public hide) |
 | — | [Mobile app README](../apps/mobile/README.md) | Expo app (Phase D — freeze, superseded by Flutter) |
 | — | [Flutter app README](../apps/flutter/README.md) | Flutter app (Phase F — active) |
 

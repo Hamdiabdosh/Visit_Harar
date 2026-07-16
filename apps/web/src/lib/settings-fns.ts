@@ -23,6 +23,9 @@ export type SiteSettingsDto = {
   default_og_image: string | null;
   maintenance_mode: boolean;
   booking_enabled: boolean;
+  event_rsvp_enabled: boolean;
+  pwa_install_enabled: boolean;
+  app_promo_enabled: boolean;
   bureau_email: string | null;
   analytics_id: string | null;
   chat_knowledge_extra: string | null;
@@ -56,6 +59,9 @@ function rowToDto(
     default_og_image: row.defaultOgImage ?? null,
     maintenance_mode: row.maintenanceMode,
     booking_enabled: row.bookingEnabled,
+    event_rsvp_enabled: row.eventRsvpEnabled,
+    pwa_install_enabled: row.pwaInstallEnabled,
+    app_promo_enabled: row.appPromoEnabled,
     bureau_email: row.bureauEmail ?? null,
     analytics_id: row.analyticsId ?? null,
     chat_knowledge_extra: row.chatKnowledgeExtra ?? null,
@@ -136,7 +142,13 @@ export const updateSiteSettings = createServerFn({ method: "POST" })
         maintenanceMode:
           data.maintenance_mode ?? existing?.maintenanceMode ?? false,
         bookingEnabled:
-          data.booking_enabled ?? existing?.bookingEnabled ?? true,
+          data.booking_enabled ?? existing?.bookingEnabled ?? false,
+        eventRsvpEnabled:
+          data.event_rsvp_enabled ?? existing?.eventRsvpEnabled ?? false,
+        pwaInstallEnabled:
+          data.pwa_install_enabled ?? existing?.pwaInstallEnabled ?? false,
+        appPromoEnabled:
+          data.app_promo_enabled ?? existing?.appPromoEnabled ?? false,
         bureauEmail:
           data.bureau_email === ""
             ? null

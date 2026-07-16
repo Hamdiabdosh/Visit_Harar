@@ -60,20 +60,8 @@ const sections: NavSection[] = [
     ],
   },
   {
-    label: "Bookings",
+    label: "Inbox",
     items: [
-      {
-        to: "/admin/bookings",
-        label: "Bookings",
-        icon: Calendar,
-        badgeKey: "bookings" as const,
-      },
-      {
-        to: "/admin/event-registrations",
-        label: "Event registrations",
-        icon: Ticket,
-        badgeKey: "event_registrations" as const,
-      },
       {
         to: "/admin/inquiries",
         label: "Inquiries",
@@ -87,9 +75,21 @@ const sections: NavSection[] = [
     items: [{ to: "/admin/media", label: "Media Library", icon: FolderOpen }],
   },
   {
-    label: "System",
+    label: "More",
     muted: true,
     items: [
+      {
+        to: "/admin/bookings",
+        label: "Bookings",
+        icon: Calendar,
+        badgeKey: "bookings" as const,
+      },
+      {
+        to: "/admin/event-registrations",
+        label: "Event registrations",
+        icon: Ticket,
+        badgeKey: "event_registrations" as const,
+      },
       { to: "/admin/users", label: "Users", icon: Shield },
       { to: "/admin/audit", label: "Audit Log", icon: ClipboardList },
       { to: "/admin/settings", label: "Settings", icon: SettingsIcon },
@@ -133,9 +133,21 @@ function SidebarContent({
     enabled: !!user,
   });
 
-  const visibleSections = sections.filter(
-    (section) => section.label !== "System" || role === "superadmin",
-  );
+  const visibleSections = sections
+    .map((section) => {
+      if (section.label !== "More") return section;
+      // Editors: bookings + event regs under More; superadmin also Users/Audit/Settings
+      if (role === "superadmin") return section;
+      return {
+        ...section,
+        items: section.items.filter(
+          (item) =>
+            item.to === "/admin/bookings" ||
+            item.to === "/admin/event-registrations",
+        ),
+      };
+    })
+    .filter((section) => section.items.length > 0);
 
   const initials =
     user?.name

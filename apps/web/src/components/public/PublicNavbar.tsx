@@ -11,6 +11,7 @@ import {
   PublicSearchDialog,
 } from "@/components/public/PublicSearch";
 import { useLocale } from "@/lib/contexts/LocaleContext";
+import { usePublicSurfaces } from "@/components/public/surfaces-context";
 import type { TranslationKey } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 
@@ -90,6 +91,7 @@ export function PublicNavbar({
   transparentOnTop?: boolean;
 }) {
   const { locale, setLocale, t } = useLocale();
+  const { bookingEnabled } = usePublicSurfaces();
   const [scrolled, setScrolled] = useState(!transparentOnTop);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -180,10 +182,10 @@ export function PublicNavbar({
               </div>
 
               <Link
-                to="/book"
+                to={bookingEnabled ? "/book" : "/guides"}
                 className="hidden sm:inline-flex items-center px-4 py-2 rounded-md bg-gold text-ink text-sm font-semibold hover:bg-gold-dark hover:text-white transition-colors whitespace-nowrap"
               >
-                {t("nav.bookGuide")}
+                {bookingEnabled ? t("nav.bookGuide") : t("nav.meetGuides")}
               </Link>
               <button
                 onClick={() => setMenuOpen(true)}
@@ -274,11 +276,11 @@ export function PublicNavbar({
 
           <div className="border-t border-white/10 p-4">
             <Link
-              to="/book"
+              to={bookingEnabled ? "/book" : "/guides"}
               onClick={closeMenu}
               className="flex w-full items-center justify-center rounded-md bg-gold px-4 py-3 text-sm font-semibold text-ink transition-colors hover:bg-gold-dark hover:text-white"
             >
-              {t("nav.bookGuide")}
+              {bookingEnabled ? t("nav.bookGuide") : t("nav.meetGuides")}
             </Link>
           </div>
         </SheetContent>

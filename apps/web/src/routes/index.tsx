@@ -16,6 +16,7 @@ import { GuideCard } from "@/components/public/GuideCard";
 import { GalleryThumb } from "@/components/public/GalleryThumb";
 import { HomeMapStrip } from "@/components/public/HomeMapStrip";
 import { useLocale } from "@/lib/contexts/LocaleContext";
+import { usePublicSurfaces } from "@/components/public/surfaces-context";
 import type { AttractionDto } from "@/lib/attraction-map";
 import type { AnnouncementDto } from "@/lib/announcements-fns";
 import type { GuideDto } from "@/lib/guides-fns";
@@ -175,6 +176,7 @@ function Announcements({ items }: { items: AnnouncementDto[] }) {
 
 function FeaturedGuides({ items }: { items: GuideDto[] }) {
   const { t } = useLocale();
+  const { bookingEnabled } = usePublicSurfaces();
   return (
     <section className="py-16 md:py-20 max-w-7xl mx-auto px-5 lg:px-8">
       <SectionHeader
@@ -198,18 +200,29 @@ function FeaturedGuides({ items }: { items: GuideDto[] }) {
         ))}
       </div>
       <div className="mt-10 flex flex-wrap justify-center gap-3">
-        <Link
-          to="/book"
-          className="px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark transition-colors"
-        >
-          {t("home.cta.button")}
-        </Link>
-        <Link
-          to="/guides"
-          className="px-6 py-3 rounded-md border border-border text-ink font-medium hover:bg-surface transition-colors inline-flex items-center gap-2"
-        >
-          {t("nav.guides")} <ArrowRight className="w-4 h-4" />
-        </Link>
+        {bookingEnabled ? (
+          <>
+            <Link
+              to="/book"
+              className="px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark transition-colors"
+            >
+              {t("home.cta.button")}
+            </Link>
+            <Link
+              to="/guides"
+              className="px-6 py-3 rounded-md border border-border text-ink font-medium hover:bg-surface transition-colors inline-flex items-center gap-2"
+            >
+              {t("nav.guides")} <ArrowRight className="w-4 h-4" />
+            </Link>
+          </>
+        ) : (
+          <Link
+            to="/guides"
+            className="px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark transition-colors inline-flex items-center gap-2"
+          >
+            {t("home.cta.buttonGuides")} <ArrowRight className="w-4 h-4" />
+          </Link>
+        )}
       </div>
     </section>
   );

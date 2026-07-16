@@ -39,7 +39,10 @@ function SettingsAdmin() {
       "Official Tourism Website of the Harari Regional State",
     default_og_image: settings?.default_og_image ?? "",
     maintenance_mode: settings?.maintenance_mode ?? false,
-    booking_enabled: settings?.booking_enabled ?? true,
+    booking_enabled: settings?.booking_enabled ?? false,
+    event_rsvp_enabled: settings?.event_rsvp_enabled ?? false,
+    pwa_install_enabled: settings?.pwa_install_enabled ?? false,
+    app_promo_enabled: settings?.app_promo_enabled ?? false,
     bureau_email: settings?.bureau_email ?? "",
     analytics_id: settings?.analytics_id ?? "",
     chat_knowledge_extra: settings?.chat_knowledge_extra ?? "",
@@ -55,6 +58,9 @@ function SettingsAdmin() {
         default_og_image: settings.default_og_image ?? "",
         maintenance_mode: settings.maintenance_mode,
         booking_enabled: settings.booking_enabled,
+        event_rsvp_enabled: settings.event_rsvp_enabled,
+        pwa_install_enabled: settings.pwa_install_enabled,
+        app_promo_enabled: settings.app_promo_enabled,
         bureau_email: settings.bureau_email ?? "",
         analytics_id: settings.analytics_id ?? "",
         chat_knowledge_extra: settings.chat_knowledge_extra ?? "",
@@ -72,6 +78,9 @@ function SettingsAdmin() {
           default_og_image: form.default_og_image || null,
           maintenance_mode: form.maintenance_mode,
           booking_enabled: form.booking_enabled,
+          event_rsvp_enabled: form.event_rsvp_enabled,
+          pwa_install_enabled: form.pwa_install_enabled,
+          app_promo_enabled: form.app_promo_enabled,
           bureau_email: form.bureau_email || null,
           analytics_id: form.analytics_id || null,
           chat_knowledge_extra: form.chat_knowledge_extra || null,
@@ -149,7 +158,53 @@ function SettingsAdmin() {
               />
             </div>
             <div className="mt-2 p-3 rounded bg-amber-50 border border-amber-200 text-[12px] text-amber-900">
-              Turning this off disables the booking form on the public site.
+              Public guide booking (/book). Off for V2 by default — turn on for
+              V3. When off, CTAs point visitors to Guides / Contact.
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Event registration (RSVP)</span>
+              <Toggle
+                checked={form.event_rsvp_enabled}
+                onChange={(v) =>
+                  setForm((f) => ({ ...f, event_rsvp_enabled: v }))
+                }
+              />
+            </div>
+            <div className="mt-2 p-3 rounded bg-amber-50 border border-amber-200 text-[12px] text-amber-900">
+              Public event RSVP on news pages. Events stay readable when off.
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">PWA install UI</span>
+              <Toggle
+                checked={form.pwa_install_enabled}
+                onChange={(v) =>
+                  setForm((f) => ({ ...f, pwa_install_enabled: v }))
+                }
+              />
+            </div>
+            <div className="mt-2 p-3 rounded bg-amber-50 border border-amber-200 text-[12px] text-amber-900">
+              “Add to home screen” button in the footer.
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">App download promo</span>
+              <Toggle
+                checked={form.app_promo_enabled}
+                onChange={(v) =>
+                  setForm((f) => ({ ...f, app_promo_enabled: v }))
+                }
+              />
+            </div>
+            <div className="mt-2 p-3 rounded bg-amber-50 border border-amber-200 text-[12px] text-amber-900">
+              Android APK link in the footer. Flutter store ship is V3.
             </div>
           </div>
 

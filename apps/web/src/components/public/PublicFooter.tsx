@@ -9,14 +9,47 @@ import type { ContactDto } from "@/lib/contact-fns";
 import { ANDROID_APK_FILENAME, ANDROID_APK_URL } from "@/lib/app-download";
 import { PwaInstallButton } from "@/components/public/PwaInstallButton";
 import { useLocale } from "@/lib/contexts/LocaleContext";
+import { usePublicSurfaces } from "@/components/public/surfaces-context";
 import { ORG_NAME } from "@/lib/org";
 
 export function PublicFooter({ contact }: { contact: ContactDto | null }) {
   const { t, locale, setLocale } = useLocale();
+  const { bookingEnabled, pwaInstallEnabled, appPromoEnabled } =
+    usePublicSurfaces();
   const year = new Date().getFullYear();
 
   const phone = contact?.phone_primary ?? contact?.phone_secondary ?? null;
   const email = contact?.email_general ?? null;
+
+  const planLinks = [
+    { to: "/plan-your-trip", label: t("nav.plan") },
+    ...(bookingEnabled
+      ? [{ to: "/book", label: t("nav.bookGuide") }]
+      : [{ to: "/guides", label: t("nav.meetGuides") }]),
+    { to: "/itineraries", label: t("footer.itineraries") },
+    { to: "/services", label: t("footer.services") },
+    { to: "/about", label: t("footer.aboutHarar") },
+    { to: "/contact", label: t("nav.contact") },
+  ];
+
+  const connectLinks = [
+    ...(phone
+      ? [{ to: `tel:${phone.replace(/\s/g, "")}`, label: phone, external: true }]
+      : []),
+    ...(email
+      ? [{ to: `mailto:${email}`, label: email, external: true }]
+      : []),
+    ...(appPromoEnabled
+      ? [
+          {
+            to: ANDROID_APK_URL,
+            label: t("footer.downloadAndroid"),
+            external: true,
+            download: ANDROID_APK_FILENAME,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <footer className="mt-16 bg-brand-dark text-white/75 border-t border-white/10">
@@ -63,34 +96,15 @@ export function PublicFooter({ contact }: { contact: ContactDto | null }) {
               { to: "/news", label: t("nav.news") },
             ]}
           />
-          <FooterCol
-            title={t("footer.plan")}
-            links={[
-              { to: "/plan-your-trip", label: t("nav.plan") },
-              { to: "/book", label: t("nav.bookGuide") },
-              { to: "/itineraries", label: t("footer.itineraries") },
-              { to: "/services", label: t("footer.services") },
-              { to: "/about", label: t("footer.aboutHarar") },
-              { to: "/contact", label: t("nav.contact") },
-            ]}
-          />
+          <FooterCol title={t("footer.plan")} links={planLinks} />
           <FooterCol
             title={t("footer.connect")}
-            links={[
-              ...(phone
-                ? [{ to: `tel:${phone.replace(/\s/g, "")}`, label: phone, external: true }]
-                : []),
-              ...(email
-                ? [{ to: `mailto:${email}`, label: email, external: true }]
-                : []),
-              {
-                to: ANDROID_APK_URL,
-                label: t("footer.downloadAndroid"),
-                external: true,
-                download: ANDROID_APK_FILENAME,
-              },
-            ]}
-            extra={<PwaInstallButton variant="link" className="mt-1" />}
+            links={connectLinks}
+            extra={
+              pwaInstallEnabled ? (
+                <PwaInstallButton variant="link" className="mt-1" />
+              ) : null
+            }
           />
         </div>
       </div>

@@ -3,6 +3,7 @@ import { PublicLayout } from "@/components/PublicLayout";
 import { getGuideBySlug } from "@/lib/guides-fns";
 import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import { ArrowLeft } from "lucide-react";
+import { usePublicSurfaces } from "@/components/public/surfaces-context";
 
 export const Route = createFileRoute("/guides/$id")({
   loader: async ({ params }) => {
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/guides/$id")({
 
 function GuideDetailById() {
   const { item } = Route.useLoaderData();
+  const { bookingEnabled } = usePublicSurfaces();
   const safeBio = sanitizeRichHtml(item.bio ?? "");
 
   return (
@@ -79,11 +81,15 @@ function GuideDetailById() {
                 />
               </div>
               <Link
-                to="/book"
-                search={{ guideId: item.id } as never}
+                to={bookingEnabled ? "/book" : "/contact"}
+                search={
+                  bookingEnabled
+                    ? ({ guideId: item.id } as never)
+                    : undefined
+                }
                 className="mt-8 inline-flex items-center px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark hover:text-white transition-colors"
               >
-                Book This Guide
+                {bookingEnabled ? "Book This Guide" : "Contact about this guide"}
               </Link>
             </div>
           </div>

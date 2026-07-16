@@ -4,14 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/public/PageHero";
+import { SoftUnavailablePage } from "@/components/public/SoftUnavailablePage";
 import { getEventRegistrationByRef } from "@/lib/event-registrations-fns";
 import {
   eventRegistrationStatusBadge,
   formatEventDate,
 } from "@/lib/event-registration-ui";
+import { getPublicSurfacesFn } from "@/lib/public-surfaces";
 import { buildHeadAsync } from "@/lib/metadata";
 
 export const Route = createFileRoute("/events/status")({
+  loader: async () => {
+    const surfaces = await getPublicSurfacesFn();
+    return { enabled: surfaces.eventRsvpEnabled };
+  },
   head: async () =>
     buildHeadAsync({
       title: "Event Registration Status",
@@ -22,6 +28,7 @@ export const Route = createFileRoute("/events/status")({
 });
 
 function EventRegistrationStatusPage() {
+  const { enabled } = Route.useLoaderData();
   const [registrationRef, setRegistrationRef] = useState("");
   const [email, setEmail] = useState("");
   const [result, setResult] = useState<
@@ -39,6 +46,16 @@ function EventRegistrationStatusPage() {
     onSuccess: (data) => setResult(data ?? "not_found"),
     onError: () => setResult("not_found"),
   });
+
+  if (!enabled) {
+    return (
+      <SoftUnavailablePage
+        title="Event Registration"
+        subtitle="Online event registration is temporarily paused."
+        body="You can still read event details on News. Contact the commission if you need to register for an event."
+      />
+    );
+  }
 
   return (
     <PublicLayout>

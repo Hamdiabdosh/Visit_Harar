@@ -11,7 +11,10 @@ export async function seedSettings() {
     siteName: "Visit Harar",
     siteTagline: "Official Tourism Website of the Harari Regional State",
     maintenanceMode: false,
-    bookingEnabled: true,
+    bookingEnabled: false,
+    eventRsvpEnabled: false,
+    pwaInstallEnabled: false,
+    appPromoEnabled: false,
   });
   console.log("✓ Site settings seeded");
 }

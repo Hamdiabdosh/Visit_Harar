@@ -5,6 +5,7 @@ import { PublicMobileBar } from "@/components/public/PublicMobileBar";
 import { ChatWidget } from "@/components/public/ChatWidget";
 import { PwaRegister } from "@/components/public/PwaRegister";
 import { usePublicContact } from "@/components/public/contact-context";
+import { usePublicSurfaces } from "@/components/public/surfaces-context";
 import { LocaleProvider } from "@/lib/contexts/LocaleContext";
 
 function PublicLayoutInner({
@@ -15,6 +16,7 @@ function PublicLayoutInner({
   transparentNav: boolean;
 }) {
   const { contact } = usePublicContact();
+  const { pwaInstallEnabled } = usePublicSurfaces();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const hideMobileBar = pathname === "/book" || pathname.startsWith("/book/");
   const showMobileBar = !hideMobileBar;
@@ -32,7 +34,7 @@ function PublicLayoutInner({
       <PublicFooter contact={contact} />
       {showMobileBar && <PublicMobileBar />}
       <ChatWidget />
-      <PwaRegister />
+      {pwaInstallEnabled ? <PwaRegister /> : null}
     </div>
   );
 }

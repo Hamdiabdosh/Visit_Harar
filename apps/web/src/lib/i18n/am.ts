@@ -13,6 +13,7 @@ export const am: Translations = {
   "nav.news": "ዜና",
   "nav.contact": "አግኙን",
   "nav.bookGuide": "መሪ ይቀጥሩ",
+  "nav.meetGuides": "መሪዎችን ይመልከቱ",
   "nav.search": "ፈልግ",
   "nav.more": "ተጨማሪ",
   "search.placeholder": "ቦታዎች፣ መሪዎች፣ ዜና ፈልግ…",
@@ -47,6 +48,9 @@ export const am: Translations = {
   "home.cta.subtitle":
     "የተፈቀደ መሪ ይቀጥሩ እና የቅዱሳን ከተማ አደባባዮችን ይራመዱ።",
   "home.cta.button": "መሪ ይቀጥሩ",
+  "home.cta.subtitleGuides":
+    "የተፈቀዱ መሪዎችን ይመልከቱ እና ጉዞዎን ለማቀድ ኮሚሽኑን ያግኙ።",
+  "home.cta.buttonGuides": "መሪዎችን ይመልከቱ",
   "footer.tagline":
     "የሀረሪ ቱሪዝም ኮሚሽን የቱሪዝም ድረ-ገጽ — በአፍሪካ አራተኛው ቅዱስ የእስልምና ከተማ እና የዩኔስኮ የዓለም ቅርስ ቦታ።",
   "footer.explore": "ያስሱ",
@@ -78,6 +82,7 @@ export const am: Translations = {
     "የኦንላይን ክፍያ የለም — ጥያቄዎን ያስገቡ እና ኮሚሽኑ በሁለት የስራ ቀናት ውስጥ በኢሜይል ያረጋግጣል ወይም ይሰርዛል።",
   "mobile.bar.map": "ካርታ",
   "mobile.bar.book": "መሪ",
+  "mobile.bar.guides": "መሪዎች",
   "locale.en": "English",
   "locale.am": "አማርኛ",
   "pwa.dialogTitle": "Visit Harar ይጫኑ",

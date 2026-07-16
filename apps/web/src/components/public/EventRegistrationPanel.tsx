@@ -10,6 +10,7 @@ import {
   formatEventDate,
 } from "@/lib/event-registration-ui";
 import type { EventRegistrationStatus } from "@/lib/types";
+import { usePublicSurfaces } from "@/components/public/surfaces-context";
 
 type Props = {
   event: AnnouncementDto;
@@ -39,6 +40,7 @@ function TicketQr({ url, label }: { url: string; label: string }) {
 }
 
 export function EventRegistrationPanel({ event }: Props) {
+  const { eventRsvpEnabled } = usePublicSurfaces();
   const meta = event.registration;
   const [open, setOpen] = useState(false);
   const [done, setDone] = useState(false);
@@ -55,7 +57,12 @@ export function EventRegistrationPanel({ event }: Props) {
     notes: "",
   });
 
-  if (event.type !== "Event" || !event.registration_enabled || !meta) {
+  if (
+    !eventRsvpEnabled ||
+    event.type !== "Event" ||
+    !event.registration_enabled ||
+    !meta
+  ) {
     return null;
   }
 

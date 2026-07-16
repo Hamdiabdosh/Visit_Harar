@@ -2,17 +2,22 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import QRCode from "qrcode";
 import { PublicLayout } from "@/components/PublicLayout";
+import { SoftUnavailablePage } from "@/components/public/SoftUnavailablePage";
 import { getEventTicketByToken } from "@/lib/event-registrations-fns";
 import {
   eventRegistrationStatusBadge,
   formatEventDate,
 } from "@/lib/event-registration-ui";
+import { getPublicSurfacesFn } from "@/lib/public-surfaces";
 import { buildHeadAsync } from "@/lib/metadata";
 
 export const Route = createFileRoute("/events/ticket/$token")({
   loader: async ({ params }) => {
-    const ticket = await getEventTicketByToken({ data: params.token });
-    return { ticket };
+    const [surfaces, ticket] = await Promise.all([
+      getPublicSurfacesFn(),
+      getEventTicketByToken({ data: params.token }),
+    ]);
+    return { enabled: surfaces.eventRsvpEnabled, ticket };
   },
   head: async () =>
     buildHeadAsync({
@@ -24,7 +29,7 @@ export const Route = createFileRoute("/events/ticket/$token")({
 });
 
 function EventTicketPage() {
-  const { ticket } = Route.useLoaderData();
+  const { enabled, ticket } = Route.useLoaderData();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ticketUrl =
     typeof window !== "undefined" ? window.location.href : "";
@@ -37,6 +42,16 @@ function EventTicketPage() {
       color: { dark: "#1A99B1", light: "#ffffff" },
     });
   }, [ticket?.qr_token, ticketUrl]);
+
+  if (!enabled) {
+    return (
+      <SoftUnavailablePage
+        title="Event Ticket"
+        subtitle="Online event tickets are temporarily paused."
+        body="Contact the commission if you already registered and need help with your ticket."
+      />
+    );
+  }
 
   return (
     <PublicLayout>

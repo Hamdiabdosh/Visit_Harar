@@ -8,6 +8,7 @@ import { sanitizeRichHtml } from "@/lib/sanitize-html";
 import { ComingSoon } from "@/components/public/ComingSoon";
 import { buildHeadAsync, excerptFromHtml } from "@/lib/metadata";
 import { Download, FileText } from "lucide-react";
+import { usePublicSurfaces } from "@/components/public/surfaces-context";
 
 export const Route = createFileRoute("/plan-your-trip")({
   loader: async () => {
@@ -66,6 +67,7 @@ function PlanSection({
 
 function PlanYourTrip() {
   const { page, itineraries } = Route.useLoaderData();
+  const { bookingEnabled } = usePublicSurfaces();
   const [active, setActive] = useState<string>("getting-here");
 
   const content = useMemo(() => {
@@ -238,10 +240,10 @@ function PlanYourTrip() {
 
         <div className="text-center pt-6">
           <Link
-            to="/book"
+            to={bookingEnabled ? "/book" : "/guides"}
             className="inline-flex items-center px-6 py-3 rounded-md bg-gold text-ink font-semibold hover:bg-gold-dark hover:text-white transition-colors"
           >
-            Book Your Guide Now
+            {bookingEnabled ? "Book Your Guide Now" : "Meet Our Guides"}
           </Link>
         </div>
       </section>

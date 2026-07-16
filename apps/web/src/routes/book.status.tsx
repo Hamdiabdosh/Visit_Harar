@@ -3,11 +3,16 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/public/PageHero";
-import { getBookingByRef } from "@/lib/bookings-fns";
+import { SoftUnavailablePage } from "@/components/public/SoftUnavailablePage";
+import { getBookingByRef, getBookingEnabledFn } from "@/lib/bookings-fns";
 import { statusBadge, formatBookingDate } from "@/lib/booking-ui";
 import { buildHeadAsync } from "@/lib/metadata";
 
 export const Route = createFileRoute("/book/status")({
+  loader: async () => {
+    const enabled = await getBookingEnabledFn();
+    return { enabled };
+  },
   head: async () =>
     buildHeadAsync({
       title: "Booking Status",
@@ -18,6 +23,7 @@ export const Route = createFileRoute("/book/status")({
 });
 
 function BookingStatusPage() {
+  const { enabled } = Route.useLoaderData();
   const [bookingRef, setBookingRef] = useState("");
   const [email, setEmail] = useState("");
   const [result, setResult] = useState<
@@ -34,6 +40,16 @@ function BookingStatusPage() {
     },
     onError: () => setResult("not_found"),
   });
+
+  if (!enabled) {
+    return (
+      <SoftUnavailablePage
+        title="Booking Status"
+        subtitle="Online booking is temporarily paused."
+        body="Tour requests are handled by the commission directly for now. Contact us or browse licensed guides."
+      />
+    );
+  }
 
   return (
     <PublicLayout>

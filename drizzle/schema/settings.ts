@@ -7,7 +7,14 @@ export const siteSettings = pgTable("site_settings", {
   siteTagline: text("site_tagline"),
   defaultOgImage: text("default_og_image"),
   maintenanceMode: boolean("maintenance_mode").default(false).notNull(),
-  bookingEnabled: boolean("booking_enabled").default(true).notNull(),
+  /** Public guide booking — V2 default off (L-005). */
+  bookingEnabled: boolean("booking_enabled").default(false).notNull(),
+  /** Public event RSVP — V2 default off (L-005). */
+  eventRsvpEnabled: boolean("event_rsvp_enabled").default(false).notNull(),
+  /** PWA install UI — V2 default off (L-005). */
+  pwaInstallEnabled: boolean("pwa_install_enabled").default(false).notNull(),
+  /** Android APK / app promo — V2 default off (L-005). */
+  appPromoEnabled: boolean("app_promo_enabled").default(false).notNull(),
   bureauEmail: text("bureau_email"),
   analyticsId: text("analytics_id"),
   chatKnowledgeExtra: text("chat_knowledge_extra"),

@@ -199,7 +199,10 @@ export async function buildSiteKnowledgeSnapshot(): Promise<string> {
       [
         settings?.siteName ? `Name: ${settings.siteName}` : null,
         settings?.siteTagline ? `Tagline: ${settings.siteTagline}` : null,
-        `booking_enabled: ${settings?.bookingEnabled ?? true}`,
+        `booking_enabled: ${settings?.bookingEnabled ?? false}`,
+        `event_rsvp_enabled: ${settings?.eventRsvpEnabled ?? false}`,
+        `pwa_install_enabled: ${settings?.pwaInstallEnabled ?? false}`,
+        `app_promo_enabled: ${settings?.appPromoEnabled ?? false}`,
         `maintenance_mode: ${settings?.maintenanceMode ?? false}`,
       ]
         .filter(Boolean)
@@ -210,7 +213,11 @@ export async function buildSiteKnowledgeSnapshot(): Promise<string> {
   parts.push(
     section(
       "Site navigation",
-      SITE_ROUTES.map((r) => `- ${r.path} — ${r.label}`).join("\n"),
+      SITE_ROUTES.filter(
+        (r) => settings?.bookingEnabled || r.path !== "/book",
+      )
+        .map((r) => `- ${r.path} — ${r.label}`)
+        .join("\n"),
     ),
   );
 
