@@ -1,4 +1,4 @@
-# Local development Postgres only (port 5434).
+# Local development Postgres only (host port 5438 — 5434 often taken by other projects).
 # Run: docker compose -f docker-compose.dev.yml up -d
 
 services:
@@ -7,7 +7,7 @@ services:
     container_name: visit-harar-pg
     restart: unless-stopped
     ports:
-      - "5434:5432"
+      - "5438:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

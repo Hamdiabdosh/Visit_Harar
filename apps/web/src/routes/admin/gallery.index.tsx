@@ -11,6 +11,7 @@ import {
   Textarea,
 } from "@/components/AdminLayout";
 import { toast } from "sonner";
+import { Plus } from "lucide-react";
 import {
   DndContext,
   PointerSensor,
