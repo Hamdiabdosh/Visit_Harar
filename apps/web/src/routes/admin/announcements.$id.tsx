@@ -33,8 +33,22 @@ import {
 } from "@/lib/validators/announcements";
 import { ImageMediaField } from "@/components/admin/ImageMediaField";
 import { ArrowLeft, Trash2 } from "lucide-react";
+import { z } from "zod";
+
+const announcementSearchSchema = z.object({
+  type: z.enum(["News", "Event", "Notice"]).optional(),
+});
 
 export const Route = createFileRoute("/admin/announcements/$id")({
+  validateSearch: (search: Record<string, unknown>) =>
+    announcementSearchSchema.parse({
+      type:
+        search.type === "News" ||
+        search.type === "Event" ||
+        search.type === "Notice"
+          ? search.type
+          : undefined,
+    }),
   component: AnnouncementEditor,
 });
 
@@ -57,6 +71,7 @@ const defaultValues: AnnouncementInput = {
 
 function AnnouncementEditor() {
   const { id } = Route.useParams();
+  const search = Route.useSearch();
   const isNew = id === "new";
   const navigate = useNavigate();
   const [slugTouched, setSlugTouched] = useState(false);
@@ -66,6 +81,11 @@ function AnnouncementEditor() {
     ReturnType<typeof getAnnouncementById>
   > | null>(null);
   const [loading, setLoading] = useState(!isNew);
+
+  const formDefaults: AnnouncementInput = {
+    ...defaultValues,
+    type: isNew && search.type ? search.type : defaultValues.type,
+  };
 
   useEffect(() => {
     if (isNew) return;
@@ -83,7 +103,7 @@ function AnnouncementEditor() {
 
   const form = useForm<AnnouncementInput>({
     resolver: zodResolver(announcementInputSchema),
-    defaultValues,
+    defaultValues: formDefaults,
     values: existing
       ? {
           title: existing.title,

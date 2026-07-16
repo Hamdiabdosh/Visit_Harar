@@ -92,7 +92,7 @@ function Dashboard() {
     draftTotal;
 
   return (
-    <AdminLayout title="Dashboard" breadcrumb="Overview of CMS activity">
+    <AdminLayout title="Feed" breadcrumb="Home · Overview (activity feed in next sprint)">
       {needsAttention > 0 && stats && (
         <AdminCard className="p-5 mb-6 border-amber-200 bg-amber-50">
           <div className="flex items-start gap-3">

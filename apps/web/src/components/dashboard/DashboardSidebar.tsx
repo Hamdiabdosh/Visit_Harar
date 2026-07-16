@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import {
-  LayoutDashboard,
   Image as ImageIcon,
   Landmark,
   GalleryHorizontal,
@@ -22,9 +22,13 @@ import {
   Handshake,
   Route,
   BarChart3,
+  House,
+  Plus,
+  MoreHorizontal,
 } from "lucide-react";
 import { SiteLogo } from "@/components/SiteLogo";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { AdminCreateSheet } from "@/components/admin/AdminCreateSheet";
 import { getPendingBookingsCount } from "@/lib/bookings-fns";
 import { getPendingEventRegistrationsCount } from "@/lib/event-registrations-fns";
 import { getUnreadInquiriesCount } from "@/lib/inquiry-fns";
@@ -35,67 +39,56 @@ import { cn } from "@/lib/utils";
 type NavItem = {
   to: string;
   label: string;
-  icon: typeof LayoutDashboard;
+  icon: typeof House;
   exact?: boolean;
-  badge?: number;
   badgeKey?: "bookings" | "inquiries" | "event_registrations";
 };
-type NavSection = { label: string; muted?: boolean; items: NavItem[] };
 
-const sections: NavSection[] = [
+/** Primary chrome — Feed · Create · Media · Messages (L-006). */
+const primaryItems: NavItem[] = [
+  { to: "/admin", label: "Feed", icon: House, exact: true },
+  { to: "/admin/media", label: "Media", icon: FolderOpen },
   {
-    label: "Content",
-    items: [
-      { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-      { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-      { to: "/admin/hero", label: "Hero", icon: ImageIcon },
-      { to: "/admin/attractions", label: "Attractions", icon: Landmark },
-      { to: "/admin/gallery", label: "Gallery", icon: GalleryHorizontal },
-      { to: "/admin/pages", label: "Pages", icon: FileText },
-      { to: "/admin/announcements", label: "Announcements", icon: Megaphone },
-      { to: "/admin/guides", label: "Guides", icon: UsersIcon },
-      { to: "/admin/partners", label: "Partners", icon: Handshake },
-      { to: "/admin/itineraries", label: "Itineraries", icon: Route },
-      { to: "/admin/contact", label: "Contact", icon: Phone },
-    ],
-  },
-  {
-    label: "Inbox",
-    items: [
-      {
-        to: "/admin/inquiries",
-        label: "Inquiries",
-        icon: Mail,
-        badgeKey: "inquiries" as const,
-      },
-    ],
-  },
-  {
-    label: "Media",
-    items: [{ to: "/admin/media", label: "Media Library", icon: FolderOpen }],
-  },
-  {
-    label: "More",
-    muted: true,
-    items: [
-      {
-        to: "/admin/bookings",
-        label: "Bookings",
-        icon: Calendar,
-        badgeKey: "bookings" as const,
-      },
-      {
-        to: "/admin/event-registrations",
-        label: "Event registrations",
-        icon: Ticket,
-        badgeKey: "event_registrations" as const,
-      },
-      { to: "/admin/users", label: "Users", icon: Shield },
-      { to: "/admin/audit", label: "Audit Log", icon: ClipboardList },
-      { to: "/admin/settings", label: "Settings", icon: SettingsIcon },
-    ],
+    to: "/admin/inquiries",
+    label: "Messages",
+    icon: Mail,
+    badgeKey: "inquiries",
   },
 ];
+
+const moreItems: NavItem[] = [
+  { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/admin/hero", label: "Hero", icon: ImageIcon },
+  { to: "/admin/attractions", label: "Attractions", icon: Landmark },
+  { to: "/admin/gallery", label: "Gallery", icon: GalleryHorizontal },
+  { to: "/admin/pages", label: "Pages", icon: FileText },
+  { to: "/admin/announcements", label: "Announcements", icon: Megaphone },
+  { to: "/admin/guides", label: "Guides", icon: UsersIcon },
+  { to: "/admin/partners", label: "Partners", icon: Handshake },
+  { to: "/admin/itineraries", label: "Itineraries", icon: Route },
+  { to: "/admin/contact", label: "Contact", icon: Phone },
+  {
+    to: "/admin/bookings",
+    label: "Bookings",
+    icon: Calendar,
+    badgeKey: "bookings",
+  },
+  {
+    to: "/admin/event-registrations",
+    label: "Event registrations",
+    icon: Ticket,
+    badgeKey: "event_registrations",
+  },
+  { to: "/admin/users", label: "Users", icon: Shield },
+  { to: "/admin/audit", label: "Audit Log", icon: ClipboardList },
+  { to: "/admin/settings", label: "Settings", icon: SettingsIcon },
+];
+
+const SUPERADMIN_ONLY = new Set([
+  "/admin/users",
+  "/admin/audit",
+  "/admin/settings",
+]);
 
 function SidebarContent({
   collapsed,
@@ -111,6 +104,14 @@ function SidebarContent({
   const location = useLocation();
   const path = location.pathname;
   const { user, role, logout } = useSessionContext();
+  const [createOpen, setCreateOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(() =>
+    moreItems.some((item) =>
+      item.exact
+        ? path === item.to
+        : path === item.to || path.startsWith(item.to + "/"),
+    ),
+  );
 
   const { data: pendingBookings = 0 } = useQuery({
     queryKey: ["admin", "bookings", "pending-count"],
@@ -133,21 +134,15 @@ function SidebarContent({
     enabled: !!user,
   });
 
-  const visibleSections = sections
-    .map((section) => {
-      if (section.label !== "More") return section;
-      // Editors: bookings + event regs under More; superadmin also Users/Audit/Settings
-      if (role === "superadmin") return section;
-      return {
-        ...section,
-        items: section.items.filter(
-          (item) =>
-            item.to === "/admin/bookings" ||
-            item.to === "/admin/event-registrations",
-        ),
-      };
-    })
-    .filter((section) => section.items.length > 0);
+  const visibleMore = moreItems.filter(
+    (item) => role === "superadmin" || !SUPERADMIN_ONLY.has(item.to),
+  );
+
+  const moreActive = visibleMore.some((item) =>
+    item.exact
+      ? path === item.to
+      : path === item.to || path.startsWith(item.to + "/"),
+  );
 
   const initials =
     user?.name
@@ -156,6 +151,50 @@ function SidebarContent({
       .join("")
       .slice(0, 2)
       .toUpperCase() ?? "?";
+
+  function badgeFor(key: NavItem["badgeKey"]) {
+    if (key === "bookings" && pendingBookings > 0) return pendingBookings;
+    if (key === "event_registrations" && pendingEventRegistrations > 0) {
+      return pendingEventRegistrations;
+    }
+    if (key === "inquiries" && unreadInquiries > 0) return unreadInquiries;
+    return 0;
+  }
+
+  function renderLink(item: NavItem) {
+    const isActive = item.exact
+      ? path === item.to
+      : path === item.to || path.startsWith(item.to + "/");
+    const Icon = item.icon;
+    const badge = badgeFor(item.badgeKey);
+    return (
+      <Link
+        to={item.to as never}
+        search={{ denied: false } as never}
+        onClick={onNavigate}
+        title={collapsed ? item.label : undefined}
+        className={cn(
+          "flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition-colors",
+          collapsed && "justify-center px-2",
+          isActive
+            ? "bg-blue-600/90 text-white shadow-sm"
+            : "text-zinc-600 hover:bg-zinc-900/6 hover:text-zinc-900",
+        )}
+      >
+        <Icon className="h-4 w-4 shrink-0" />
+        {!collapsed && (
+          <>
+            <span className="flex-1 truncate">{item.label}</span>
+            {badge > 0 ? (
+              <span className="rounded-full bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-amber-950">
+                {badge}
+              </span>
+            ) : null}
+          </>
+        )}
+      </Link>
+    );
+  }
 
   return (
     <div className="flex h-full flex-col bg-transparent text-zinc-800">
@@ -195,73 +234,72 @@ function SidebarContent({
         </div>
       )}
 
-      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
-        {visibleSections.map((section) => (
-          <div key={section.label}>
-            {!collapsed && (
-              <div
-                className={cn(
-                  "mb-2 px-2 text-[10px] uppercase tracking-widest text-zinc-500",
-                  section.muted && "text-zinc-600",
-                )}
-              >
-                {section.label}
-              </div>
-            )}
-            <ul className="space-y-0.5">
-              {section.items.map((item) => {
-                const isActive = item.exact
-                  ? path === item.to
-                  : path === item.to || path.startsWith(item.to + "/");
-                const Icon = item.icon;
-                return (
-                  <li key={item.to}>
-                    <Link
-                      to={item.to as never}
-                      search={{ denied: false } as never}
-                      onClick={onNavigate}
-                      title={collapsed ? item.label : undefined}
-                      className={cn(
-                        "flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition-colors",
-                        collapsed && "justify-center px-2",
-                        isActive
-                          ? "bg-blue-600/90 text-white shadow-sm"
-                          : "text-zinc-600 hover:bg-zinc-900/6 hover:text-zinc-900",
-                      )}
-                    >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      {!collapsed && (
-                        <>
-                          <span className="flex-1 truncate">{item.label}</span>
-                          {item.badgeKey === "bookings" &&
-                          pendingBookings > 0 ? (
-                            <span className="rounded-full bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-amber-950">
-                              {pendingBookings}
-                            </span>
-                          ) : item.badgeKey === "event_registrations" &&
-                            pendingEventRegistrations > 0 ? (
-                            <span className="rounded-full bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-amber-950">
-                              {pendingEventRegistrations}
-                            </span>
-                          ) : item.badgeKey === "inquiries" &&
-                            unreadInquiries > 0 ? (
-                            <span className="rounded-full bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-amber-950">
-                              {unreadInquiries}
-                            </span>
-                          ) : "badge" in item && item.badge ? (
-                            <span className="rounded-full bg-amber-400 px-1.5 py-0.5 text-[10px] font-bold text-amber-950">
-                              {item.badge}
-                            </span>
-                          ) : null}
-                        </>
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        {!collapsed && (
+          <div className="mb-2 px-2 text-[10px] uppercase tracking-widest text-zinc-500">
+            Main
           </div>
-        ))}
+        )}
+        <ul className="space-y-0.5">
+          <li key="feed">
+            {renderLink(primaryItems[0]!)}
+          </li>
+          <li>
+            <button
+              type="button"
+              onClick={() => setCreateOpen(true)}
+              title={collapsed ? "Create" : undefined}
+              className={cn(
+                "flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition-colors",
+                collapsed && "justify-center px-2",
+                "bg-gold/20 text-ink font-semibold hover:bg-gold/30",
+              )}
+            >
+              <Plus className="h-4 w-4 shrink-0" />
+              {!collapsed && (
+                <span className="flex-1 truncate text-left">Create</span>
+              )}
+            </button>
+          </li>
+          {primaryItems.slice(1).map((item) => (
+            <li key={item.to}>{renderLink(item)}</li>
+          ))}
+        </ul>
+
+        <div className="pt-4">
+          {!collapsed && (
+            <button
+              type="button"
+              onClick={() => setMoreOpen((o) => !o)}
+              className={cn(
+                "mb-2 flex w-full items-center gap-2 px-2 text-[10px] uppercase tracking-widest transition-colors",
+                moreActive ? "text-zinc-800" : "text-zinc-500 hover:text-zinc-700",
+              )}
+            >
+              <MoreHorizontal className="h-3.5 w-3.5" />
+              <span className="flex-1 text-left">More</span>
+              <ChevronRight
+                className={cn(
+                  "h-3.5 w-3.5 transition-transform",
+                  moreOpen && "rotate-90",
+                )}
+              />
+            </button>
+          )}
+          {collapsed ? (
+            <ul className="space-y-0.5">
+              {visibleMore.map((item) => (
+                <li key={item.to}>{renderLink(item)}</li>
+              ))}
+            </ul>
+          ) : moreOpen ? (
+            <ul className="space-y-0.5">
+              {visibleMore.map((item) => (
+                <li key={item.to}>{renderLink(item)}</li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       </nav>
 
       <div
@@ -334,23 +372,11 @@ function SidebarContent({
             <span className="font-semibold text-foreground/80 transition-colors group-hover:text-foreground">
               RAAFAT-DIGITAL
             </span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 opacity-50 transition-opacity group-hover:opacity-100"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-              <polyline points="15 3 21 3 21 9" />
-              <line x1="10" y1="14" x2="21" y2="3" />
-            </svg>
           </a>
         )}
       </div>
+
+      <AdminCreateSheet open={createOpen} onOpenChange={setCreateOpen} />
     </div>
   );
 }

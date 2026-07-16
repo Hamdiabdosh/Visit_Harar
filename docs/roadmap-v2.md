@@ -1,7 +1,7 @@
 # Visit Harar V2 Roadmap
 
 > **Purpose:** Sprint-based execution plan for V2 — implements locked decisions in [`v2-plan.md`](./v2-plan.md).  
-> **Status:** V2-001 ✅ · V2-002…V2-006 planned  
+> **Status:** V2-001 ✅ · V2-002 ✅ · V2-003 ✅ · V2-004…V2-006 planned  
 > **Last updated:** 2026-07-16  
 > **Related:** [`v2-plan.md`](./v2-plan.md) (locks) · [`06-phased-roadmap.md`](./06-phased-roadmap.md) (Phases A–E) · [`03-admin-cms-strategy.md`](./03-admin-cms-strategy.md)
 
@@ -35,8 +35,8 @@ Public surface (T2)
 │
 Admin shell (T1)
 │
-├── V2-002  Shell nav: Feed · Create · Media · Messages · More
-├── V2-003  Create sheet → News · Event · Attraction · Photo · Guide
+├── V2-002  Shell nav: Feed · Create · Media · Messages · More             ✅
+├── V2-003  Create sheet → News · Event · Attraction · Photo · Guide       ✅
 ├── V2-004  Home/Feed for Create types
 ├── V2-005  Preview before publish
 │
@@ -48,8 +48,8 @@ Finish
 | Sprint | Theme | Area | Locks | Status |
 |--------|-------|------|-------|--------|
 | V2-001 | T2 | Public hide + soft-gates + contact CTAs | L-005, L-003 | ✅ |
-| V2-002 | T1 | Primary nav shell + More | L-006, L-001 | 🔲 |
-| V2-003 | T1 | Create (+) type picker | L-008, L-006 | 🔲 |
+| V2-002 | T1 | Primary nav shell + More | L-006, L-001 | ✅ |
+| V2-003 | T1 | Create (+) type picker | L-008, L-006 | ✅ |
 | V2-004 | T1 | Feed | L-009, L-004 | 🔲 |
 | V2-005 | T1 | Preview on Create/Edit | L-007, L-004 | 🔲 |
 | V2-006 | T1/T2 | Polish + mobile QA | L-006, L-005 | 🔲 |
@@ -124,7 +124,7 @@ Visitors no longer see guide booking, event RSVP/ticket actions, app download, o
 
 # V2-002 — Admin shell nav
 
-**Status:** 🔲  
+**Status:** ✅  
 **Theme:** T1  
 **Locks:** L-006, L-001
 
@@ -140,6 +140,12 @@ Primary admin chrome is **Feed · Create · Media · Messages · More**. Old fla
 - More → attractions, gallery, pages, announcements list, guides, partners, itineraries, hero, contact, analytics, bookings, event registrations, users, audit, settings
 - Keep deep links to all existing routes working
 
+## Shipped
+
+- Primary: Feed (`/admin`), Media, Messages (inquiries badge), Create button
+- Collapsible **More** with power tools; Users/Audit/Settings superadmin-only
+- Create opens [`AdminCreateSheet`](../apps/web/src/components/admin/AdminCreateSheet.tsx) (V2-003)
+
 ## Check
 
 - Editor login: sees ≤5 primary destinations; can reach Attractions and Settings via More
@@ -148,14 +154,13 @@ Primary admin chrome is **Feed · Create · Media · Messages · More**. Old fla
 
 ## Out of scope
 
-- Create sheet UI (V2-003)
-- Feed content (V2-004)
+- Feed content cards (V2-004)
 
 ---
 
 # V2-003 — Create sheet
 
-**Status:** 🔲  
+**Status:** ✅  
 **Theme:** T1  
 **Locks:** L-008, L-006
 
@@ -170,6 +175,12 @@ One **Create (+)** entry: News · Event · Attraction · Photo · Guide → exis
 - Attraction / Guide → `…/new` routes
 - Photo → gallery create album or media upload entry (pick the shortest existing path; document in sprint notes)
 - Notice / Partner / etc. **not** in Create (More only)
+
+## Shipped
+
+- `AdminCreateSheet` dialog with five types
+- Announcement editor accepts `?type=News|Event` on `/admin/announcements/new`
+- Photo → `/admin/gallery` (album create UI on that page)
 
 ## Check
 
