@@ -12,6 +12,7 @@ import {
   unpinAnnouncement,
 } from "@/lib/announcements-fns";
 import { Pin, Pencil, Trash2, Plus } from "lucide-react";
+import { toMediaSrc } from "@/lib/media-url";
 
 export const Route = createFileRoute("/admin/announcements")({
   component: AnnouncementsAdmin,
@@ -237,7 +238,7 @@ function AnnouncementsAdmin() {
                   <td className="p-3">
                     {a.cover_image ? (
                       <img
-                        src={a.cover_image}
+                        src={toMediaSrc(a.cover_image) ?? a.cover_image}
                         alt=""
                         className="w-12 h-8 rounded object-cover"
                       />

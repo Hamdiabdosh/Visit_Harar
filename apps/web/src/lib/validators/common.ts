@@ -5,8 +5,8 @@ export const uuidSchema = z.string().uuid();
 export const slugSchema = z.string().regex(/^[a-z0-9-]+$/);
 export const urlSchema = z.string().url();
 
-/** Image fields must come from the media library (local uploads or legacy Cloudinary). */
-export const mediaUrlSchema = urlSchema.refine(isMediaUrl, {
+/** Image fields must come from the media library (local `/uploads/…` or legacy Cloudinary). */
+export const mediaUrlSchema = z.string().refine(isMediaUrl, {
   message: "Image must be uploaded via the Media Library.",
 });
 

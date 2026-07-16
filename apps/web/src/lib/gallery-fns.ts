@@ -202,7 +202,7 @@ const updateAlbumSchema = z.object({
   data: z.object({
     title: z.string().min(1).max(200).optional(),
     description: z.string().max(800).optional().nullable(),
-    cover_image: z.string().url().optional().nullable(),
+    cover_image: z.string().optional().nullable(),
     is_published: z.boolean().optional(),
   }),
 });

@@ -1,4 +1,5 @@
 import { getPublishedHero } from "@/lib/hero-fns";
+import { toMediaSrc } from "@/lib/media-url";
 import { ORG_NAME } from "@/lib/org";
 
 type MetaTag =
@@ -38,10 +39,12 @@ function publicAppOrigin() {
 }
 
 function absoluteUrl(pathOrUrl: string) {
-  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://"))
-    return pathOrUrl;
+  // Rewrite stale absolute /uploads hosts, then absolutize for OG/canonical.
+  const normalized = toMediaSrc(pathOrUrl) ?? pathOrUrl;
+  if (normalized.startsWith("http://") || normalized.startsWith("https://"))
+    return normalized;
   const base = publicAppOrigin();
-  const path = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
+  const path = normalized.startsWith("/") ? normalized : `/${normalized}`;
   return base ? `${base}${path}` : path;
 }
 
@@ -68,7 +71,8 @@ export function buildHead(overrides?: BuildMetadataOverrides): {
     { property: "og:type", content: "website" },
   ];
 
-  if (ogImage) meta.push({ property: "og:image", content: ogImage });
+  if (ogImage)
+    meta.push({ property: "og:image", content: absoluteUrl(ogImage) });
   const links: LinkTag[] = canonical
     ? [{ rel: "canonical", href: canonical }]
     : [];

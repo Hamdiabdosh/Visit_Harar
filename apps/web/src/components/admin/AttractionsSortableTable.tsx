@@ -2,6 +2,7 @@
 
 import { Link } from "@tanstack/react-router";
 import type React from "react";
+import { toMediaSrc } from "@/lib/media-url";
 import {
   DndContext,
   PointerSensor,
@@ -174,7 +175,7 @@ function AttractionRow({
       <td className="p-4">
         {item.image ? (
           <img
-            src={item.image}
+            src={toMediaSrc(item.image) ?? item.image}
             alt=""
             className="w-10 h-10 rounded object-cover"
           />

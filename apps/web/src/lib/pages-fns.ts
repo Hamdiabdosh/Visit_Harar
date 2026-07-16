@@ -80,7 +80,7 @@ const cultureContentSchema = z.object({
       z.object({
         title: z.string().min(1).max(120),
         body: z.string().optional(),
-        image: z.string().url().optional().nullable(),
+        image: z.string().optional().nullable(),
       }),
     )
     .optional(),
@@ -168,7 +168,7 @@ export const getPublishedPage = createServerFn({ method: "GET" })
 
 const upsertSchema = z.object({
   page_key: pageKeySchema,
-  hero_image: z.string().url().optional().nullable(),
+  hero_image: z.string().optional().nullable(),
   content: z.unknown(),
 });
 

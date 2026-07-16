@@ -8,10 +8,29 @@ export function isCloudinaryUrl(url: string) {
   return /(^|\/\/)res\.cloudinary\.com\//.test(url) && url.includes("/upload/");
 }
 
-export function isLocalMediaUrl(url: string) {
-  if (url.startsWith("/uploads/")) return true;
+/**
+ * Strip host from local upload URLs so images load from the current origin.
+ * Fixes DB rows saved with an old APP_URL (e.g. visitharar.raafat.site).
+ */
+export function toMediaSrc(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith("/uploads/")) return url;
   try {
-    return new URL(url).pathname.startsWith("/uploads/");
+    const u = new URL(url);
+    if (u.pathname.startsWith("/uploads/")) {
+      return `${u.pathname}${u.search}`;
+    }
+  } catch {
+    /* not absolute */
+  }
+  return url;
+}
+
+export function isLocalMediaUrl(url: string) {
+  const src = toMediaSrc(url) ?? url;
+  if (src.startsWith("/uploads/")) return true;
+  try {
+    return new URL(src).pathname.startsWith("/uploads/");
   } catch {
     return false;
   }
@@ -23,10 +42,11 @@ export function isMediaUrl(url: string) {
 
 /** Derive the `-thumb.webp` sibling for locally stored WebP files. */
 export function localThumbUrl(url: string | null | undefined) {
-  if (!url || !isLocalMediaUrl(url)) return null;
-  if (/-thumb\.webp$/i.test(url)) return url;
-  if (!/\.webp$/i.test(url)) return null;
-  return url.replace(/\.webp$/i, "-thumb.webp");
+  const src = toMediaSrc(url);
+  if (!src || !isLocalMediaUrl(src)) return null;
+  if (/-thumb\.webp$/i.test(src)) return src;
+  if (!/\.webp$/i.test(src)) return null;
+  return src.replace(/\.webp$/i, "-thumb.webp");
 }
 
 /** Prefer an explicit thumbnail, then a derived local thumb, then Cloudinary resize. */
@@ -35,13 +55,15 @@ export function pickListImageUrl(
   thumbnailUrl?: string | null,
   width = 400,
 ) {
-  if (thumbnailUrl) return thumbnailUrl;
+  const thumb = toMediaSrc(thumbnailUrl);
+  if (thumb) return thumb;
   const derived = localThumbUrl(url);
   if (derived) return derived;
-  if (url && isCloudinaryUrl(url)) {
-    return optimizeImage(url, { width }) ?? url;
+  const src = toMediaSrc(url);
+  if (src && isCloudinaryUrl(src)) {
+    return optimizeImage(src, { width }) ?? src;
   }
-  return url ?? null;
+  return src;
 }
 
 /**
@@ -51,23 +73,25 @@ export function optimizeImage(
   url: string | null | undefined,
   options?: OptimizeImageOptions,
 ) {
-  if (!url) return url ?? null;
-  if (!isCloudinaryUrl(url)) return url;
+  const src = toMediaSrc(url);
+  if (!src) return null;
+  if (!isCloudinaryUrl(src)) return src;
 
   const width = options?.width ?? 800;
   const quality = options?.quality ?? "auto";
   const format = options?.format ?? "auto";
   const transformation = `f_${format},q_${quality},w_${width}`;
-  return url.replace("/upload/", `/upload/${transformation}/`);
+  return src.replace("/upload/", `/upload/${transformation}/`);
 }
 
 export function downloadImageUrl(url: string): string {
-  if (isLocalMediaUrl(url)) {
-    const sep = url.includes("?") ? "&" : "?";
-    return `${url}${sep}download=1`;
+  const src = toMediaSrc(url) ?? url;
+  if (isLocalMediaUrl(src)) {
+    const sep = src.includes("?") ? "&" : "?";
+    return `${src}${sep}download=1`;
   }
-  if (!isCloudinaryUrl(url)) return url;
-  return url.replace("/upload/", "/upload/fl_attachment/");
+  if (!isCloudinaryUrl(src)) return src;
+  return src.replace("/upload/", "/upload/fl_attachment/");
 }
 
 export function galleryDownloadFilename(

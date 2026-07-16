@@ -4,6 +4,7 @@ import { Landmark, Megaphone, Route as RouteIcon, Search, Store, Users } from "l
 import { PublicLayout } from "@/components/PublicLayout";
 import { PublicSearchDialog } from "@/components/public/PublicSearch";
 import { searchPublished } from "@/lib/search-fns";
+import { toMediaSrc } from "@/lib/media-url";
 import { buildHeadAsync } from "@/lib/metadata";
 import { useLocale } from "@/lib/contexts/LocaleContext";
 import { useState } from "react";
@@ -101,7 +102,7 @@ function SearchPage() {
                 >
                   {item.image ? (
                     <img
-                      src={item.image}
+                      src={toMediaSrc(item.image) ?? item.image}
                       alt=""
                       className="h-16 w-20 rounded object-cover shrink-0"
                     />

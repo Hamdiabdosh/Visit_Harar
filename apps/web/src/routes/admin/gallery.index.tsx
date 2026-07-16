@@ -35,6 +35,7 @@ import {
   updateAlbum,
 } from "@/lib/gallery-fns";
 import { AdminGalleryListSkeleton } from "@/components/public/GallerySkeletons";
+import { toMediaSrc } from "@/lib/media-url";
 
 export const Route = createFileRoute("/admin/gallery/")({
   component: GalleryAdmin,
@@ -266,7 +267,7 @@ function SortableAlbumCard({
         <div className="aspect-[4/3] bg-surface relative overflow-hidden">
           {cover ? (
             <img
-              src={cover}
+              src={toMediaSrc(cover) ?? cover}
               alt=""
               className="absolute inset-0 w-full h-full object-cover"
             />

@@ -26,17 +26,10 @@ export function getUploadDir(): string {
   return process.env.UPLOAD_DIR ?? path.join(process.cwd(), "uploads");
 }
 
-function getAppBaseUrl(): string {
-  const base =
-    process.env.APP_URL ??
-    process.env.BETTER_AUTH_URL ??
-    "http://localhost:3000";
-  return base.replace(/\/+$/, "");
-}
-
+/** Same-origin path — survives APP_URL / domain changes (no absolute host baked in). */
 export function getPublicUrl(storageKey: string): string {
   const normalized = storageKey.replace(/^\/+/, "");
-  return `${getAppBaseUrl()}${UPLOAD_URL_PREFIX}${normalized}`;
+  return `${UPLOAD_URL_PREFIX}${normalized}`;
 }
 
 function sanitizeFilename(filename: string): string {
