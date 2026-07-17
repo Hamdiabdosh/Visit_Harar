@@ -18,6 +18,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Toggle } from "@/components/AdminLayout";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import type { GuideDto } from "@/lib/guides-fns";
+import { toMediaSrc } from "@/lib/media-url";
 
 export type GuidesTableActions = {
   onToggleAvailable: (id: string) => void;
@@ -161,7 +162,7 @@ function GuideRow({
       <td className="p-3">
         {g.photo ? (
           <img
-            src={g.photo}
+            src={toMediaSrc(g.photo) ?? g.photo}
             alt=""
             className="w-9 h-9 rounded-full object-cover"
           />

@@ -14,6 +14,7 @@ import {
 } from "@/lib/storage.server";
 import { generateSlug } from "@/lib/slug";
 import { guideInputSchema } from "@/lib/validators/guides";
+import { toMediaSrc } from "@/lib/media-url";
 import type { UserRole } from "@/lib/types";
 import { auditSnap, fireAudit } from "@/lib/audit";
 
@@ -62,7 +63,7 @@ function rowToDto(
     id: row.id,
     name: row.name,
     slug: row.slug,
-    photo: row.photo ?? null,
+    photo: toMediaSrc(row.photo) ?? row.photo ?? null,
     bio: row.bio ?? null,
     languages: row.languages ?? [],
     specialties: row.specialties ?? [],

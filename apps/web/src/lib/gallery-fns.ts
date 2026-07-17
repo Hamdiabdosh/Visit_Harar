@@ -18,6 +18,7 @@ import {
 } from "@/lib/storage.server";
 import type { MediaType, UserRole } from "@/lib/types";
 import { auditSnap, fireAudit } from "@/lib/audit";
+import { toMediaSrc } from "@/lib/media-url";
 
 async function requireEditorSession() {
   const request = getRequest();
@@ -71,7 +72,7 @@ function albumRowToDto(
     id: row.id,
     title: row.title,
     description: row.description ?? null,
-    cover_image: row.coverImage ?? null,
+    cover_image: toMediaSrc(row.coverImage) ?? row.coverImage ?? null,
     is_published: row.isPublished,
     sort_order: row.sortOrder,
     created_by: row.createdBy ?? null,
@@ -85,8 +86,8 @@ function itemRowToDto(row: typeof galleryItems.$inferSelect): GalleryItemDto {
     id: row.id,
     album_id: row.albumId,
     type: row.type as MediaType,
-    url: row.url,
-    thumbnail_url: row.thumbnailUrl ?? null,
+    url: toMediaSrc(row.url) ?? row.url,
+    thumbnail_url: toMediaSrc(row.thumbnailUrl) ?? null,
     caption: row.caption ?? null,
     alt_text: row.altText ?? null,
     is_published: row.isPublished,

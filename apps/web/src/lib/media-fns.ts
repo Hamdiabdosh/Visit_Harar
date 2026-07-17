@@ -12,6 +12,7 @@ import {
   uploadAssetBuffer,
 } from "@/lib/storage.server";
 import { altTextSchema, mediaFilterSchema } from "@/lib/validators/media";
+import { toMediaSrc } from "@/lib/media-url";
 import type { MediaType, UserRole } from "@/lib/types";
 import { auditSnap, fireAudit } from "@/lib/audit";
 
@@ -49,8 +50,8 @@ function rowToDto(row: typeof mediaAssets.$inferSelect): MediaAssetDto {
   return {
     id: row.id,
     cloudinary_id: row.cloudinaryId,
-    url: row.url,
-    thumbnail_url: row.thumbnailUrl ?? null,
+    url: toMediaSrc(row.url) ?? row.url,
+    thumbnail_url: toMediaSrc(row.thumbnailUrl) ?? null,
     filename: row.filename ?? null,
     type: row.type as MediaType,
     size_bytes: row.sizeBytes ?? null,

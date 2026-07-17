@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PublicLayout } from "@/components/PublicLayout";
 import { getGuideBySlug } from "@/lib/guides-fns";
 import { sanitizeRichHtml } from "@/lib/sanitize-html";
+import { toMediaSrc } from "@/lib/media-url";
 import { ArrowLeft } from "lucide-react";
 import { usePublicSurfaces } from "@/components/public/surfaces-context";
 
@@ -33,7 +34,7 @@ function GuideDetailById() {
           <div className="bg-white rounded-lg border border-border p-10 grid md:grid-cols-[120px_1fr] gap-8">
             {item.photo ? (
               <img
-                src={item.photo}
+                src={toMediaSrc(item.photo) ?? item.photo}
                 alt=""
                 className="w-[120px] h-[120px] rounded-full object-cover"
               />

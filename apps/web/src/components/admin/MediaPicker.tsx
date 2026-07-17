@@ -14,7 +14,7 @@ import {
   type MediaAssetDto,
 } from "@/lib/media-fns";
 import { prepareMediaForUpload } from "@/lib/prepare-image-upload";
-import { pickListImageUrl } from "@/lib/media-url";
+import { pickListImageUrl, toMediaSrc } from "@/lib/media-url";
 import { Upload } from "lucide-react";
 
 type Props = {
@@ -175,7 +175,7 @@ function MediaThumb({
       <div className="aspect-square bg-surface">
         {asset.type === "image" ? (
           <img
-            src={thumb ?? asset.url}
+            src={thumb ?? toMediaSrc(asset.url) ?? asset.url}
             alt={asset.alt_text ?? ""}
             className="w-full h-full object-cover"
           />

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/AdminLayout";
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import { markUsedIn, unmarkUsedIn } from "@/lib/media-fns";
+import { toMediaSrc } from "@/lib/media-url";
 import { Image as ImageIcon } from "lucide-react";
 
 type Props = {
@@ -44,7 +45,7 @@ export function ImageMediaField({
     <>
       {value ? (
         <img
-          src={value}
+          src={toMediaSrc(value) ?? value}
           alt=""
           className="w-full h-[150px] object-cover rounded mb-3"
         />

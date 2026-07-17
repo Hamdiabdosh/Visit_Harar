@@ -52,6 +52,20 @@ async function normalizeCatastrophicSsrResponse(
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      // TanStack resolvePath joins absolute https:// media URLs onto /admin and
+      // collapses :// → :/. Recover so <img> / preloads still hit the file.
+      const reqUrl = new URL(request.url);
+      if (
+        reqUrl.pathname.includes("/uploads/") &&
+        (reqUrl.pathname.includes("https:/") ||
+          reqUrl.pathname.includes("http:/"))
+      ) {
+        const match = reqUrl.pathname.match(/\/uploads\/[^?#]*/);
+        if (match) {
+          return Response.redirect(new URL(match[0], reqUrl.origin), 302);
+        }
+      }
+
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

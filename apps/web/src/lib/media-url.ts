@@ -8,21 +8,63 @@ export function isCloudinaryUrl(url: string) {
   return /(^|\/\/)res\.cloudinary\.com\//.test(url) && url.includes("/upload/");
 }
 
+/** Drop router junk like `?denied=false` from local media paths. */
+function uploadsPathOnly(pathWithOptionalQuery: string): string {
+  const q = pathWithOptionalQuery.indexOf("?");
+  const path =
+    q === -1 ? pathWithOptionalQuery : pathWithOptionalQuery.slice(0, q);
+  return path.startsWith("/uploads/") ? path : pathWithOptionalQuery;
+}
+
+/**
+ * Recover `/uploads/…` from TanStack resolvePath mangling:
+ * `/admin` + `https://host/uploads/…` → `/admin/https:/host/uploads/…`
+ * (cleanPath collapses `://` to `:/`).
+ */
+function uploadsFromMangled(url: string): string | null {
+  const m = url.match(/\/uploads\/[^?#\s]*/);
+  if (!m) return null;
+  if (
+    url.includes("https:/") ||
+    url.includes("http:/") ||
+    url.startsWith("/admin/")
+  ) {
+    return m[0];
+  }
+  return null;
+}
+
 /**
  * Strip host from local upload URLs so images load from the current origin.
- * Fixes DB rows saved with an old APP_URL host.
+ * Fixes DB rows saved with an old APP_URL host, and router-joined absolute URLs.
  */
 export function toMediaSrc(url: string | null | undefined): string | null {
   if (!url) return null;
-  if (url.startsWith("/uploads/")) return url;
+  if (url.startsWith("/uploads/")) return uploadsPathOnly(url);
+
+  const recovered = uploadsFromMangled(url);
+  if (recovered) return recovered;
+
   try {
     const u = new URL(url);
-    if (u.pathname.startsWith("/uploads/")) {
-      return `${u.pathname}${u.search}`;
-    }
+    if (u.pathname.startsWith("/uploads/")) return u.pathname;
+    // Single-slash scheme (`https:/host/…`) still parses; path may be wrong — try recover.
+    const fromHref = uploadsFromMangled(u.href) ?? uploadsFromMangled(u.pathname);
+    if (fromHref) return fromHref;
   } catch {
     /* not absolute */
   }
+
+  // Relative `https:/host/uploads/…` (invalid absolute, path-relative to /admin)
+  try {
+    const u = new URL(url, "https://local.invalid/");
+    if (u.pathname.startsWith("/uploads/")) return u.pathname;
+    const fromPath = uploadsFromMangled(u.pathname);
+    if (fromPath) return fromPath;
+  } catch {
+    /* give up */
+  }
+
   return url;
 }
 
