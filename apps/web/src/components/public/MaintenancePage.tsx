@@ -1,27 +1,21 @@
-import { Link } from "@tanstack/react-router";
-import { ORG_NAME } from "@/lib/org";
-
+/**
+ * Full coming-soon experience for public visitors.
+ * Serves the static design at /coming-soon.html (admin stays outside this gate).
+ */
 export function MaintenancePage() {
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center px-5">
-      <div className="max-w-md text-center">
-        <h1 className="font-serif text-3xl font-bold text-ink">
-          We&apos;ll be back soon
-        </h1>
-        <p className="mt-3 text-ink-muted leading-relaxed">
-          Visit Harar is undergoing scheduled maintenance. The {ORG_NAME} will
-          restore public access shortly.
-        </p>
-        <p className="mt-6 text-sm text-ink-muted">
-          Commission staff?{" "}
-          <Link
-            to="/admin/login"
-            className="text-brand font-semibold hover:underline"
-          >
-            Sign in to admin
-          </Link>
-        </p>
-      </div>
+    <div className="fixed inset-0 z-[100] bg-[#0a0a0e]">
+      <iframe
+        title="Visit Harar — Coming Soon"
+        src="/coming-soon.html"
+        className="absolute inset-0 h-full w-full border-0"
+      />
+      <a
+        href="/admin/login"
+        className="fixed bottom-3 right-3 z-[101] rounded px-2 py-1 text-[10px] text-white/25 hover:text-white/70"
+      >
+        Staff
+      </a>
     </div>
   );
 }

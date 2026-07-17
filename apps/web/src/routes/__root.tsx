@@ -17,11 +17,15 @@ import { getAnalyticsIdFn, getMaintenanceModeFn } from "@/lib/settings-fns";
 import { getPublicSurfacesFn } from "@/lib/public-surfaces";
 import { MaintenancePage } from "@/components/public/MaintenancePage";
 import { ORG_NAME } from "@/lib/org";
+import { isPublicComingSoonEnabled } from "@/lib/coming-soon";
 
 function isMaintenanceBypass(pathname: string) {
   return (
     pathname.startsWith("/admin") ||
     pathname.startsWith("/api/") ||
+    pathname.startsWith("/uploads/") ||
+    pathname === "/coming-soon.html" ||
+    pathname === "/health" ||
     pathname === "/robots.txt" ||
     pathname === "/sitemap.xml" ||
     pathname === "/manifest.webmanifest" ||
@@ -94,6 +98,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     beforeLoad: async ({ location }) => {
       if (isMaintenanceBypass(location.pathname)) {
         return { maintenanceActive: false };
+      }
+      // Hard public gate (env) OR DB maintenance toggle
+      if (isPublicComingSoonEnabled()) {
+        return { maintenanceActive: true };
       }
       const maintenanceActive = await getMaintenanceModeFn();
       return { maintenanceActive };
