@@ -1,5 +1,5 @@
 /* Visit Harar PWA service worker — Phase C */
-const CACHE_VERSION = "visit-harar-v3";
+const CACHE_VERSION = "visit-harar-v4";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const TILE_CACHE = `${CACHE_VERSION}-tiles`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
