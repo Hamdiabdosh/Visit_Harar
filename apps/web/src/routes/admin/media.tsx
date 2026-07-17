@@ -12,7 +12,7 @@ import {
   type MediaAssetDto,
 } from "@/lib/media-fns";
 import { prepareMediaForUpload } from "@/lib/prepare-image-upload";
-import { pickListImageUrl } from "@/lib/media-url";
+import { pickListImageUrl, toMediaSrc } from "@/lib/media-url";
 import { Search, Upload, Copy, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/admin/media")({
@@ -235,18 +235,22 @@ function MediaCard({
   const [alt, setAlt] = useState(asset.alt_text ?? "");
   const thumb =
     asset.type === "image"
-      ? (pickListImageUrl(asset.url, asset.thumbnail_url) ?? asset.url)
-      : (asset.thumbnail_url ?? asset.url);
+      ? pickListImageUrl(asset.url, asset.thumbnail_url)
+      : null;
 
   return (
     <div className="bg-white rounded-lg border border-border overflow-hidden group">
       <div className="relative aspect-square bg-surface">
-        {asset.type === "image" ? (
+        {asset.type === "image" && thumb ? (
           <img
             src={thumb}
             alt={asset.alt_text ?? ""}
             className="w-full h-full object-cover"
           />
+        ) : asset.type === "image" ? (
+          <div className="w-full h-full grid place-items-center text-ink-muted text-xs">
+            —
+          </div>
         ) : (
           <div className="w-full h-full grid place-items-center text-ink-muted text-xs">
             Video
@@ -262,7 +266,9 @@ function MediaCard({
           <button
             type="button"
             onClick={() => {
-              void navigator.clipboard.writeText(asset.url);
+              void navigator.clipboard.writeText(
+                toMediaSrc(asset.url) ?? asset.url,
+              );
               toast.success("URL copied");
             }}
             className="px-2 py-1 rounded bg-white text-ink text-xs font-semibold inline-flex items-center gap-1"

@@ -1,4 +1,9 @@
-import { Outlet, createFileRoute, useSearch } from "@tanstack/react-router";
+import {
+  Outlet,
+  createFileRoute,
+  stripSearchParams,
+  useSearch,
+} from "@tanstack/react-router";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { SessionProvider } from "@/lib/contexts/SessionContext";
@@ -12,6 +17,11 @@ export const Route = createFileRoute("/admin")({
       search.denied === 1 ||
       search.denied === "true",
   }),
+  // Keep ?denied=true when needed; don't pollute every admin URL with denied=false
+  // (that query was ending up on mangled media requests too).
+  search: {
+    middlewares: [stripSearchParams({ denied: false })],
+  },
   beforeLoad: async ({ location }) => {
     if (isPublicAdminPath(location.pathname)) {
       return {};

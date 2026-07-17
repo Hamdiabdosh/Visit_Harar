@@ -118,7 +118,10 @@ export function MediaPicker({
                       key={m.id}
                       asset={m}
                       onClick={() => {
-                        onSelect({ url: m.url, id: m.id });
+                        onSelect({
+                          url: toMediaSrc(m.url) ?? m.url,
+                          id: m.id,
+                        });
                         onOpenChange(false);
                       }}
                     />
@@ -161,10 +164,12 @@ function MediaThumb({
   asset: MediaAssetDto;
   onClick: () => void;
 }) {
+  // Always root-relative `/uploads/…` — never host-qualified strings under /admin
+  // (TanStack cleanPath turns https://… into /admin/https:/…).
   const thumb =
     asset.type === "image"
-      ? (pickListImageUrl(asset.url, asset.thumbnail_url) ?? asset.url)
-      : (asset.thumbnail_url ?? asset.url);
+      ? pickListImageUrl(asset.url, asset.thumbnail_url)
+      : toMediaSrc(asset.thumbnail_url) ?? toMediaSrc(asset.url);
 
   return (
     <button
@@ -173,12 +178,16 @@ function MediaThumb({
       className="rounded border border-border overflow-hidden hover:ring-2 hover:ring-brand text-left"
     >
       <div className="aspect-square bg-surface">
-        {asset.type === "image" ? (
+        {asset.type === "image" && thumb ? (
           <img
-            src={thumb ?? toMediaSrc(asset.url) ?? asset.url}
+            src={thumb}
             alt={asset.alt_text ?? ""}
             className="w-full h-full object-cover"
           />
+        ) : asset.type === "image" ? (
+          <div className="w-full h-full grid place-items-center text-xs text-ink-muted">
+            —
+          </div>
         ) : (
           <div className="w-full h-full grid place-items-center text-xs text-ink-muted">
             Video
